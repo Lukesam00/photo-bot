@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>Photo Bot</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0f766e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Photo Bot">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/icons/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Montserrat:wght@500;800&family=Playfair+Display:wght@600;800&family=Bebas+Neue&family=Great+Vibes&family=Noto+Sans+Thaana:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
@@ -98,6 +106,8 @@ html,body{overflow-x:hidden}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chips button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 13px;font:600 13px Poppins;color:var(--ink);cursor:pointer}
 .chips button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.installBtn{margin-left:auto;border:0;border-radius:999px;background:var(--accent);color:#fff;font:700 13px Poppins;padding:9px 14px;cursor:pointer}
+@media (display-mode: standalone){ header{padding-top:max(10px, env(safe-area-inset-top))} }
 .btn.tg{background:#229ED9} .btn.tg:hover{background:#1c8cc1}
 .sheet{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;justify-content:center;z-index:20}
 .sheet.show{display:flex}
@@ -110,7 +120,7 @@ html,body{overflow-x:hidden}
 </style>
 </head>
 <body>
-<header><h1>Photo Bot</h1><span>Frame → Photo → Name → Download</span></header>
+<header><img src="/icons/icon-192.png" alt="" style="width:30px;height:30px;border-radius:8px"><h1>Photo Bot</h1><span>Frame → Photo → Name → Download</span><button id="installBtn" class="installBtn" style="display:none">⬇ Install app</button></header>
 <div class="wrap">
 <section class="stage">
 <div class="toolbar" id="tools">
@@ -240,6 +250,13 @@ html,body{overflow-x:hidden}
 </aside>
 </div>
 <div class="modal" id="modal"><div><p style="margin-top:0;font-size:14px">Right-click (or long-press) the image and choose <b>Save image</b>.</p><img id="modalImg" alt="poster"><div id="modalList"></div><button class="btn ghost" id="closeModal">Close</button></div></div>
+<div class="sheet" id="iosSheet"><div class="box">
+<h3>Install Photo Bot</h3>
+<p>1. Tap the <b>Share</b> button <span style="font-size:18px">⬆︎</span> at the bottom of Safari.</p>
+<p>2. Scroll down and tap <b>Add to Home Screen</b>.</p>
+<p>3. Tap <b>Add</b>. Photo Bot appears on your home screen like an app.</p>
+<button class="btn ghost" id="iosClose">Got it</button>
+</div></div>
 <div class="sheet" id="readySheet"><div class="box">
 <h3 id="readyTitle">Photos ready</h3><p id="readyText">Tap below, then choose “Save Images”.</p>
 <button class="btn" id="readyGo">⬇ Save to Photos</button>
@@ -1274,6 +1291,26 @@ $('dlMsg').textContent = `✓ Sent ${sent} poster${sent>1?'s':''} to Telegram.`;
 } catch(e){ $('dlMsg').textContent = `Telegram error: ${e.message} (sent ${sent}/${photos.length})`; }
 btn.disabled = false;
 };
+})();
+</script>
+<script>
+/* ===== installable app (PWA) ===== */
+(() => {
+  if (window.claude && window.claude.use) return;
+  if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  if (standalone) return;
+  const btn = document.getElementById('installBtn');
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.userAgent));
+  let deferred = null;
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferred = e; btn.style.display = ''; });
+  window.addEventListener('appinstalled', () => { btn.style.display = 'none'; deferred = null; });
+  if (isIOS) btn.style.display = '';
+  btn.onclick = async () => {
+    if (deferred){ deferred.prompt(); await deferred.userChoice.catch(() => {}); deferred = null; btn.style.display = 'none'; }
+    else document.getElementById('iosSheet').classList.add('show');
+  };
+  document.getElementById('iosClose').onclick = () => document.getElementById('iosSheet').classList.remove('show');
 })();
 </script>
 </body>
