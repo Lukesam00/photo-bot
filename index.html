@@ -305,10 +305,56 @@ details.more .btn{margin-top:8px}
 .gate .pkg .badge{background:#5b9cf6;color:#0b1220}
 .gate .fine{color:#7d8696}
 @media(max-width:380px){.heroH{font-size:33px}}
+/* ===== admin panel ===== */
+.adminBtn{border:0;border-radius:999px;background:var(--ink);color:#fff;font:700 12px Poppins;padding:8px 12px;margin-left:8px;cursor:pointer}
+.admWrap{position:fixed;inset:0;z-index:40;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.admHead{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:max(14px, env(safe-area-inset-top)) 18px 10px;background:var(--bg)}
+.admHead b{font:800 22px Poppins;letter-spacing:-.4px}
+.admTabs{position:sticky;top:58px;z-index:2;display:flex;gap:4px;padding:0 12px;background:var(--bg);border-bottom:1px solid var(--line);overflow-x:auto}
+.admTabs button{border:0;background:transparent;padding:12px 10px;font:600 14px Poppins;color:var(--muted);cursor:pointer;box-shadow:inset 0 -2px 0 transparent;white-space:nowrap;position:relative}
+.admTabs button.on{color:var(--ink);box-shadow:inset 0 -2px 0 var(--ink)}
+.admTabs .dot{display:inline-block;min-width:18px;height:18px;border-radius:9px;background:#e11d48;color:#fff;font:700 11px/18px Poppins;margin-left:6px;padding:0 5px;text-align:center}
+.admBody{max-width:760px;margin:0 auto;padding:16px 14px 60px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:#fff;border-radius:16px;padding:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.stat .k{font:600 12px Poppins;color:var(--muted)}
+.stat .v{font:800 26px Poppins;letter-spacing:-.6px;margin-top:4px}
+.stat .s{font:500 11px Poppins;color:var(--muted);margin-top:2px}
+.stat.alert{background:#fff7ed;cursor:pointer}
+.stat.alert .v{color:#c2410c}
+.acard{background:#fff;border-radius:16px;padding:14px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-top:10px}
+.acard h4{margin:0 0 6px;font:700 15px Poppins}
+.payc{display:flex;gap:12px;align-items:flex-start}
+.payc .slip{width:76px;height:96px;border-radius:10px;object-fit:cover;background:#eee;flex:0 0 76px;cursor:zoom-in;display:flex;align-items:center;justify-content:center;font:700 12px Poppins;color:var(--muted)}
+.payc .info{flex:1;min-width:0;font:500 13px Poppins}
+.payc .info .who{font:700 15px Poppins;word-break:break-all}
+.payc .info .meta{color:var(--muted);font-size:12px;margin-top:2px}
+.payc .info .amt{font:800 18px Poppins;margin-top:6px}
+.acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.acts .mini{flex:1;padding:11px;font-size:13px}
+.acts select{flex:1.2;font-size:13px;padding:9px}
+.urow{display:flex;align-items:center;gap:10px;padding:12px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+.urow:last-child{border-bottom:0}
+.urow .av{width:38px;height:38px;border-radius:50%;background:#f1f1ef;display:flex;align-items:center;justify-content:center;font:700 13px Poppins;flex:0 0 38px}
+.urow .g{flex:1;min-width:0}
+.urow .g .n{font:700 14px Poppins;word-break:break-all}
+.urow .g .m{font:500 12px Poppins;color:var(--muted)}
+.urow .c{text-align:right;font:800 16px Poppins}
+.urow .c small{display:block;font:500 11px Poppins;color:var(--muted)}
+.tag{display:inline-block;border-radius:6px;background:var(--ink);color:#fff;font:700 9px Poppins;padding:2px 6px;margin-left:6px;vertical-align:middle;text-transform:uppercase}
+.admIn{display:block;width:100%;margin-top:8px;border:0;background:#f3f3f1;border-radius:10px;padding:11px 12px;font:500 15px Poppins}
+.pkrow{display:grid;grid-template-columns:1.4fr .8fr .9fr auto;gap:6px;align-items:center;margin-top:8px}
+.pkrow input{border:0;background:#f3f3f1;border-radius:9px;padding:10px;font:500 14px Poppins;width:100%;min-width:0}
+.pkrow label{font:500 11px Poppins;color:var(--muted);display:flex;align-items:center;gap:4px}
+.hist .it{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font:500 13px Poppins}
+.hist .it:last-child{border-bottom:0}
+.hist .plus{color:#15803d;font-weight:700}.hist .minus{color:#b91c1c;font-weight:700}
+.empty{color:var(--muted);font:500 13px Poppins;padding:14px 4px;text-align:center}
+#admSheetBox img.full{width:100%;border-radius:12px;display:block}
 </style>
 </head>
 <body>
-<header><img src="/icons/icon-192.png" alt="" style="width:30px;height:30px;border-radius:8px"><h1>Photo Bot</h1><span>Frame → Photo → Name → Download</span><button id="credPill" class="credPill" style="display:none"></button><button id="installBtn" class="installBtn" style="display:none">⬇ Install app</button></header>
+<header><img src="/icons/icon-192.png" alt="" style="width:30px;height:30px;border-radius:8px"><h1>Photo Bot</h1><span>Frame → Photo → Name → Download</span><button id="credPill" class="credPill" style="display:none"></button><button id="adminBtn" class="adminBtn" style="display:none">Admin</button><button id="installBtn" class="installBtn" style="display:none">⬇ Install app</button></header>
 <div class="wrap">
 <section class="stage">
 <div class="toolbar" id="tools">
@@ -518,6 +564,12 @@ details.more .btn{margin-top:8px}
 <p class="fine">Pay by bank transfer and upload the slip — credits are added once approved.</p>
 </div>
 </div>
+<div id="adminPanel" class="admWrap" style="display:none">
+<div class="admHead"><b>Admin</b><button id="admClose" class="mini" style="background:#f1f1ef">Done</button></div>
+<nav class="admTabs" id="admTabs"><button data-a="ov" class="on">Overview</button><button data-a="pay">Payments<span id="admPendN" class="dot" style="display:none"></span></button><button data-a="users">Users</button><button data-a="set">Settings</button></nav>
+<div id="admBody" class="admBody"></div>
+</div>
+<div class="sheet" id="admSheet"><div class="box" id="admSheetBox"></div></div>
 <div class="sheet" id="acctSheet"><div class="box" id="acctBox"></div></div>
 <div class="sheet" id="iosSheet"><div class="box">
 <h3>Install Photo Bot</h3>
@@ -1889,7 +1941,7 @@ draw();
     gate.style.display = '';
     $('authMsg').textContent = ''; $('authPw').value = '';
     $('heroBtns').style.display = ''; $('authForm').style.display = 'none';
-    $('credPill').style.display = 'none';
+    $('credPill').style.display = 'none'; $('adminBtn').style.display = 'none'; $('adminPanel').style.display = 'none';
     try { const {data} = await sb.from('photobot_settings').select('value').eq('key', 'contact').maybeSingle(); $('authContact').textContent = data && data.value ? ' on ' + data.value : ''; } catch(e){}
     await loadPackages().catch(() => {}); pkgCards($('gatePkgs'), false);
   }
@@ -1936,6 +1988,8 @@ draw();
     await loadPackages().catch(() => {});
     gate.style.display = 'none';
     const admin = !!PB.me.is_admin;
+    $('adminBtn').style.display = admin ? '' : 'none';
+    if (admin) refreshPendingDot();
     $('tgSend').style.display = admin ? '' : 'none'; $('tgSet').style.display = admin ? '' : 'none';
     $('tgSend').parentElement.style.gridTemplateColumns = admin ? '' : '1fr';
   }
@@ -1971,14 +2025,14 @@ draw();
       <div id="acPay"></div>
       <h3 style="margin-top:20px">My payments</h3>
       <div class="lst" id="acMine"><div class="msg">Loading…</div></div>
-      ${PB.me.is_admin ? '<div id="acAdmin"></div>' : ''}
+      ${PB.me.is_admin ? '<button class="btn" id="acAdminOpen" style="margin-top:18px">Open admin panel</button>' : ''}
       <button class="btn ghost" id="acOut" style="margin-top:18px">Sign out</button>`;
     sheet.classList.add('show');
     $('acClose').onclick = () => sheet.classList.remove('show');
     $('acOut').onclick = async () => { sheet.classList.remove('show'); await sb.auth.signOut(); };
     pkgCards($('acPkgs'), true, p => renderPay(p));
     loadMine();
-    if (PB.me.is_admin) renderAdmin();
+    if (PB.me.is_admin) $('acAdminOpen').onclick = () => { sheet.classList.remove('show'); openAdmin('ov'); };
   }
   function renderPay(p){
     const S = PB.settings, ref = showId(PB.me.email);
@@ -2021,30 +2075,168 @@ draw();
     const el = $('acMine'); if (!el) return;
     el.innerHTML = (data && data.length) ? data.map(t => `<div class="it"><div class="grow"><div><b>${esc(t.package_name)}</b> · ${t.credits} credits · ${mvr(t.amount_mvr)}</div><div>${new Date(t.created_at).toLocaleString()}${t.note ? ' · ' + esc(t.note) : ''}</div></div><span class="st ${t.status}">${t.status}</span></div>`).join('') : '<div class="msg">No payments yet.</div>';
   }
-  async function renderAdmin(){
-    const S = PB.settings, el = $('acAdmin');
-    el.innerHTML = `<h3 style="margin-top:22px">Admin · payments to approve</h3><div class="lst" id="adPend"><div class="msg">Loading…</div></div>
-      <h3 style="margin-top:20px">Admin · add credits</h3>
-      <div class="adm"><input id="adWho" placeholder="Customer phone or email"><input id="adN" type="number" inputmode="numeric" placeholder="Credits (e.g. 10, or -5 to remove)"></div>
-      <button class="btn ghost" id="adAdd">Add credits</button><div class="msg" id="adAddMsg"></div>
-      <h3 style="margin-top:20px">Admin · bank details</h3>
-      <div class="adm">
-        <input id="ad_bank_name" placeholder="Bank (e.g. BML)" value="${esc(S.bank_name || '')}">
-        <input id="ad_account_name" placeholder="Account name" value="${esc(S.account_name || '')}">
-        <input id="ad_account_number" placeholder="Account number" value="${esc(S.account_number || '')}" inputmode="numeric">
-        <input id="ad_contact" placeholder="Contact number (shown on login page)" value="${esc(S.contact || '')}">
-        <input id="ad_free_credits" placeholder="Free credits on sign-up" value="${esc(S.free_credits || '5')}" inputmode="numeric">
+  /* ===================== ADMIN PANEL ===================== */
+  const AP = $('adminPanel'), AB = $('admBody'), AS = $('admSheet'), ASB = $('admSheetBox');
+  let admTab = 'ov', payFilter = 'pending', userQ = '';
+  const fmtD = d => d ? new Date(d).toLocaleString('en-GB', {day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'}) : '—';
+  const fmtDay = d => d ? new Date(d).toLocaleDateString('en-GB', {day: 'numeric', month: 'short', year: 'numeric'}) : '—';
+  const initials = e => { const id = showId(e); return /^\d/.test(id) ? id.slice(-2) : id.slice(0, 2).toUpperCase(); };
+  AS.addEventListener('click', e => { if (e.target === AS) AS.classList.remove('show'); });
+  $('admClose').onclick = () => { AP.style.display = 'none'; refreshMe().catch(() => {}); };
+  $('adminBtn').onclick = () => openAdmin(admTab);
+  document.querySelectorAll('#admTabs button').forEach(b => b.onclick = () => openAdmin(b.dataset.a));
+  async function refreshPendingDot(){
+    const {data} = await sb.rpc('photobot_admin_stats');
+    const n = data ? data.pending : 0, d = $('admPendN');
+    d.style.display = n ? '' : 'none'; d.textContent = n;
+    $('adminBtn').textContent = n ? `Admin · ${n}` : 'Admin';
+    return data;
+  }
+  function openAdmin(tab){
+    admTab = tab; AP.style.display = '';
+    document.querySelectorAll('#admTabs button').forEach(b => b.classList.toggle('on', b.dataset.a === tab));
+    AB.innerHTML = '<div class="empty">Loading…</div>';
+    ({ov: admOverview, pay: admPayments, users: admUsers, set: admSettings})[tab]();
+  }
+  PB.openAdmin = openAdmin;
+
+  async function slipUrl(path){ const r = await sb.storage.from('photobot-slips').createSignedUrl(path, 3600); return r.data && r.data.signedUrl; }
+  function showSlip(url, pdf){
+    ASB.innerHTML = `<div class="acctTop"><h3>Payment slip</h3><button class="mini" style="background:#f1f1ef" id="slClose">Close</button></div>${pdf ? `<a class="btn" href="${url}" target="_blank" style="display:block;text-align:center;text-decoration:none">Open PDF slip</a>` : `<img class="full" src="${url}" alt="slip">`}`;
+    AS.classList.add('show'); $('slClose').onclick = () => AS.classList.remove('show');
+  }
+
+  /* ---- overview ---- */
+  async function admOverview(){
+    const st = await refreshPendingDot().catch(e => null);
+    if (!st){ AB.innerHTML = '<div class="empty">Could not load.</div>'; return; }
+    const {data: recent} = await sb.rpc('photobot_admin_topups', {p_status: null});
+    AB.innerHTML = `<div class="stats">
+      <div class="stat ${st.pending ? 'alert' : ''}" id="stPend"><div class="k">Payments to approve</div><div class="v">${st.pending}</div><div class="s">${st.pending ? 'Tap to review' : 'All clear'}</div></div>
+      <div class="stat"><div class="k">Users</div><div class="v">${st.users}</div><div class="s">+${st.new_7d} this week</div></div>
+      <div class="stat"><div class="k">Revenue</div><div class="v">${mvr(st.revenue)}</div><div class="s">${mvr(st.revenue_30d)} last 30 days</div></div>
+      <div class="stat"><div class="k">Posters made</div><div class="v">${st.posters}</div><div class="s">${st.posters_7d} this week</div></div>
+      <div class="stat"><div class="k">Credits sold</div><div class="v">${st.credits_sold}</div><div class="s">approved packages</div></div>
+      <div class="stat"><div class="k">Credits held by users</div><div class="v">${st.credits_outstanding}</div><div class="s">not yet used</div></div>
+    </div>
+    <div class="acard"><h4>Recent payments</h4><div class="lst">${(recent || []).slice(0, 6).map(t => `<div class="it"><div class="grow"><div><b>${esc(showId(t.email))}</b> · ${esc(t.package_name)}</div><div>${mvr(t.amount_mvr)} · ${fmtD(t.created_at)}</div></div><span class="st ${t.status}">${t.status}</span></div>`).join('') || '<div class="empty">No payments yet.</div>'}</div></div>`;
+    $('stPend').onclick = () => { payFilter = 'pending'; openAdmin('pay'); };
+  }
+
+  /* ---- payments ---- */
+  async function admPayments(){
+    AB.innerHTML = `<div class="chips" id="payF">${['pending','approved','rejected','all'].map(f => `<button data-f="${f}" class="${f === payFilter ? 'on' : ''}">${f[0].toUpperCase() + f.slice(1)}</button>`).join('')}</div><div id="payL"><div class="empty">Loading…</div></div>`;
+    document.querySelectorAll('#payF button').forEach(b => b.onclick = () => { payFilter = b.dataset.f; admPayments(); });
+    const {data, error} = await sb.rpc('photobot_admin_topups', {p_status: payFilter === 'all' ? null : payFilter});
+    const L = $('payL');
+    if (error){ L.innerHTML = `<div class="empty">${esc(error.message)}</div>`; return; }
+    if (!data.length){ L.innerHTML = `<div class="empty">${payFilter === 'pending' ? 'Nothing to approve 🎉' : 'No payments here.'}</div>`; return; }
+    L.innerHTML = '';
+    for (const t of data){
+      const c = document.createElement('div'); c.className = 'acard';
+      const pdf = /\.pdf$/i.test(t.slip_path);
+      c.innerHTML = `<div class="payc"><div class="slip">…</div><div class="info">
+        <div class="who">${esc(showId(t.email))}</div>
+        <div class="meta">${esc(t.package_name)} · ${t.credits} credits · ${fmtD(t.created_at)}</div>
+        <div class="amt">${mvr(t.amount_mvr)}</div>
+        <div class="meta"><span class="st ${t.status}">${t.status}</span>${t.note ? ' · ' + esc(t.note) : ''}${t.reviewed_at ? ' · ' + fmtD(t.reviewed_at) : ''}</div>
+      </div></div>
+      ${t.status === 'pending' ? `<div class="acts"><button class="mini ok">Approve +${t.credits}</button><select><option>Payment not found</option><option>Wrong amount</option><option>Slip not clear</option><option>Duplicate slip</option></select><button class="mini no">Reject</button></div>` : ''}
+      <div class="acts"><button class="mini" style="background:#f1f1ef" data-user="${t.user_id}">View customer</button></div>`;
+      L.appendChild(c);
+      slipUrl(t.slip_path).then(url => {
+        const sl = c.querySelector('.slip');
+        if (!url){ sl.textContent = 'No slip'; return; }
+        if (pdf){ sl.textContent = 'PDF'; } else { const im = document.createElement('img'); im.className = 'slip'; im.src = url; im.alt = 'slip'; sl.replaceWith(im); }
+        (c.querySelector('img.slip') || c.querySelector('.slip')).onclick = () => showSlip(url, pdf);
+      });
+      c.querySelector('[data-user]').onclick = () => openUser(t.user_id);
+      const ok = c.querySelector('.mini.ok'), no = c.querySelector('.mini.no');
+      if (ok){
+        ok.onclick = async () => { ok.disabled = no.disabled = true; ok.textContent = 'Approving…';
+          const {error} = await sb.rpc('photobot_admin_review', {p_id: t.id, p_approve: true});
+          if (error){ ok.textContent = error.message; return; }
+          c.querySelector('.acts').innerHTML = `<div class="paybox" style="background:#dcfce7;margin:0;width:100%">Approved ✓ ${t.credits} credits added to ${esc(showId(t.email))}</div>`;
+          refreshPendingDot(); };
+        no.onclick = async () => { ok.disabled = no.disabled = true;
+          const note = c.querySelector('select').value;
+          const {error} = await sb.rpc('photobot_admin_review', {p_id: t.id, p_approve: false, p_note: note});
+          c.querySelector('.acts').innerHTML = error ? esc(error.message) : `<div class="paybox" style="background:#fee2e2;margin:0;width:100%">Rejected · ${esc(note)}</div>`;
+          refreshPendingDot(); };
+      }
+    }
+  }
+
+  /* ---- users ---- */
+  let userT = 0;
+  async function admUsers(){
+    AB.innerHTML = `<input class="admIn" id="uSearch" placeholder="Search phone or email" value="${esc(userQ)}"><div class="acard" id="uList" style="padding:4px 12px"><div class="empty">Loading…</div></div>`;
+    $('uSearch').oninput = () => { clearTimeout(userT); userT = setTimeout(() => { userQ = $('uSearch').value.trim(); loadUsers(); }, 300); };
+    loadUsers();
+  }
+  async function loadUsers(){
+    const {data, error} = await sb.rpc('photobot_admin_users', {p_search: userQ || null});
+    const L = $('uList'); if (!L) return;
+    if (error){ L.innerHTML = `<div class="empty">${esc(error.message)}</div>`; return; }
+    if (!data.length){ L.innerHTML = '<div class="empty">No users found.</div>'; return; }
+    L.innerHTML = `<div class="msg" style="padding:8px 4px 0">${data.length} user${data.length === 1 ? '' : 's'}</div>` + data.map(u => `<div class="urow" data-u="${u.user_id}">
+      <div class="av">${esc(initials(u.email))}</div>
+      <div class="g"><div class="n">${esc(showId(u.email))}${u.is_admin ? '<span class="tag">Admin</span>' : ''}</div><div class="m">${u.posters} posters · ${mvr(u.paid_mvr)} paid · joined ${fmtDay(u.created_at)}</div></div>
+      <div class="c">${u.credits}<small>credits</small></div></div>`).join('');
+    L.querySelectorAll('.urow').forEach(r => r.onclick = () => openUser(r.dataset.u));
+  }
+  async function openUser(uid){
+    ASB.innerHTML = '<div class="empty">Loading…</div>'; AS.classList.add('show');
+    const {data, error} = await sb.rpc('photobot_admin_user_detail', {p_user: uid});
+    if (error || !data || !data.profile){ ASB.innerHTML = `<div class="empty">${esc(error ? error.message : 'Not found')}</div>`; return; }
+    const p = data.profile, posters = data.ledger.filter(l => l.delta < 0).reduce((a, l) => a - l.delta, 0), paid = data.topups.filter(t => t.status === 'approved').reduce((a, t) => a + Number(t.amount_mvr), 0);
+    ASB.innerHTML = `
+      <div class="acctTop"><div><div class="msg" style="margin:0">${p.is_admin ? 'Admin' : 'Customer'} · joined ${fmtDay(p.created_at)}</div><h3 style="font-size:20px;word-break:break-all">${esc(showId(p.email))}</h3></div><button class="mini" style="background:#f1f1ef" id="udClose">Close</button></div>
+      <div class="stats">
+        <div class="stat"><div class="k">Credits</div><div class="v" id="udCred">${p.credits}</div></div>
+        <div class="stat"><div class="k">Posters made</div><div class="v">${posters}</div></div>
+        <div class="stat"><div class="k">Paid</div><div class="v">${mvr(paid)}</div></div>
+        <div class="stat"><div class="k">Last sign-in</div><div class="v" style="font-size:15px">${fmtD(data.last_sign_in)}</div></div>
       </div>
-      <button class="btn ghost" id="adSave">Save bank details</button><div class="msg" id="adSaveMsg"></div>`;
-    $('adAdd').onclick = async () => {
-      const who = toLogin($('adWho').value), n = parseInt($('adN').value, 10);
-      if (!who || !n){ $('adAddMsg').textContent = 'Enter a customer and a number of credits.'; return; }
-      let {data, error} = await sb.rpc('photobot_admin_add_credits', {p_email: who, p_credits: n});
-      const ph = phoneOf($('adWho').value);
-      if (error && ph && /NO_SUCH_USER/.test(error.message)) ({data, error} = await sb.rpc('photobot_admin_add_credits', {p_email: ph + OLD_DOM, p_credits: n}));
-      $('adAddMsg').textContent = error ? (/NO_SUCH_USER/.test(error.message) ? 'No account with that phone/email.' : error.message) : `Done — they now have ${data} credits.`;
-      if (!error) refreshMe().catch(() => {});
+      <div class="acard"><h4>Add or remove credits</h4>
+        <div class="acts" style="margin-top:4px"><input class="admIn" id="udN" type="number" inputmode="numeric" placeholder="e.g. 10 or -5" style="margin:0;flex:1"><input class="admIn" id="udR" placeholder="Reason (optional)" style="margin:0;flex:1.4"></div>
+        <button class="btn" id="udAdd" style="margin-top:8px">Update credits</button><div class="msg" id="udMsg"></div></div>
+      <div class="acard"><h4>Admin access</h4><label class="row" style="margin-top:0">Can open admin panel <input type="checkbox" id="udAdm" ${p.is_admin ? 'checked' : ''}></label><div class="msg" id="udAdmMsg"></div></div>
+      <div class="acard"><h4>Payments</h4><div class="lst">${data.topups.map(t => `<div class="it"><div class="grow"><div><b>${esc(t.package_name)}</b> · ${t.credits} cr · ${mvr(t.amount_mvr)}</div><div>${fmtD(t.created_at)}${t.note ? ' · ' + esc(t.note) : ''}</div></div><span class="st ${t.status}">${t.status}</span></div>`).join('') || '<div class="empty">No payments.</div>'}</div></div>
+      <div class="acard"><h4>Credit history</h4><div class="hist">${data.ledger.map(l => `<div class="it"><span>${esc(l.reason || '')}<br><span class="msg" style="font-size:11px">${fmtD(l.created_at)}</span></span><span class="${l.delta > 0 ? 'plus' : 'minus'}">${l.delta > 0 ? '+' : ''}${l.delta}</span></div>`).join('') || '<div class="empty">No activity.</div>'}</div></div>`;
+    $('udClose').onclick = () => AS.classList.remove('show');
+    $('udAdd').onclick = async () => {
+      const n = parseInt($('udN').value, 10); if (!n){ $('udMsg').textContent = 'Enter a number like 10 or -5.'; return; }
+      const {data: total, error} = await sb.rpc('photobot_admin_user_credits', {p_user: uid, p_credits: n, p_reason: $('udR').value});
+      if (error){ $('udMsg').textContent = error.message; return; }
+      $('udCred').textContent = total; $('udMsg').textContent = `Done — now ${total} credits.`; $('udN').value = '';
+      if (uid === PB.me.user_id) refreshMe().catch(() => {});
+      if (admTab === 'users') loadUsers();
     };
+    $('udAdm').onchange = async () => {
+      const v = $('udAdm').checked;
+      const {error} = await sb.rpc('photobot_admin_set_admin', {p_user: uid, p_admin: v});
+      if (error){ $('udAdm').checked = !v; $('udAdmMsg').textContent = /CANNOT_REMOVE_SELF/.test(error.message) ? "You can't remove your own admin access." : error.message; return; }
+      $('udAdmMsg').textContent = v ? 'Now an admin.' : 'Admin access removed.';
+      if (admTab === 'users') loadUsers();
+    };
+  }
+
+  /* ---- settings ---- */
+  async function admSettings(){
+    const {data: rows} = await sb.from('photobot_settings').select('key,value');
+    const S = Object.fromEntries((rows || []).map(r => [r.key, r.value])); PB.settings = S;
+    const {data: pks} = await sb.rpc('photobot_admin_packages');
+    AB.innerHTML = `
+      <div class="acard"><h4>Bank details for payments</h4>
+        <input class="admIn" id="ad_bank_name" placeholder="Bank (e.g. BML)" value="${esc(S.bank_name || '')}">
+        <input class="admIn" id="ad_account_name" placeholder="Account name" value="${esc(S.account_name || '')}">
+        <input class="admIn" id="ad_account_number" placeholder="Account number" value="${esc(S.account_number || '')}" inputmode="numeric">
+        <input class="admIn" id="ad_contact" placeholder="Contact number (shown on login page)" value="${esc(S.contact || '')}">
+        <label class="row">Free credits on sign-up <input class="admIn" id="ad_free_credits" value="${esc(S.free_credits || '5')}" inputmode="numeric" style="width:90px;margin:0"></label>
+        <button class="btn" id="adSave" style="margin-top:10px">Save</button><div class="msg" id="adSaveMsg"></div></div>
+      <div class="acard"><h4>Packages</h4><div class="msg" style="margin:0 0 4px">Name · credits · price (MVR) · shown</div><div id="pkL"></div>
+        <button class="btn ghost" id="pkAdd" style="margin-top:10px">+ Add package</button><div class="msg" id="pkMsg"></div></div>`;
     $('adSave').onclick = async () => {
       try {
         for (const k of ['bank_name','account_name','account_number','contact','free_credits']){
@@ -2054,23 +2246,22 @@ draw();
         $('adSaveMsg').textContent = 'Saved ✓';
       } catch(e){ $('adSaveMsg').textContent = 'Could not save: ' + e.message; }
     };
-    const {data, error} = await sb.rpc('photobot_admin_topups', {p_status: 'pending'});
-    const pend = $('adPend');
-    if (error){ pend.innerHTML = `<div class="msg">${esc(error.message)}</div>`; return; }
-    if (!data.length){ pend.innerHTML = '<div class="msg">Nothing waiting. 🎉</div>'; return; }
-    pend.innerHTML = '';
-    for (const t of data){
-      const row = document.createElement('div'); row.className = 'it';
-      const sig = await sb.storage.from('photobot-slips').createSignedUrl(t.slip_path, 3600);
-      const url = sig.data && sig.data.signedUrl, isPdf = /\.pdf$/i.test(t.slip_path);
-      row.innerHTML = `${url ? (isPdf ? `<a href="${url}" target="_blank" class="slipimg" style="display:flex;align-items:center;justify-content:center;font:700 11px Poppins;color:var(--ink);text-decoration:none">PDF</a>` : `<a href="${url}" target="_blank"><img class="slipimg" src="${url}" alt="slip"></a>`) : '<span class="slipimg"></span>'}
-        <div class="grow"><div><b>${esc(showId(t.email))}</b></div><div>${esc(t.package_name)} · ${t.credits} cr · ${mvr(t.amount_mvr)} · ${new Date(t.created_at).toLocaleDateString()}</div></div>
-        <button class="mini ok">Approve</button><button class="mini no">Reject</button>`;
-      const [ok, no] = row.querySelectorAll('button');
-      ok.onclick = async () => { ok.disabled = no.disabled = true; const {error} = await sb.rpc('photobot_admin_review', {p_id: t.id, p_approve: true}); row.querySelector('.grow div:last-child').textContent = error ? error.message : 'Approved ✓ credits added'; if (!error){ ok.remove(); no.remove(); refreshMe().catch(() => {}); } };
-      no.onclick = async () => { ok.disabled = no.disabled = true; const {error} = await sb.rpc('photobot_admin_review', {p_id: t.id, p_approve: false, p_note: 'Payment not found'}); row.querySelector('.grow div:last-child').textContent = error ? error.message : 'Rejected'; if (!error){ ok.remove(); no.remove(); } };
-      pend.appendChild(row);
-    }
+    const L = $('pkL');
+    const addRow = p => {
+      const r = document.createElement('div'); r.className = 'pkrow';
+      r.innerHTML = `<input value="${esc(p.name || '')}" placeholder="Name"><input value="${p.credits || ''}" type="number" inputmode="numeric" placeholder="Credits"><input value="${p.price_mvr ?? ''}" type="number" inputmode="decimal" placeholder="MVR"><label><input type="checkbox" ${p.active !== false ? 'checked' : ''}></label>
+        <button class="mini ok" style="grid-column:1/-1">Save ${esc(p.name || 'new package')}</button>`;
+      const [nm, cr, pr, ac] = r.querySelectorAll('input'), btn = r.querySelector('button');
+      btn.onclick = async () => {
+        const {data: id, error} = await sb.rpc('photobot_admin_save_package', {p_id: p.id || null, p_name: nm.value, p_credits: parseInt(cr.value, 10), p_price: parseFloat(pr.value), p_active: ac.checked, p_sort: p.sort || null});
+        if (error){ $('pkMsg').textContent = /BAD_PACKAGE/.test(error.message) ? 'Check the name, credits (1 or more) and price.' : error.message; return; }
+        p.id = id; btn.textContent = 'Saved ✓'; setTimeout(() => btn.textContent = 'Save ' + nm.value, 1500);
+        $('pkMsg').textContent = ''; loadPackages().catch(() => {});
+      };
+      L.appendChild(r);
+    };
+    (pks || []).forEach(addRow);
+    $('pkAdd').onclick = () => addRow({active: true});
   }
   PB.openAccount = openAccount;
 
