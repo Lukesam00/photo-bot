@@ -453,7 +453,7 @@ details.more .btn{margin-top:8px}
 <div class="gateHead"><img src="/icons/icon-192.png" alt=""><div><h1>Photo Bot</h1><p>Product posters in seconds — frame, AI background removal, English &amp; Dhivehi names.</p></div></div>
 <div class="gateCard">
 <div class="seg" id="authSeg"><button data-m="in" class="on">Sign in</button><button data-m="up">Create account</button></div>
-<input type="text" id="authId" placeholder="Phone number or email" autocomplete="username" inputmode="email">
+<input type="text" id="authId" placeholder="Mobile number or email" autocomplete="username">
 <input type="password" id="authPw" placeholder="Password" autocomplete="current-password">
 <button class="btn" id="authGo">Sign in</button>
 <div class="msg" id="authMsg"></div>
@@ -1792,9 +1792,11 @@ draw();
   if (!window.supabase){ window.PBspend = async () => true; return; }
   const sb = window.supabase.createClient(SB_URL, SB_KEY, {auth: {persistSession: true, storageKey: 'photobot-auth', autoRefreshToken: true}});
   const PB = window.PB = {sb, me: null, settings: {}, packages: []};
-  const MOBILE = '@mobile.inputtax.app';
-  const toLogin = v => { v = (v || '').trim(); const d = v.replace(/[\s()+-]/g, ''); if (/^\d{7,15}$/.test(d)) return d.replace(/^960(?=\d{7}$)/, '') + MOBILE; return v.toLowerCase(); };
-  const showId = e => (e || '').endsWith(MOBILE) ? e.replace(MOBILE, '') : (e || '');
+  const PHONE_DOM = '@phone.photobot.app', OLD_DOM = '@mobile.inputtax.app';
+  const phoneOf = v => { const d = (v || '').replace(/[\s()+-]/g, ''); return /^\d{7,15}$/.test(d) ? d.replace(/^960(?=\d{7}$)/, '') : null; };
+  // phone numbers map to Photo Bot phone accounts; emails stay as they are
+  const toLogin = v => { const d = phoneOf(v); return d ? d + PHONE_DOM : (v || '').trim().toLowerCase(); };
+  const showId = e => (e || '').replace(PHONE_DOM, '').replace(OLD_DOM, '');
   const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const mvr = n => 'MVR ' + Number(n).toLocaleString('en', {maximumFractionDigits: 2});
 
@@ -1841,7 +1843,20 @@ draw();
     if (!id || !pw){ $('authMsg').textContent = 'Enter your phone/email and password.'; return; }
     $('authGo').disabled = true; $('authMsg').textContent = mode === 'in' ? 'Signing in…' : 'Creating account…';
     try {
-      const r = mode === 'in' ? await sb.auth.signInWithPassword({email: id, password: pw}) : await sb.auth.signUp({email: id, password: pw});
+      const phone = phoneOf($('authId').value);
+      let r;
+      if (mode === 'in'){
+        r = await sb.auth.signInWithPassword({email: id, password: pw});
+        // older accounts made in the input-tax app use a different address for the same phone number
+        if (r.error && phone) { const r2 = await sb.auth.signInWithPassword({email: phone + OLD_DOM, password: pw}); if (!r2.error) r = r2; }
+      } else if (phone){
+        const res = await fetch(SB_URL + '/functions/v1/photobot-signup', {method: 'POST', headers: {'content-type': 'application/json', apikey: SB_KEY, authorization: 'Bearer ' + SB_KEY}, body: JSON.stringify({phone, password: pw})});
+        const j = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(j.error || 'Could not create account');
+        r = await sb.auth.signInWithPassword({email: j.email, password: pw});
+      } else {
+        r = await sb.auth.signUp({email: id, password: pw});
+      }
       if (r.error) throw r.error;
       if (!r.data.session){ $('authMsg').textContent = 'Check your email to confirm, then sign in.'; return; }
       await afterLogin();
@@ -1965,7 +1980,9 @@ draw();
     $('adAdd').onclick = async () => {
       const who = toLogin($('adWho').value), n = parseInt($('adN').value, 10);
       if (!who || !n){ $('adAddMsg').textContent = 'Enter a customer and a number of credits.'; return; }
-      const {data, error} = await sb.rpc('photobot_admin_add_credits', {p_email: who, p_credits: n});
+      let {data, error} = await sb.rpc('photobot_admin_add_credits', {p_email: who, p_credits: n});
+      const ph = phoneOf($('adWho').value);
+      if (error && ph && /NO_SUCH_USER/.test(error.message)) ({data, error} = await sb.rpc('photobot_admin_add_credits', {p_email: ph + OLD_DOM, p_credits: n}));
       $('adAddMsg').textContent = error ? (/NO_SUCH_USER/.test(error.message) ? 'No account with that phone/email.' : error.message) : `Done — they now have ${data} credits.`;
       if (!error) refreshMe().catch(() => {});
     };
