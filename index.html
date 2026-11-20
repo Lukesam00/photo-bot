@@ -134,6 +134,14 @@ html,body{overflow-x:hidden}
 .swatches button{width:30px;height:30px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0}
 .swatches button.on{box-shadow:0 0 0 3px var(--accent)}
 .swatches input{width:34px;height:34px;border:0;padding:0;background:none}
+.tplgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.tplgrid button{border:2px solid var(--line);border-radius:10px;padding:3px;background:#fff;cursor:pointer;display:flex;flex-direction:column;gap:3px;align-items:center;font:600 11px Poppins;color:var(--muted)}
+.tplgrid button img{width:100%;border-radius:6px;display:block}
+.tplgrid button.on{border-color:var(--accent);color:var(--accent)}
+.brandrow{display:flex;gap:10px;align-items:flex-start}
+.brandrow input{margin-bottom:6px;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font:500 16px Poppins}
+.logobox{width:84px;height:84px;flex:0 0 84px;border:2px dashed var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;font:600 12px Poppins;color:var(--muted);background:repeating-conic-gradient(#f3f3f3 0 25%,#fff 0 50%) 0 0/12px 12px;overflow:hidden}
+.logobox img{max-width:100%;max-height:100%}
 </style>
 </head>
 <body>
@@ -161,8 +169,25 @@ html,body{overflow-x:hidden}
 <button data-go="dv">ދިވެހި</button>
 </nav>
 <div class="card" data-step="frame">
-<h2><b>1</b>Sample frame</h2>
-<div class="drop" id="frameDrop"><span>Tap to choose your frame / poster template</span></div>
+<h2><b>1</b>Frame</h2>
+<div class="sub" style="margin-top:0">Ready-made templates</div>
+<div class="chips" id="tplSize"><button data-v="p">Portrait 4:5</button><button data-v="s">Square</button><button data-v="st">Story 9:16</button></div>
+<div class="tplgrid" id="tplGrid"></div>
+<div class="sub">Your shop details</div>
+<div class="brandrow">
+<div class="logobox" id="logoBox"><span>＋ Logo</span></div>
+<div style="flex:1;min-width:0">
+<input type="text" id="brShop" placeholder="Shop name (if no logo)">
+<input type="tel" id="brPhone" placeholder="Phone / WhatsApp e.g. 7xx xxxx">
+<input type="text" id="brSocial" placeholder="Instagram / website e.g. @kosik.mv">
+</div>
+</div>
+<input type="file" id="logoIn" accept="image/*" hidden>
+<label class="row">Brand colour <input type="color" id="brColor" value="#0f766e"></label>
+<label class="row">Logo size <input type="range" id="brLogoSize" min="50" max="200" value="100"></label>
+<button class="btn ghost" id="logoDel" style="display:none;padding:8px;font-size:13px">Remove logo</button>
+<div class="sub">Or upload your own frame</div>
+<div class="drop" id="frameDrop"><span>Tap to upload your own frame / poster template</span></div>
 <input type="file" id="frameIn" accept="image/*" hidden>
 <label class="row">Product layer
 <select id="layer"><option value="front">In front of frame</option><option value="behind">Behind frame (PNG hole)</option></select>
@@ -349,26 +374,182 @@ dropEl.ondragleave = () => dropEl.classList.remove('over');
 dropEl.ondrop = e => { e.preventDefault(); dropEl.classList.remove('over'); const fs = [...e.dataTransfer.files]; if (fs.length) cb(multi ? fs : fs[0]); };
 }
 function thumb(el, src, text){ el.innerHTML = `<img src="${src}"><span>${text}</span>`; }
-function setFrame(im){
+function setFrame(im, opt){
+opt = opt || {};
+const sameSize = frame && W === im.naturalWidth && H === im.naturalHeight;
 frame = im; W = im.naturalWidth; H = im.naturalHeight;
 cv.width = W; cv.height = H;
-T.x = W/2; T.y = H*0.85; T2.x = W/2; T2.y = H*0.93;
-thumb($('frameDrop'), im.src, 'Tap to change frame');
-$('frameMsg').textContent = `${W} × ${H}px — saved for next time`;
+if (!opt.template) thumb($('frameDrop'), im.src, 'Tap to change frame');
+$('frameMsg').textContent = opt.template ? '' : `${W} × ${H}px — saved for next time`;
+if (opt.keepLayout && sameSize){ draw(); return; }
+const ty = opt.ty || 0.85, t2y = opt.t2y || 0.93;
+T.x = W/2; T.y = H*ty; T2.x = W/2; T2.y = H*t2y;
 if (items.length && !busy){
 saveCur(); const keep = cur;
-items.forEach((it, i) => { loadItem(i); T.x = W/2; T.y = H*0.85; T2.x = W/2; T2.y = H*0.93; if (cut) fitToFrame(); saveCur(); });
+items.forEach((it, i) => { loadItem(i); T.x = W/2; T.y = H*ty; T2.x = W/2; T2.y = H*t2y; if (cut) fitToFrame(); saveCur(); });
 loadItem(keep);
 }
 draw();
 }
 hookDrop($('frameDrop'), $('frameIn'), async f => {
-const im = await loadImg(f); setFrame(im); showStep('photo');
+const im = await loadImg(f); TPL.id = null; saveTpl(); renderTplGrid(); setFrame(im); showStep('photo');
 try { localStorage.setItem(savedFrameKey, im.src); } catch(e){ $('frameMsg').textContent = `${W} × ${H}px`; }
 });
+/* ---------- frame templates with shop details ---------- */
+const BR_KEY = 'photobot.brand', TPL_KEY = 'photobot.tpl';
+let BR = {shop:'', phone:'', social:'', color:'#0f766e', logo:'', logoSize:100}, logoImg = null;
+let TPL = {id: null, size: 'p'};
+try { Object.assign(BR, JSON.parse(localStorage.getItem(BR_KEY) || '{}')); } catch(e){}
+try { Object.assign(TPL, JSON.parse(localStorage.getItem(TPL_KEY) || '{}')); } catch(e){}
+const saveBr = () => { try { localStorage.setItem(BR_KEY, JSON.stringify(BR)); } catch(e){ $('frameMsg').textContent = 'Logo too large to remember — it will work until you close the app.'; } };
+const saveTpl = () => { try { localStorage.setItem(TPL_KEY, JSON.stringify(TPL)); } catch(e){} };
+const SIZES = {p: [1080, 1350], s: [1080, 1080], st: [1080, 1920]};
+const TEMPLATES = [
+  {id:'cream', name:'Cream'}, {id:'band', name:'Brand band'}, {id:'arch', name:'Arch'},
+  {id:'lux', name:'Luxury', txt:'#d4af37', txt2:'#ffffff'}, {id:'card', name:'Boutique'}, {id:'diag', name:'Diagonal', txt:'#ffffff', txt2:'#ffffff'},
+];
+function mix(hex, to, t){ const a = parseInt(hex.slice(1),16), b = parseInt(to.slice(1),16);
+  const c = s => Math.round(((a>>s)&255)*(1-t) + ((b>>s)&255)*t); return `rgb(${c(16)},${c(8)},${c(0)})`; }
+function iconPhone(c, x, y, s, col){ c.save(); c.strokeStyle = col; c.lineWidth = s*0.12; c.lineCap = 'round';
+  rrect(c, x - s*0.3, y - s*0.5, s*0.6, s, s*0.12); c.stroke(); c.beginPath(); c.moveTo(x - s*0.08, y + s*0.33); c.lineTo(x + s*0.08, y + s*0.33); c.stroke(); c.restore(); }
+function iconCam(c, x, y, s, col){ c.save(); c.strokeStyle = col; c.fillStyle = col; c.lineWidth = s*0.11;
+  rrect(c, x - s*0.48, y - s*0.48, s*0.96, s*0.96, s*0.28); c.stroke(); c.beginPath(); c.arc(x, y, s*0.22, 0, 7); c.stroke(); c.beginPath(); c.arc(x + s*0.25, y - s*0.25, s*0.06, 0, 7); c.fill(); c.restore(); }
+// draw logo (or shop name) centred in a box
+function drawBrandMark(c, cx, cy, maxW, maxH, col){
+  const k = (BR.logoSize || 100)/100; maxW *= k; maxH *= k;
+  if (logoImg && logoImg.complete && logoImg.naturalWidth){
+    const sc = Math.min(maxW/logoImg.naturalWidth, maxH/logoImg.naturalHeight);
+    const w = logoImg.naturalWidth*sc, h = logoImg.naturalHeight*sc;
+    c.drawImage(logoImg, cx - w/2, cy - h/2, w, h);
+  } else if (BR.shop){
+    c.fillStyle = col; c.textAlign = 'center'; c.textBaseline = 'middle';
+    let fs = maxH*0.62; c.font = `800 ${fs}px Poppins`; const tw = c.measureText(BR.shop.toUpperCase()).width;
+    if (tw > maxW) { fs *= maxW/tw; c.font = `800 ${fs}px Poppins`; }
+    c.letterSpacing = '2px'; c.fillText(BR.shop.toUpperCase(), cx, cy); c.letterSpacing = '0px';
+  }
+}
+// contact line: phone · social
+function drawContact(c, cx, cy, w, h, col){
+  const parts = [];
+  if (BR.phone) parts.push(['phone', BR.phone]);
+  if (BR.social) parts.push(['cam', BR.social]);
+  if (!parts.length) return;
+  let fs = h*0.42; c.font = `600 ${fs}px Poppins`;
+  const gap = fs*1.6, ic = fs*1.05, pad = fs*0.45;
+  const measure = () => parts.reduce((t, [, s]) => t + ic + pad + c.measureText(s).width, 0) + gap*(parts.length-1);
+  let tot = measure(); if (tot > w){ fs *= w/tot; c.font = `600 ${fs}px Poppins`; }
+  const ic2 = fs*1.05, pad2 = fs*0.45, gap2 = fs*1.6;
+  tot = parts.reduce((t, [, s]) => t + ic2 + pad2 + c.measureText(s).width, 0) + gap2*(parts.length-1);
+  let x = cx - tot/2;
+  c.fillStyle = col; c.textAlign = 'left'; c.textBaseline = 'middle';
+  parts.forEach(([kind, s]) => {
+    (kind === 'phone' ? iconPhone : iconCam)(c, x + ic2/2, cy, ic2, col);
+    x += ic2 + pad2; c.fillText(s, x, cy + fs*0.04); x += c.measureText(s).width + gap2;
+  });
+}
+function buildTemplate(id, w, h){
+  const c0 = document.createElement('canvas'); c0.width = w; c0.height = h; const c = c0.getContext('2d');
+  const A = BR.color || '#0f766e', u = w/1080, barH = 86*u, headH = Math.min(h*0.13, 175*u);
+  const lightA = mix(A, '#ffffff', 0.88), deepA = mix(A, '#000000', 0.35);
+  if (id === 'cream'){
+    const g = c.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#fcfaf6'); g.addColorStop(1, '#efe7dc'); c.fillStyle = g; c.fillRect(0, 0, w, h);
+    c.fillStyle = mix(A, '#ffffff', 0.86); c.beginPath(); c.arc(w/2, h*0.46, Math.min(w, h)*0.36, 0, 7); c.fill();
+    c.fillStyle = A; c.fillRect(w*0.4, headH*0.12, w*0.2, 5*u);
+    drawBrandMark(c, w/2, headH*0.56, w*0.56, headH*0.78, deepA);
+    c.fillStyle = A; c.fillRect(0, h - barH, w, barH); drawContact(c, w/2, h - barH/2, w*0.9, barH, '#fff');
+  } else if (id === 'band'){
+    c.fillStyle = '#ffffff'; c.fillRect(0, 0, w, h);
+    c.fillStyle = A; c.fillRect(0, 0, w, headH);
+    c.fillStyle = lightA; c.fillRect(0, headH, w, h - headH - barH);
+    c.fillStyle = '#fff'; rrect(c, w/2 - w*0.2, headH*0.14, w*0.4, headH*0.72, headH*0.2); c.fill();
+    drawBrandMark(c, w/2, headH*0.5, w*0.37, headH*0.6, A);
+    c.fillStyle = deepA; c.fillRect(0, h - barH, w, barH); drawContact(c, w/2, h - barH/2, w*0.9, barH, '#fff');
+  } else if (id === 'arch'){
+    c.fillStyle = lightA; c.fillRect(0, 0, w, h);
+    const aw = w*0.72, ax = (w - aw)/2, top = headH*1.05, bot = h - barH*1.9;
+    c.fillStyle = '#ffffff'; c.beginPath(); c.moveTo(ax, bot); c.lineTo(ax, top + aw/2); c.arc(w/2, top + aw/2, aw/2, Math.PI, 0); c.lineTo(ax + aw, bot); c.closePath(); c.fill();
+    c.strokeStyle = A; c.lineWidth = 4*u; c.stroke();
+    drawBrandMark(c, w/2, headH*0.52, w*0.56, headH*0.78, deepA);
+    drawContact(c, w/2, h - barH*0.75, w*0.9, barH, deepA);
+  } else if (id === 'lux'){
+    c.fillStyle = '#0d0d0d'; c.fillRect(0, 0, w, h);
+    const g = c.createRadialGradient(w/2, h*0.48, 10, w/2, h*0.48, Math.max(w, h)*0.55); g.addColorStop(0, 'rgba(255,255,255,0.16)'); g.addColorStop(1, 'rgba(255,255,255,0)'); c.fillStyle = g; c.fillRect(0, 0, w, h);
+    const gold = '#d4af37'; c.strokeStyle = gold; c.lineWidth = 3*u; c.strokeRect(28*u, 28*u, w - 56*u, h - 56*u); c.lineWidth = 1.2*u; c.strokeRect(40*u, 40*u, w - 80*u, h - 80*u);
+    drawBrandMark(c, w/2, headH*0.6, w*0.52, headH*0.72, gold);
+    c.strokeStyle = gold; c.lineWidth = 1.5*u; c.beginPath(); c.moveTo(w*0.3, h - barH*1.25); c.lineTo(w*0.7, h - barH*1.25); c.stroke();
+    drawContact(c, w/2, h - barH*0.8, w*0.82, barH*0.9, gold);
+  } else if (id === 'card'){
+    const g = c.createLinearGradient(0, 0, w, h); g.addColorStop(0, mix(A, '#ffffff', 0.78)); g.addColorStop(1, mix(A, '#ffffff', 0.55)); c.fillStyle = g; c.fillRect(0, 0, w, h);
+    c.save(); c.shadowColor = 'rgba(0,0,0,.12)'; c.shadowBlur = 40*u; c.shadowOffsetY = 12*u; c.fillStyle = '#fff';
+    rrect(c, w*0.07, headH*1.05, w*0.86, h - headH*1.05 - barH*1.55, 48*u); c.fill(); c.restore();
+    drawBrandMark(c, w/2, headH*0.55, w*0.56, headH*0.78, deepA);
+    drawContact(c, w/2, h - barH*0.75, w*0.9, barH, deepA);
+  } else if (id === 'diag'){
+    c.fillStyle = '#ffffff'; c.fillRect(0, 0, w, h);
+    c.fillStyle = A; c.beginPath(); c.moveTo(w, h*0.42); c.lineTo(w, h); c.lineTo(0, h); c.lineTo(0, h*0.78); c.closePath(); c.fill();
+    c.fillStyle = mix(A, '#ffffff', 0.35); c.beginPath(); c.moveTo(w, h*0.36); c.lineTo(w, h*0.42); c.lineTo(0, h*0.78); c.lineTo(0, h*0.74); c.closePath(); c.fill();
+    drawBrandMark(c, w*0.3, headH*0.55, w*0.5, headH*0.78, deepA);
+    drawContact(c, w/2, h - barH/2 - 8*u, w*0.9, barH, '#fff');
+  }
+  return c0;
+}
+function renderTplGrid(){
+  const g = $('tplGrid'); g.innerHTML = '';
+  const [fw, fh] = SIZES[TPL.size] || SIZES.p, k = 200/fw;
+  TEMPLATES.forEach(t => {
+    const b = document.createElement('button'); b.className = TPL.id === t.id ? 'on' : '';
+    const im = new Image(); im.src = buildTemplate(t.id, Math.round(fw*k), Math.round(fh*k)).toDataURL('image/jpeg', 0.85);
+    b.appendChild(im); b.appendChild(document.createTextNode(t.name));
+    b.onclick = () => { TPL.id = t.id; saveTpl(); applyTemplate(false); renderTplGrid(); };
+    g.appendChild(b);
+  });
+  document.querySelectorAll('#tplSize button').forEach(b => b.classList.toggle('on', b.dataset.v === TPL.size));
+}
+function applyTemplate(keepLayout){
+  if (!TPL.id) return;
+  const t = TEMPLATES.find(x => x.id === TPL.id); if (!t) return;
+  const [fw, fh] = SIZES[TPL.size] || SIZES.p;
+  const im = new Image();
+  im.onload = () => {
+    if (!keepLayout){
+      // readable name colours for dark / light templates
+      $('fcolor').value = t.txt || '#1d1d1f'; $('dvColor').value = t.txt2 || '#1d1d1f';
+    }
+    const barFrac = 86/fh;
+    setFrame(im, {template: true, keepLayout, ty: 1 - barFrac*2.9, t2y: 1 - barFrac*1.9});
+    try { localStorage.setItem(savedFrameKey, im.src); } catch(e){}
+  };
+  im.src = buildTemplate(t.id, fw, fh).toDataURL('image/png');
+}
+let brT = 0;
+function brandChanged(){ saveBr(); clearTimeout(brT); brT = setTimeout(() => { renderTplGrid(); if (TPL.id) applyTemplate(true); }, 250); }
+function syncBrandUI(){
+  $('brShop').value = BR.shop || ''; $('brPhone').value = BR.phone || ''; $('brSocial').value = BR.social || '';
+  $('brColor').value = BR.color || '#0f766e'; $('brLogoSize').value = BR.logoSize || 100;
+  $('logoBox').innerHTML = BR.logo ? `<img src="${BR.logo}" alt="logo">` : '<span>＋ Logo</span>';
+  $('logoDel').style.display = BR.logo ? '' : 'none';
+}
+function loadLogo(){ logoImg = null; if (!BR.logo) return Promise.resolve(); return new Promise(r => { const im = new Image(); im.onload = () => { logoImg = im; r(); }; im.onerror = () => r(); im.src = BR.logo; }); }
+['brShop','brPhone','brSocial'].forEach(id => $(id).addEventListener('input', () => { BR[{brShop:'shop', brPhone:'phone', brSocial:'social'}[id]] = $(id).value.trim(); brandChanged(); }));
+$('brColor').addEventListener('input', () => { BR.color = $('brColor').value; brandChanged(); });
+$('brLogoSize').addEventListener('input', () => { BR.logoSize = +$('brLogoSize').value; brandChanged(); });
+$('logoBox').onclick = () => $('logoIn').click();
+$('logoIn').onchange = async () => {
+  const f = $('logoIn').files[0]; $('logoIn').value = ''; if (!f) return;
+  const im = await loadImg(f).catch(() => null); if (!im) return;
+  const k = Math.min(1, 700/Math.max(im.naturalWidth, im.naturalHeight));
+  const c = document.createElement('canvas'); c.width = Math.round(im.naturalWidth*k); c.height = Math.round(im.naturalHeight*k);
+  c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+  BR.logo = c.toDataURL('image/png'); await loadLogo(); syncBrandUI(); brandChanged();
+};
+$('logoDel').onclick = async () => { BR.logo = ''; await loadLogo(); syncBrandUI(); brandChanged(); };
+document.querySelectorAll('#tplSize button').forEach(b => b.onclick = () => { TPL.size = b.dataset.v; saveTpl(); renderTplGrid(); if (TPL.id) applyTemplate(false); });
+syncBrandUI();
+loadLogo().then(() => { renderTplGrid(); document.fonts.ready.then(renderTplGrid); });
+
 try {
 const s = localStorage.getItem(savedFrameKey);
-if (s){ const im = new Image(); im.onload = () => { setFrame(im); showStep('photo'); }; im.src = s; }
+if (s){ const im = new Image(); im.onload = () => { setFrame(im, {template: !!TPL.id}); showStep('photo'); }; im.src = s; }
 } catch(e){}
 /* ---------- batch: several product photos ---------- */
 const items = []; let cur = -1, busy = false;
@@ -753,8 +934,10 @@ $('undo').onclick = () => { if (!undoStack.length || !mask) return; mask.getCont
 /* ---------- layout ---------- */
 function fitToFrame(){
 if (!bbox) return;
-P.s = Math.min(W*0.78 / bbox.w, H*0.62 / bbox.h);
-P.x = W/2; P.y = H*0.46;
+// fit between the header (logo) area and the product name
+const top = H*0.145, bottom = Math.max(top + H*0.3, T.y - H*0.05);
+P.s = Math.min(W*0.74 / bbox.w, (bottom - top) / bbox.h);
+P.x = W/2; P.y = (top + bottom)/2;
 $('scale').value = 100; baseScale = P.s;
 draw();
 }
