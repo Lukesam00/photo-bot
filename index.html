@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>Photo Bot</title>
 <link rel="manifest" href="/manifest.webmanifest">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <meta name="theme-color" content="#0f766e">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -218,10 +219,58 @@ details.more .btn{margin-top:8px}
   .card{border-radius:18px}
   .dlcard{border-radius:18px 18px 0 0;box-shadow:0 -6px 24px rgba(0,0,0,.07)}
 }
+.credPill{margin-left:auto;border:0;border-radius:999px;background:#fff;color:var(--ink);font:700 13px Poppins;padding:8px 13px;box-shadow:0 1px 3px rgba(0,0,0,.08);cursor:pointer;white-space:nowrap}
+.credPill.low{background:#fee2e2;color:#b91c1c}
+.credPill + .installBtn{margin-left:8px}
+.gate{position:fixed;inset:0;z-index:50;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.gateIn{max-width:440px;margin:0 auto;padding:max(28px, env(safe-area-inset-top)) 18px 40px}
+.gateHead{display:flex;gap:14px;align-items:center;margin:8px 0 22px}
+.gateHead img{width:56px;height:56px;border-radius:14px}
+.gateHead h1{margin:0;font:800 22px Poppins;letter-spacing:-.3px}
+.gateHead p{margin:3px 0 0;font:500 13px Poppins;color:var(--muted)}
+.gateCard{background:#fff;border-radius:20px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 24px rgba(0,0,0,.05)}
+.gateCard input{display:block;width:100%;margin-top:10px;border:0;background:#f3f3f1;border-radius:12px;padding:14px;font:500 16px Poppins}
+.gateCard input:focus{outline:2px solid var(--ink);background:#fff}
+.gateCard .btn{margin-top:12px}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:#f1f1ef;border-radius:12px;padding:4px}
+.seg button{border:0;background:transparent;border-radius:9px;padding:10px;font:600 14px Poppins;color:var(--muted);cursor:pointer}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.pkgs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pkg{background:#fff;border:1.5px solid transparent;border-radius:16px;padding:14px;text-align:left;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.04);position:relative;font-family:Poppins;color:var(--ink)}
+.pkg h4{margin:0;font:700 14px Poppins}
+.pkg .cr{font:800 24px Poppins;margin:6px 0 0;letter-spacing:-.5px}
+.pkg .cr small{font:600 12px Poppins;color:var(--muted);margin-left:3px}
+.pkg .pr{font:700 14px Poppins;margin-top:2px}
+.pkg .per{font:500 11px Poppins;color:var(--muted)}
+.pkg.on{border-color:var(--ink)}
+.pkg .badge{position:absolute;top:10px;right:10px;background:var(--ink);color:#fff;border-radius:999px;font:700 9px Poppins;padding:3px 7px;text-transform:uppercase;letter-spacing:.4px}
+.fine{font:500 12px Poppins;color:var(--muted);text-align:center;margin:14px 6px 0;line-height:1.5}
+#acctBox h3{margin:0}
+.acctTop{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px}
+.acctTop .big{font:800 34px Poppins;letter-spacing:-1px;line-height:1}
+.acctTop .big small{font:600 13px Poppins;color:var(--muted);margin-left:4px;letter-spacing:0}
+.paybox{background:#f6f6f4;border-radius:14px;padding:14px;margin-top:12px;font:500 14px Poppins}
+.paybox .ln{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid #ececea}
+.paybox .ln:last-child{border-bottom:0}
+.paybox .ln span:first-child{color:var(--muted)}
+.paybox b{font-weight:700;word-break:break-all;text-align:right}
+.copy{border:0;background:#fff;border-radius:8px;padding:3px 8px;font:600 11px Poppins;margin-left:6px;cursor:pointer}
+.lst{margin-top:6px}
+.lst .it{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font:500 13px Poppins}
+.lst .it:last-child{border-bottom:0}
+.lst .it .grow{flex:1;min-width:0}
+.lst .it .grow div:last-child{color:var(--muted);font-size:11px}
+.st{border-radius:999px;padding:3px 9px;font:700 10px Poppins;text-transform:uppercase}
+.st.pending{background:#fef3c7;color:#92400e}.st.approved{background:#dcfce7;color:#166534}.st.rejected{background:#fee2e2;color:#991b1b}
+.slipimg{width:56px;height:56px;border-radius:10px;object-fit:cover;background:#eee;cursor:pointer;flex:0 0 56px}
+.mini{border:0;border-radius:10px;padding:8px 11px;font:700 12px Poppins;cursor:pointer}
+.mini.ok{background:var(--ink);color:#fff}.mini.no{background:#f1f1ef;color:#b91c1c}
+.adm input{display:block;width:100%;margin-top:8px;border:0;background:#f3f3f1;border-radius:10px;padding:11px 12px;font:500 15px Poppins}
+.sheet .box h3{font:700 17px Poppins}
 </style>
 </head>
 <body>
-<header><img src="/icons/icon-192.png" alt="" style="width:30px;height:30px;border-radius:8px"><h1>Photo Bot</h1><span>Frame → Photo → Name → Download</span><button id="installBtn" class="installBtn" style="display:none">⬇ Install app</button></header>
+<header><img src="/icons/icon-192.png" alt="" style="width:30px;height:30px;border-radius:8px"><h1>Photo Bot</h1><span>Frame → Photo → Name → Download</span><button id="credPill" class="credPill" style="display:none"></button><button id="installBtn" class="installBtn" style="display:none">⬇ Install app</button></header>
 <div class="wrap">
 <section class="stage">
 <div class="toolbar" id="tools">
@@ -399,6 +448,23 @@ details.more .btn{margin-top:8px}
 </aside>
 </div>
 <div class="modal" id="modal"><div><p style="margin-top:0;font-size:14px">Right-click (or long-press) the image and choose <b>Save image</b>.</p><img id="modalImg" alt="poster"><div id="modalList"></div><button class="btn ghost" id="closeModal">Close</button></div></div>
+<div id="authGate" class="gate" style="display:none">
+<div class="gateIn">
+<div class="gateHead"><img src="/icons/icon-192.png" alt=""><div><h1>Photo Bot</h1><p>Product posters in seconds — frame, AI background removal, English &amp; Dhivehi names.</p></div></div>
+<div class="gateCard">
+<div class="seg" id="authSeg"><button data-m="in" class="on">Sign in</button><button data-m="up">Create account</button></div>
+<input type="text" id="authId" placeholder="Phone number or email" autocomplete="username" inputmode="email">
+<input type="password" id="authPw" placeholder="Password" autocomplete="current-password">
+<button class="btn" id="authGo">Sign in</button>
+<div class="msg" id="authMsg"></div>
+<div class="msg" id="authHelp">Forgot your password? Message us<span id="authContact"></span>.</div>
+</div>
+<div class="sub" style="text-align:center">Credit packages · 1 credit = 1 poster</div>
+<div class="pkgs" id="gatePkgs"></div>
+<p class="fine">Editing is free. A credit is used when a finished poster is saved or sent. Pay by bank transfer and upload the slip — credits are added once approved.</p>
+</div>
+</div>
+<div class="sheet" id="acctSheet"><div class="box" id="acctBox"></div></div>
 <div class="sheet" id="iosSheet"><div class="box">
 <h3>Install Photo Bot</h3>
 <p>1. Tap the <b>Share</b> button <span style="font-size:18px">⬆︎</span> at the bottom of Safari.</p>
@@ -1718,6 +1784,229 @@ loadFont().then(draw);
 draw();
 </script>
 <script>
+/* ===== Photo Bot accounts & credits (Supabase) ===== */
+(() => {
+  if (window.claude && window.claude.use) return;
+  const SB_URL = 'https://ndfwjqoxnxydndsmqndn.supabase.co', SB_KEY = 'sb_publishable_yzWBS97wY7tY8SVhbfE-xQ_GCgO1XtY';
+  const gate = $('authGate');
+  if (!window.supabase){ window.PBspend = async () => true; return; }
+  const sb = window.supabase.createClient(SB_URL, SB_KEY, {auth: {persistSession: true, storageKey: 'photobot-auth', autoRefreshToken: true}});
+  const PB = window.PB = {sb, me: null, settings: {}, packages: []};
+  const MOBILE = '@mobile.inputtax.app';
+  const toLogin = v => { v = (v || '').trim(); const d = v.replace(/[\s()+-]/g, ''); if (/^\d{7,15}$/.test(d)) return d.replace(/^960(?=\d{7}$)/, '') + MOBILE; return v.toLowerCase(); };
+  const showId = e => (e || '').endsWith(MOBILE) ? e.replace(MOBILE, '') : (e || '');
+  const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const mvr = n => 'MVR ' + Number(n).toLocaleString('en', {maximumFractionDigits: 2});
+
+  /* ---- packages (shown on login page and Buy page) ---- */
+  async function loadPackages(){
+    const {data} = await sb.from('photobot_packages').select('*').order('sort');
+    PB.packages = data || [];
+    return PB.packages;
+  }
+  function pkgCards(box, selectable, onPick){
+    box.innerHTML = '';
+    const best = PB.packages.reduce((b, p) => (!b || p.credits/p.price_mvr > b.credits/b.price_mvr) ? p : b, null);
+    if (!selectable){
+      const f = document.createElement('div'); f.className = 'pkg';
+      f.innerHTML = `<h4>Free</h4><div class="cr">5<small>credits</small></div><div class="pr">MVR 0</div><div class="per">when you sign up</div>`;
+      box.appendChild(f);
+    }
+    PB.packages.forEach(p => {
+      const b = document.createElement(selectable ? 'button' : 'div'); b.className = 'pkg';
+      const per = (p.price_mvr / p.credits).toFixed(2);
+      b.innerHTML = `${p.name === 'Pro' ? '<span class="badge">Popular</span>' : (best && best.id === p.id && PB.packages.length > 1 ? '<span class="badge">Best value</span>' : '')}<h4>${esc(p.name)}</h4><div class="cr">${p.credits}<small>credits</small></div><div class="pr">${mvr(p.price_mvr)}</div><div class="per">MVR ${per} per poster</div>`;
+      if (selectable) b.onclick = () => { [...box.children].forEach(x => x.classList.remove('on')); b.classList.add('on'); onPick(p); };
+      box.appendChild(b);
+    });
+  }
+
+  /* ---- login page ---- */
+  let mode = 'in';
+  document.querySelectorAll('#authSeg button').forEach(b => b.onclick = () => {
+    mode = b.dataset.m; document.querySelectorAll('#authSeg button').forEach(x => x.classList.toggle('on', x === b));
+    $('authGo').textContent = mode === 'in' ? 'Sign in' : 'Create account — 5 free credits';
+    $('authPw').autocomplete = mode === 'in' ? 'current-password' : 'new-password';
+    $('authMsg').textContent = '';
+  });
+  async function showGate(){
+    gate.style.display = '';
+    $('credPill').style.display = 'none';
+    try { const {data} = await sb.from('photobot_settings').select('value').eq('key', 'contact').maybeSingle(); $('authContact').textContent = data && data.value ? ' on ' + data.value : ''; } catch(e){}
+    await loadPackages().catch(() => {}); pkgCards($('gatePkgs'), false);
+  }
+  const niceErr = m => /Invalid login/i.test(m) ? 'Wrong phone/email or password.' : /already registered/i.test(m) ? 'This account already exists — sign in instead.' : /Password should be/i.test(m) ? 'Password must be at least 6 characters.' : /valid email|invalid format/i.test(m) ? 'Enter a phone number or a valid email.' : m;
+  $('authGo').onclick = async () => {
+    const id = toLogin($('authId').value), pw = $('authPw').value;
+    if (!id || !pw){ $('authMsg').textContent = 'Enter your phone/email and password.'; return; }
+    $('authGo').disabled = true; $('authMsg').textContent = mode === 'in' ? 'Signing in…' : 'Creating account…';
+    try {
+      const r = mode === 'in' ? await sb.auth.signInWithPassword({email: id, password: pw}) : await sb.auth.signUp({email: id, password: pw});
+      if (r.error) throw r.error;
+      if (!r.data.session){ $('authMsg').textContent = 'Check your email to confirm, then sign in.'; return; }
+      await afterLogin();
+    } catch(e){ $('authMsg').textContent = niceErr(e.message || String(e)); }
+    finally { $('authGo').disabled = false; }
+  };
+  $('authPw').addEventListener('keydown', e => { if (e.key === 'Enter') $('authGo').click(); });
+
+  /* ---- signed in ---- */
+  function pill(){
+    const c = PB.me ? PB.me.credits : 0, p = $('credPill');
+    p.style.display = ''; p.textContent = `${c} credit${c === 1 ? '' : 's'}`; p.classList.toggle('low', c < 3);
+  }
+  async function refreshMe(){ const {data, error} = await sb.rpc('photobot_me'); if (error) throw error; PB.me = data; pill(); return data; }
+  async function afterLogin(){
+    await refreshMe();
+    const {data} = await sb.from('photobot_settings').select('key,value'); PB.settings = Object.fromEntries((data || []).map(r => [r.key, r.value]));
+    await loadPackages().catch(() => {});
+    gate.style.display = 'none';
+    const admin = !!PB.me.is_admin;
+    $('tgSend').style.display = admin ? '' : 'none'; $('tgSet').style.display = admin ? '' : 'none';
+    $('tgSend').parentElement.style.gridTemplateColumns = admin ? '' : '1fr';
+  }
+  $('credPill').onclick = () => openAccount();
+  sb.auth.onAuthStateChange((ev) => { if (ev === 'SIGNED_OUT'){ PB.me = null; showGate(); } });
+
+  /* ---- spending credits (called before saving / sending) ---- */
+  window.PBspend = async (n, reason) => {
+    if (!PB.me){ showGate(); return false; }
+    const {data, error} = await sb.rpc('photobot_use_credits', {n, reason});
+    if (error){
+      if (/NO_CREDITS/.test(error.message)){ await refreshMe().catch(() => {}); openAccount(`You need ${n} credit${n>1?'s':''} for this — you have ${PB.me.credits}. Buy a package below.`); }
+      else if (/JWT|NOT_SIGNED_IN/.test(error.message)){ showGate(); }
+      else $('dlMsg').textContent = 'Could not use credits: ' + error.message;
+      return false;
+    }
+    PB.me.credits = data; pill(); return true;
+  };
+
+  /* ---- account / buy credits / admin sheet ---- */
+  const sheet = $('acctSheet'), box = $('acctBox');
+  sheet.addEventListener('click', e => { if (e.target === sheet) sheet.classList.remove('show'); });
+  async function openAccount(notice){
+    if (!PB.me) return showGate();
+    await refreshMe().catch(() => {});
+    const S = PB.settings;
+    box.innerHTML = `
+      <div class="acctTop"><div><div class="msg" style="margin:0">${esc(showId(PB.me.email))}</div><div class="big">${PB.me.credits}<small>credits</small></div></div>
+      <button class="mini no" id="acClose" style="color:var(--ink)">Close</button></div>
+      ${notice ? `<div class="paybox" style="background:#fef3c7;margin:0 0 10px">${esc(notice)}</div>` : ''}
+      <h3>Buy credits</h3>
+      <div class="pkgs" id="acPkgs" style="margin-top:10px"></div>
+      <div id="acPay"></div>
+      <h3 style="margin-top:20px">My payments</h3>
+      <div class="lst" id="acMine"><div class="msg">Loading…</div></div>
+      ${PB.me.is_admin ? '<div id="acAdmin"></div>' : ''}
+      <button class="btn ghost" id="acOut" style="margin-top:18px">Sign out</button>`;
+    sheet.classList.add('show');
+    $('acClose').onclick = () => sheet.classList.remove('show');
+    $('acOut').onclick = async () => { sheet.classList.remove('show'); await sb.auth.signOut(); };
+    pkgCards($('acPkgs'), true, p => renderPay(p));
+    loadMine();
+    if (PB.me.is_admin) renderAdmin();
+  }
+  function renderPay(p){
+    const S = PB.settings, ref = showId(PB.me.email);
+    const ready = S.account_number;
+    $('acPay').innerHTML = `<div class="paybox">
+      <div class="ln"><span>Package</span><b>${esc(p.name)} · ${p.credits} credits</b></div>
+      <div class="ln"><span>Amount</span><b>${mvr(p.price_mvr)}</b></div>
+      ${ready ? `<div class="ln"><span>Bank</span><b>${esc(S.bank_name || '')}</b></div>
+      <div class="ln"><span>Account name</span><b>${esc(S.account_name || '')}</b></div>
+      <div class="ln"><span>Account no.</span><b>${esc(S.account_number)}<button class="copy" data-c="${esc(S.account_number)}">Copy</button></b></div>
+      <div class="ln"><span>Remarks</span><b>${esc(ref)}<button class="copy" data-c="${esc(ref)}">Copy</button></b></div>` :
+      `<div class="ln"><span>Bank details</span><b>Not set up yet${S.contact ? ' — contact ' + esc(S.contact) : ''}</b></div>`}
+    </div>
+    <p class="fine" style="text-align:left;margin:10px 2px">Transfer the amount, then upload your payment slip. Credits are added once the payment is checked.</p>
+    <input type="file" id="acSlip" accept="image/*,application/pdf" hidden>
+    <button class="btn" id="acUp">Upload payment slip</button>
+    <div class="msg" id="acPayMsg"></div>`;
+    $('acPay').querySelectorAll('.copy').forEach(b => b.onclick = () => { navigator.clipboard && navigator.clipboard.writeText(b.dataset.c).then(() => { b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1500); }).catch(() => {}); });
+    $('acUp').onclick = () => $('acSlip').click();
+    $('acSlip').onchange = async () => {
+      const f = $('acSlip').files[0]; if (!f) return;
+      $('acUp').disabled = true; $('acPayMsg').textContent = 'Uploading slip…';
+      try {
+        const ext = ((f.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '')) || 'jpg';
+        const path = `${PB.me.user_id}/${Date.now()}.${ext}`;
+        const up = await sb.storage.from('photobot-slips').upload(path, f, {contentType: f.type || 'image/jpeg', upsert: false});
+        if (up.error) throw up.error;
+        const {error} = await sb.rpc('photobot_request_topup', {p_package: p.id, p_slip: path});
+        if (error) throw error;
+        $('acPay').innerHTML = `<div class="paybox" style="background:#dcfce7">Slip received ✓ Your ${p.credits} credits will be added once the payment is approved.</div>`;
+        loadMine();
+      } catch(e){
+        $('acPayMsg').textContent = /TOO_MANY_PENDING/.test(e.message) ? 'You already have 3 payments waiting for approval.' : 'Upload failed: ' + e.message;
+        $('acUp').disabled = false;
+      }
+    };
+  }
+  async function loadMine(){
+    const {data} = await sb.from('photobot_topups').select('*').order('created_at', {ascending: false}).limit(10);
+    const el = $('acMine'); if (!el) return;
+    el.innerHTML = (data && data.length) ? data.map(t => `<div class="it"><div class="grow"><div><b>${esc(t.package_name)}</b> · ${t.credits} credits · ${mvr(t.amount_mvr)}</div><div>${new Date(t.created_at).toLocaleString()}${t.note ? ' · ' + esc(t.note) : ''}</div></div><span class="st ${t.status}">${t.status}</span></div>`).join('') : '<div class="msg">No payments yet.</div>';
+  }
+  async function renderAdmin(){
+    const S = PB.settings, el = $('acAdmin');
+    el.innerHTML = `<h3 style="margin-top:22px">Admin · payments to approve</h3><div class="lst" id="adPend"><div class="msg">Loading…</div></div>
+      <h3 style="margin-top:20px">Admin · add credits</h3>
+      <div class="adm"><input id="adWho" placeholder="Customer phone or email"><input id="adN" type="number" inputmode="numeric" placeholder="Credits (e.g. 10, or -5 to remove)"></div>
+      <button class="btn ghost" id="adAdd">Add credits</button><div class="msg" id="adAddMsg"></div>
+      <h3 style="margin-top:20px">Admin · bank details</h3>
+      <div class="adm">
+        <input id="ad_bank_name" placeholder="Bank (e.g. BML)" value="${esc(S.bank_name || '')}">
+        <input id="ad_account_name" placeholder="Account name" value="${esc(S.account_name || '')}">
+        <input id="ad_account_number" placeholder="Account number" value="${esc(S.account_number || '')}" inputmode="numeric">
+        <input id="ad_contact" placeholder="Contact number (shown on login page)" value="${esc(S.contact || '')}">
+        <input id="ad_free_credits" placeholder="Free credits on sign-up" value="${esc(S.free_credits || '5')}" inputmode="numeric">
+      </div>
+      <button class="btn ghost" id="adSave">Save bank details</button><div class="msg" id="adSaveMsg"></div>`;
+    $('adAdd').onclick = async () => {
+      const who = toLogin($('adWho').value), n = parseInt($('adN').value, 10);
+      if (!who || !n){ $('adAddMsg').textContent = 'Enter a customer and a number of credits.'; return; }
+      const {data, error} = await sb.rpc('photobot_admin_add_credits', {p_email: who, p_credits: n});
+      $('adAddMsg').textContent = error ? (/NO_SUCH_USER/.test(error.message) ? 'No account with that phone/email.' : error.message) : `Done — they now have ${data} credits.`;
+      if (!error) refreshMe().catch(() => {});
+    };
+    $('adSave').onclick = async () => {
+      try {
+        for (const k of ['bank_name','account_name','account_number','contact','free_credits']){
+          const {error} = await sb.rpc('photobot_admin_set', {p_key: k, p_value: $('ad_' + k).value.trim()}); if (error) throw error;
+          PB.settings[k] = $('ad_' + k).value.trim();
+        }
+        $('adSaveMsg').textContent = 'Saved ✓';
+      } catch(e){ $('adSaveMsg').textContent = 'Could not save: ' + e.message; }
+    };
+    const {data, error} = await sb.rpc('photobot_admin_topups', {p_status: 'pending'});
+    const pend = $('adPend');
+    if (error){ pend.innerHTML = `<div class="msg">${esc(error.message)}</div>`; return; }
+    if (!data.length){ pend.innerHTML = '<div class="msg">Nothing waiting. 🎉</div>'; return; }
+    pend.innerHTML = '';
+    for (const t of data){
+      const row = document.createElement('div'); row.className = 'it';
+      const sig = await sb.storage.from('photobot-slips').createSignedUrl(t.slip_path, 3600);
+      const url = sig.data && sig.data.signedUrl, isPdf = /\.pdf$/i.test(t.slip_path);
+      row.innerHTML = `${url ? (isPdf ? `<a href="${url}" target="_blank" class="slipimg" style="display:flex;align-items:center;justify-content:center;font:700 11px Poppins;color:var(--ink);text-decoration:none">PDF</a>` : `<a href="${url}" target="_blank"><img class="slipimg" src="${url}" alt="slip"></a>`) : '<span class="slipimg"></span>'}
+        <div class="grow"><div><b>${esc(showId(t.email))}</b></div><div>${esc(t.package_name)} · ${t.credits} cr · ${mvr(t.amount_mvr)} · ${new Date(t.created_at).toLocaleDateString()}</div></div>
+        <button class="mini ok">Approve</button><button class="mini no">Reject</button>`;
+      const [ok, no] = row.querySelectorAll('button');
+      ok.onclick = async () => { ok.disabled = no.disabled = true; const {error} = await sb.rpc('photobot_admin_review', {p_id: t.id, p_approve: true}); row.querySelector('.grow div:last-child').textContent = error ? error.message : 'Approved ✓ credits added'; if (!error){ ok.remove(); no.remove(); refreshMe().catch(() => {}); } };
+      no.onclick = async () => { ok.disabled = no.disabled = true; const {error} = await sb.rpc('photobot_admin_review', {p_id: t.id, p_approve: false, p_note: 'Payment not found'}); row.querySelector('.grow div:last-child').textContent = error ? error.message : 'Rejected'; if (!error){ ok.remove(); no.remove(); } };
+      pend.appendChild(row);
+    }
+  }
+  PB.openAccount = openAccount;
+
+  /* ---- start ---- */
+  (async () => {
+    const {data: {session}} = await sb.auth.getSession();
+    if (session){ try { await afterLogin(); return; } catch(e){ /* expired */ } }
+    showGate();
+  })();
+})();
+</script>
+<script>
 /* ===== Vercel version: phone share-sheet saving + Telegram ===== */
 (() => {
 const onClaude = !!(window.claude && window.claude.use);
@@ -1762,6 +2051,7 @@ $('readyGo').onclick = async () => { $('readySheet').classList.remove('show'); i
 $('readyClose').onclick = () => $('readySheet').classList.remove('show');
 async function saveSet(indices, type){
 if (busy || !items.length) return;
+if (window.PBspend && !(await window.PBspend(indices.length, indices.length > 1 ? 'Saved ' + indices.length + ' posters' : 'Saved poster'))) return;
 busy = true; let files;
 try { files = await buildFiles(indices, type); } finally { busy = false; }
 if (!(await trySave(files))) readyAsk(files);
@@ -1771,6 +2061,7 @@ $('dlJpg').onclick = () => saveSet([cur], 'jpeg');
 $('saveAll').onclick = () => saveSet(items.map((_, i) => i), 'jpeg');
 $('dlAll').onclick = async () => {
 if (busy || !items.length) return;
+if (window.PBspend && !(await window.PBspend(items.length, 'ZIP ' + items.length + ' posters'))) return;
 busy = true; let files;
 try { files = await buildFiles(items.map((_, i) => i), 'png'); } finally { busy = false; }
 try {
@@ -1824,6 +2115,7 @@ $('tgSend').onclick = async () => {
 if (busy || !items.length){ $('dlMsg').textContent = 'Add a product photo first.'; return; }
 const st = status || await getStatus(), c = tgCfg();
 if (!st.configured || (!st.chatFixed && !c.chatId) || (st.pinRequired && !c.pin)){ openTg(); return; }
+if (window.PBspend && !(await window.PBspend(items.length, 'Telegram ' + items.length + ' posters'))) return;
 const btn = $('tgSend'); btn.disabled = true;
 busy = true; let files;
 try { files = await buildFiles(items.map((_, i) => i), 'jpeg'); } finally { busy = false; }
