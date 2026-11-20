@@ -2181,7 +2181,7 @@ draw();
     if (!data.length){ L.innerHTML = '<div class="empty">No users found.</div>'; return; }
     L.innerHTML = `<div class="msg" style="padding:8px 4px 0">${data.length} user${data.length === 1 ? '' : 's'}</div>` + data.map(u => `<div class="urow" data-u="${u.user_id}">
       <div class="av">${esc(initials(u.email))}</div>
-      <div class="g"><div class="n">${esc(showId(u.email))}${u.is_admin ? '<span class="tag">Admin</span>' : ''}</div><div class="m">${u.posters} posters · ${mvr(u.paid_mvr)} paid · joined ${fmtDay(u.created_at)}</div></div>
+      <div class="g"><div class="n">${esc(showId(u.email))}${u.is_admin ? '<span class="tag">Admin</span>' : ''}${(u.email || '').endsWith(OLD_DOM) ? '<span class="tag" style="background:#9ca3af">input-tax login</span>' : ''}</div><div class="m">${u.posters} posters · ${mvr(u.paid_mvr)} paid · joined ${fmtDay(u.created_at)}</div></div>
       <div class="c">${u.credits}<small>credits</small></div></div>`).join('');
     L.querySelectorAll('.urow').forEach(r => r.onclick = () => openUser(r.dataset.u));
   }
