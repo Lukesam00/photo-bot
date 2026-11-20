@@ -110,7 +110,7 @@ html,body{overflow-x:hidden}
 .preset i{display:block;width:100%;aspect-ratio:1;border-radius:7px;background:repeating-conic-gradient(#eee 0 25%,#fff 0 50%) 0 0/10px 10px}
 .preset i span{display:block;width:100%;height:100%;background:center/contain no-repeat}
 .preset.on{border-color:var(--accent);color:var(--accent)}
-@media(max-width:900px){ .steps{gap:4px} .steps button{font-size:12px;padding:11px 2px} }
+@media(max-width:900px){ .steps{gap:4px;overflow-x:auto;scrollbar-width:none} .steps::-webkit-scrollbar{display:none} .steps button{flex:1 0 auto;font-size:12px;padding:11px 9px;white-space:nowrap} }
 .sub{font:700 12px Poppins;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:16px 0 8px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chips button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 13px;font:600 13px Poppins;color:var(--ink);cursor:pointer}
@@ -126,6 +126,14 @@ html,body{overflow-x:hidden}
 .sheet input{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;font:500 16px Poppins;margin:4px 0}
 .chatlist button{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:10px;padding:12px;margin:6px 0;font:600 14px Poppins}
 .chatlist button.on{border-color:#229ED9;background:#eef8fd}
+.stkgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stkgrid button{border:1px solid var(--line);background:repeating-conic-gradient(#f3f3f3 0 25%,#fff 0 50%) 0 0/12px 12px;border-radius:10px;padding:4px;cursor:pointer;aspect-ratio:1}
+.stkgrid canvas{width:100%;height:100%;display:block}
+#stkText{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font:600 16px Poppins;resize:none}
+.swatches{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.swatches button{width:30px;height:30px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0}
+.swatches button.on{box-shadow:0 0 0 3px var(--accent)}
+.swatches input{width:34px;height:34px;border:0;padding:0;background:none}
 </style>
 </head>
 <body>
@@ -148,6 +156,7 @@ html,body{overflow-x:hidden}
 <button data-go="frame" class="on">Frame</button>
 <button data-go="photo">Photo</button>
 <button data-go="fx">✨ Effects</button>
+<button data-go="stk">🏷 Stickers</button>
 <button data-go="name">Name</button>
 <button data-go="dv">ދިވެހި</button>
 </nav>
@@ -211,6 +220,27 @@ html,body{overflow-x:hidden}
 <button class="btn ghost" id="fxAll">Apply to all photos</button>
 </div>
 <div class="msg" id="fxMsg"></div>
+</div>
+<div class="card" data-step="stk">
+<h2><b>🏷</b>Stickers</h2>
+<div class="stkgrid" id="stkGrid"></div>
+<div id="stkEdit" style="display:none">
+<div class="sub">Selected sticker</div>
+<textarea id="stkText" rows="2" placeholder="Sticker text — new line for 2 lines"></textarea>
+<div class="chips" id="stkShapes" style="margin-top:8px">
+<button data-v="burst">Burst</button><button data-v="circle">Circle</button><button data-v="pill">Pill</button><button data-v="ribbon">Ribbon</button>
+<button data-v="tag">Tag</button><button data-v="stamp">Stamp</button><button data-v="rosette">Rosette</button><button data-v="corner">Corner</button>
+</div>
+<div class="swatches" id="stkColors"></div>
+<label class="row">Size <input type="range" id="stkSize" min="30" max="300" value="100"></label>
+<label class="row">Rotate <input type="range" id="stkRot" min="-180" max="180" value="0"></label>
+<div class="two">
+<button class="btn ghost" id="stkDup">⧉ Duplicate</button>
+<button class="btn ghost" id="stkDel" style="color:#e11d48">🗑 Delete</button>
+</div>
+<button class="btn ghost" id="stkAll">Copy stickers to all posters</button>
+</div>
+<div class="msg" id="stkMsg">Tap a sticker to add it. Drag it on the poster to move, pinch to resize, twist to rotate. Tap a sticker on the poster to edit its words, colour or shape.</div>
 </div>
 <div class="card" data-step="name">
 <div class="which" id="which"></div>
@@ -345,7 +375,7 @@ const items = []; let cur = -1, busy = false;
 function saveCur(){
 if (cur < 0 || !items[cur]) return;
 Object.assign(items[cur], {orig, mask, cut, bbox, gc, hint: hints.canvas, undo: undoStack, baseScale,
-fx: {...FX}, P: {...P}, T: {...T}, T2: {...T2}, name: $('name').value, dv: $('dvName').value, scaleV: $('scale').value});
+stickers: STK.map(o => ({...o})), fx: {...FX}, P: {...P}, T: {...T}, T2: {...T2}, name: $('name').value, dv: $('dvName').value, scaleV: $('scale').value});
 }
 function loadItem(i){
 const it = items[i]; cur = i;
@@ -354,6 +384,7 @@ Object.assign(P, it.P); Object.assign(T, it.T); Object.assign(T2, it.T2);
 $('name').value = it.name; $('dvName').value = it.dv; $('scale').value = it.scaleV;
 $('rot').value = Math.round(P.rot); $('sx').value = Math.round(P.sx*100);
 Object.assign(FX, it.fx || {...FX}); syncFxUI();
+STK = (it.stickers || []).map(o => ({...o})); selS = -1; syncStkUI();
 }
 function selectItem(i){ if (busy) return; saveCur(); loadItem(i); renderStrip(); schedulePresets(); draw(); }
 function removeItem(i){
@@ -394,7 +425,7 @@ tc.width = Math.round(o.width*tk); tc.height = Math.round(o.height*tk); tc.getCo
 const m = document.createElement('canvas'); m.width = o.width; m.height = o.height;
 items.push({orig: o, mask: m, cut: null, bbox: null, gc: null, hint: null, undo: [], baseScale: 1,
 P: {x: W/2, y: H*0.45, s: 1, rot: 0, flip: false, sx: 1}, T: {...T}, T2: {...T2}, name: '', dv: '', scaleV: 100,
-fx: {...FX}, thumb: tc.toDataURL('image/jpeg', .8), pending: true});
+stickers: [], fx: {...FX}, thumb: tc.toDataURL('image/jpeg', .8), pending: true});
 }
 ['removeBg','resetBg','fit'].forEach(id => $(id).disabled = false);
 thumb($('photoDrop'), items[items.length-1].thumb, 'Tap to add more photos');
@@ -1025,11 +1056,200 @@ if (frame) ctx.drawImage(frame, 0, 0, W, H);
 if (!behind) drawProduct(ctx);
 drawText('en', T, $('fcolor').value);
 drawText('dv', T2, $('dvColor').value);
+drawStickers(ctx, forExport);
 if (!forExport && !frame && !cut){
 ctx.fillStyle = '#8a857d'; ctx.textAlign='center'; ctx.font = `600 ${W*0.035}px Poppins`;
 ctx.fillText('Start: choose a frame and a product photo', W/2, H/2);
 }
 }
+/* ---------- stickers ---------- */
+let STK = [], selS = -1;
+const STK_COLORS = ['#e11d48','#f97316','#d4a017','#0f766e','#2563eb','#7c3aed','#db2777','#111111','#ffffff'];
+const STK_PRESETS = [
+  {shape:'ribbon', text:'NEW\nARRIVAL', color:'#0f766e'},
+  {shape:'burst', text:'SALE', color:'#e11d48'},
+  {shape:'burst', text:'20%\nOFF', color:'#f97316'},
+  {shape:'rosette', text:'BEST\nSELLER', color:'#d4a017'},
+  {shape:'circle', text:'NEW', color:'#2563eb'},
+  {shape:'pill', text:'LIMITED STOCK', color:'#111111'},
+  {shape:'tag', text:'FREE\nDELIVERY', color:'#7c3aed'},
+  {shape:'stamp', text:'SOLD OUT', color:'#e11d48', rot:-14},
+  {shape:'pill', text:'HOT DEAL', color:'#e11d48'},
+  {shape:'tag', text:'MVR\n499', color:'#0f766e'},
+  {shape:'corner', text:'SALE', color:'#e11d48'},
+  {shape:'circle', text:'އާ', color:'#0f766e'},
+  {shape:'burst', text:'ސޭލް', color:'#e11d48'},
+  {shape:'ribbon', text:'އާ ސްޓޮކް', color:'#db2777'},
+  {shape:'pill', text:'ONLY 2 LEFT', color:'#f97316'},
+  {shape:'stamp', text:'EID\nSPECIAL', color:'#0f766e', rot:-10},
+];
+const isThaana = t => /[ހ-޿]/.test(t);
+const STK_BASE = () => Math.min(W, H) * 0.12;
+function starPath(c, n, r1, r2){ c.beginPath(); for (let i=0;i<n*2;i++){ const r = i%2 ? r2 : r1, a = i*Math.PI/n - Math.PI/2; c.lineTo(Math.cos(a)*r, Math.sin(a)*r); } c.closePath(); }
+function lum(hex){ const n = parseInt(hex.slice(1),16); return (0.299*(n>>16&255) + 0.587*(n>>8&255) + 0.114*(n&255))/255; }
+// fit 1–2 lines of text into a box
+function stkText(c, text, maxW, maxH, color, center){
+  const lines = String(text || '').split('\n').map(l => l.trim()).filter(Boolean).slice(0, 3);
+  if (!lines.length) return;
+  const th = lines.some(isThaana);
+  let fam, legacy = false;
+  if (th){ const df = DVFONTS[dvFont] || DVFONTS[0]; fam = `"${df.family}"`; legacy = !!df.legacy; }
+  else fam = '"Bebas Neue", "Poppins", sans-serif';
+  const wt = th ? '400' : '400';
+  const lh = th ? 1.25 : 0.95;
+  let size = maxH / (lines.length * lh);
+  c.font = `${wt} ${size}px ${fam}`;
+  const shown = lines.map(l => legacy ? toLegacy(l) : l);
+  const widest = Math.max(...shown.map(l => c.measureText(l).width));
+  if (widest > maxW) size *= maxW / widest;
+  c.font = `${wt} ${size}px ${fam}`;
+  c.fillStyle = color; c.textAlign = 'center'; c.textBaseline = 'middle';
+  c.direction = th && !legacy ? 'rtl' : 'ltr';
+  const total = size * lh * shown.length, y0 = (center || 0) - total/2 + size*lh/2 + (th ? 0 : size*0.06);
+  shown.forEach((l, i) => c.fillText(l, 0, y0 + i*size*lh));
+  c.direction = 'ltr';
+}
+function stkSizeOf(o){ // half-width, half-height of the sticker before scaling
+  const R = STK_BASE();
+  if (o.shape === 'pill'){ ctx.font = `400 ${R*0.5}px "Bebas Neue", Poppins`; const lines = String(o.text).split('\n'); const w = Math.max(...lines.map(l => ctx.measureText(l).width)); return [Math.max(R*0.9, w/2 + R*0.35), R*0.42*Math.max(1, Math.min(2, lines.length)*0.8)]; }
+  if (o.shape === 'ribbon') return [R*1.45, R*0.55];
+  if (o.shape === 'tag') return [R*1.25, R*0.7];
+  if (o.shape === 'stamp') return [R*1.35, R*0.62];
+  if (o.shape === 'corner') return [R*1.1, R*1.1];
+  if (o.shape === 'rosette') return [R*1.05, R*1.35];
+  return [R, R];
+}
+function paintSticker(c, o){
+  const R = STK_BASE(), col = o.color, ink = lum(col) > 0.7 ? '#111' : '#fff';
+  const [hw, hh] = stkSizeOf(o);
+  c.save();
+  c.shadowColor = 'rgba(0,0,0,.25)'; c.shadowBlur = R*0.12; c.shadowOffsetY = R*0.05;
+  c.fillStyle = col;
+  if (o.shape === 'burst'){
+    starPath(c, 18, R, R*0.84); c.fill(); c.shadowColor = 'transparent';
+    c.setLineDash([R*0.06, R*0.05]); c.lineWidth = R*0.035; c.strokeStyle = ink; c.globalAlpha = .55; c.beginPath(); c.arc(0,0,R*0.7,0,7); c.stroke(); c.globalAlpha = 1; c.setLineDash([]);
+    stkText(c, o.text, R*1.15, R*0.95, ink);
+  } else if (o.shape === 'circle'){
+    c.beginPath(); c.arc(0,0,R,0,7); c.fill(); c.shadowColor = 'transparent';
+    c.lineWidth = R*0.045; c.strokeStyle = ink; c.globalAlpha = .7; c.beginPath(); c.arc(0,0,R*0.84,0,7); c.stroke(); c.globalAlpha = 1;
+    stkText(c, o.text, R*1.2, R*0.9, ink);
+  } else if (o.shape === 'pill'){
+    rrect(c, -hw, -hh, hw*2, hh*2, hh); c.fill(); c.shadowColor = 'transparent';
+    stkText(c, o.text, hw*2 - hh*1.1, hh*1.45, ink);
+  } else if (o.shape === 'ribbon'){
+    const t = hh*0.55; // tails
+    c.fillStyle = shade(col, -0.28);
+    c.beginPath(); c.moveTo(-hw-t*1.2, -hh*0.55); c.lineTo(-hw+t*0.6, -hh*0.55); c.lineTo(-hw+t*0.6, hh*1.15); c.lineTo(-hw-t*1.2, hh*1.15); c.lineTo(-hw-t*0.4, hh*0.3); c.closePath(); c.fill();
+    c.beginPath(); c.moveTo(hw+t*1.2, -hh*0.55); c.lineTo(hw-t*0.6, -hh*0.55); c.lineTo(hw-t*0.6, hh*1.15); c.lineTo(hw+t*1.2, hh*1.15); c.lineTo(hw+t*0.4, hh*0.3); c.closePath(); c.fill();
+    c.fillStyle = col; c.beginPath(); c.rect(-hw, -hh, hw*2, hh*2); c.fill(); c.shadowColor = 'transparent';
+    c.strokeStyle = ink; c.globalAlpha = .45; c.lineWidth = R*0.025; c.setLineDash([R*0.06, R*0.04]); c.strokeRect(-hw+R*0.08, -hh+R*0.08, hw*2-R*0.16, hh*2-R*0.16); c.setLineDash([]); c.globalAlpha = 1;
+    stkText(c, o.text, hw*1.7, hh*1.5, ink);
+  } else if (o.shape === 'tag'){
+    const n = hh*0.9;
+    c.beginPath(); c.moveTo(-hw, -hh); c.lineTo(hw-n, -hh); c.lineTo(hw, 0); c.lineTo(hw-n, hh); c.lineTo(-hw, hh); c.closePath(); c.fill(); c.shadowColor = 'transparent';
+    c.globalCompositeOperation = 'destination-out'; c.beginPath(); c.arc(hw-n*0.95, 0, hh*0.16, 0, 7); c.fill(); c.globalCompositeOperation = 'source-over';
+    stkText(c, o.text, hw*1.4, hh*1.45, ink); 
+  } else if (o.shape === 'stamp'){
+    c.shadowColor = 'transparent';
+    c.strokeStyle = col; c.lineWidth = R*0.09; rrect(c, -hw, -hh, hw*2, hh*2, R*0.12); c.stroke();
+    c.lineWidth = R*0.03; rrect(c, -hw+R*0.13, -hh+R*0.13, hw*2-R*0.26, hh*2-R*0.26, R*0.06); c.stroke();
+    stkText(c, o.text, hw*1.55, hh*1.25, col);
+  } else if (o.shape === 'corner'){
+    // folded-corner triangle banner
+    c.beginPath(); c.moveTo(-hw, -hh); c.lineTo(hw, -hh); c.lineTo(-hw, hh); c.closePath(); c.fill(); c.shadowColor = 'transparent';
+    c.save(); c.translate(-hw*0.35, -hh*0.35); c.rotate(-Math.PI/4); stkText(c, o.text, hw*1.1, hh*0.48, ink); c.restore();
+  } else if (o.shape === 'rosette'){
+    c.fillStyle = shade(col, -0.25);
+    c.beginPath(); c.moveTo(-R*0.55, R*0.3); c.lineTo(-R*0.05, R*0.5); c.lineTo(-R*0.3, hh); c.lineTo(-R*0.5, hh*0.82); c.lineTo(-R*0.72, hh*0.95); c.closePath(); c.fill();
+    c.beginPath(); c.moveTo(R*0.55, R*0.3); c.lineTo(R*0.05, R*0.5); c.lineTo(R*0.3, hh); c.lineTo(R*0.5, hh*0.82); c.lineTo(R*0.72, hh*0.95); c.closePath(); c.fill();
+    c.fillStyle = col; c.translate(0, -R*0.3);
+    starPath(c, 24, R*0.98, R*0.86); c.fill(); c.shadowColor = 'transparent';
+    c.fillStyle = shade(col, 0.18); c.beginPath(); c.arc(0,0,R*0.74,0,7); c.fill();
+    c.strokeStyle = ink; c.globalAlpha = .6; c.lineWidth = R*0.03; c.beginPath(); c.arc(0,0,R*0.66,0,7); c.stroke(); c.globalAlpha = 1;
+    stkText(c, o.text, R*1.05, R*0.8, ink);
+  }
+  c.restore();
+}
+function shade(hex, amt){ const n = parseInt(hex.slice(1),16); let r = n>>16&255, g = n>>8&255, b = n&255;
+  const f = v => Math.max(0, Math.min(255, Math.round(amt < 0 ? v*(1+amt) : v + (255-v)*amt)));
+  return `rgb(${f(r)},${f(g)},${f(b)})`; }
+function drawStickers(c, forExport){
+  STK.forEach((o, i) => {
+    c.save(); c.translate(o.x, o.y); c.rotate(o.rot*Math.PI/180); c.scale(o.k, o.k);
+    paintSticker(c, o);
+    if (!forExport && i === selS){ const [hw, hh] = stkSizeOf(o), pad = STK_BASE()*0.15; c.setLineDash([12/o.k, 8/o.k]); c.lineWidth = 3/o.k; c.strokeStyle = '#0ea5e9'; c.strokeRect(-hw-pad, -hh-pad, (hw+pad)*2, (hh+pad)*2); }
+    c.restore();
+  });
+}
+function hitSticker(p){
+  for (let i = STK.length-1; i >= 0; i--){
+    const o = STK[i], a = -o.rot*Math.PI/180, dx = p.x-o.x, dy = p.y-o.y;
+    const lx = (dx*Math.cos(a) - dy*Math.sin(a))/o.k, ly = (dx*Math.sin(a) + dy*Math.cos(a))/o.k;
+    const [hw, hh] = stkSizeOf(o), pad = STK_BASE()*0.2;
+    if (Math.abs(lx) <= hw+pad && Math.abs(ly) <= hh+pad) return i;
+  }
+  return -1;
+}
+function selectSticker(i){ selS = i; syncStkUI(); draw(); }
+function addSticker(pr){
+  const o = {shape: pr.shape, text: pr.text, color: pr.color, rot: pr.rot || 0, k: 1, x: W*0.76, y: H*0.16};
+  // stagger new stickers so they don't stack exactly
+  o.x -= (STK.length % 4) * W*0.04; o.y += (STK.length % 4) * H*0.03;
+  STK.push(o); selS = STK.length-1; syncStkUI(); draw();
+}
+function syncStkUI(){
+  const o = STK[selS];
+  $('stkEdit').style.display = o ? '' : 'none';
+  if (!o) return;
+  if (document.activeElement !== $('stkText')) $('stkText').value = o.text;
+  $('stkText').style.fontFamily = isThaana(o.text) ? "'Mv Amaan XP',sans-serif" : 'Poppins';
+  $('stkText').dir = isThaana(o.text) ? 'rtl' : 'ltr';
+  document.querySelectorAll('#stkShapes button').forEach(b => b.classList.toggle('on', b.dataset.v === o.shape));
+  document.querySelectorAll('#stkColors button').forEach(b => b.classList.toggle('on', b.dataset.c === o.color));
+  $('stkCustom').value = /^#[0-9a-f]{6}$/i.test(o.color) ? o.color : '#e11d48';
+  $('stkSize').value = Math.round(o.k*100); $('stkRot').value = Math.round(o.rot);
+}
+function renderStkGrid(){
+  const g = $('stkGrid'); g.innerHTML = '';
+  const saveW = W, saveH = H;
+  STK_PRESETS.forEach(pr => {
+    const b = document.createElement('button'), cc = document.createElement('canvas'); cc.width = 160; cc.height = 160;
+    b.appendChild(cc); g.appendChild(b);
+    const x = cc.getContext('2d'), o = {...pr, k: 1, rot: pr.rot || 0};
+    // draw at a virtual 1080 canvas scale, then fit into the 160px tile
+    W = 1080; H = 1080;
+    const [hw, hh] = stkSizeOf(o), span = Math.max(hw, hh)*2.35;
+    x.save(); x.translate(80, 80); x.scale(160/span, 160/span); x.rotate(o.rot*Math.PI/180); paintSticker(x, o); x.restore();
+    W = saveW; H = saveH;
+    b.onclick = () => addSticker(pr);
+  });
+}
+// editor wiring
+(() => {
+  const sw = $('stkColors');
+  STK_COLORS.forEach(c => { const b = document.createElement('button'); b.style.background = c; b.dataset.c = c; b.onclick = () => { const o = STK[selS]; if (o){ o.color = c; syncStkUI(); draw(); } }; sw.appendChild(b); });
+  const ci = document.createElement('input'); ci.type = 'color'; ci.id = 'stkCustom'; ci.title = 'Custom colour';
+  ci.oninput = () => { const o = STK[selS]; if (o){ o.color = ci.value; syncStkUI(); draw(); } }; sw.appendChild(ci);
+  $('stkText').addEventListener('input', () => {
+    const o = STK[selS]; if (!o) return;
+    let v = $('stkText').value;
+    if ($('dvPhon').checked && isThaana(o.text) && /[A-Za-z]/.test(v)) { v = toThaana(v); $('stkText').value = v; }
+    o.text = v; syncStkUI(); draw();
+  });
+  document.querySelectorAll('#stkShapes button').forEach(b => b.onclick = () => { const o = STK[selS]; if (o){ o.shape = b.dataset.v; syncStkUI(); draw(); } });
+  $('stkSize').oninput = () => { const o = STK[selS]; if (o){ o.k = $('stkSize').value/100; draw(); } };
+  $('stkRot').oninput = () => { const o = STK[selS]; if (o){ o.rot = +$('stkRot').value; draw(); } };
+  $('stkDel').onclick = () => { if (selS < 0) return; STK.splice(selS, 1); selS = -1; syncStkUI(); draw(); };
+  $('stkDup').onclick = () => { const o = STK[selS]; if (!o) return; STK.push({...o, x: o.x + W*0.05, y: o.y + H*0.04}); selS = STK.length-1; syncStkUI(); draw(); };
+  $('stkAll').onclick = () => {
+    if (busy) return;
+    items.forEach((it, i) => { if (i !== cur) it.stickers = STK.map(o => ({...o})); });
+    $('stkMsg').textContent = items.length > 1 ? `Copied ${STK.length} sticker${STK.length===1?'':'s'} to all ${items.length} posters.` : 'Copied.';
+  };
+  document.fonts.load('400 40px "Bebas Neue"').then(() => { renderStkGrid(); draw(); }).catch(() => renderStkGrid());
+  renderStkGrid();
+})();
+
 /* ---------- pointer interaction ---------- */
 function toCanvas(e){ const r = cv.getBoundingClientRect(); return {x:(e.clientX-r.left)*W/r.width, y:(e.clientY-r.top)*H/r.height}; }
 function toLocal(p){
@@ -1064,6 +1284,10 @@ const pdist = () => { const [a,b] = [...pts.values()]; return Math.hypot(a.x-b.x
 cv.addEventListener('pointerdown', e => {
 e.preventDefault();
 const p = toCanvas(e); cv.setPointerCapture(e.pointerId); pts.set(e.pointerId, p);
+if (pts.size === 2 && tool === 'move' && drag && drag.kind === 'sticker'){
+const [a1,b1] = [...pts.values()], o = STK[drag.i];
+pinch = {stk: drag.i, d0: pdist(), k0: o.k, a0: Math.atan2(b1.y-a1.y, b1.x-a1.x), r0: o.rot}; drag = null; return;
+}
 if (pts.size === 2 && tool === 'move'){
 const target = drag && drag.kind==='text' ? (drag.obj===T ? 'fsize' : 'dvSize') : 'scale';
 const [a1,b1] = [...pts.values()];
@@ -1071,6 +1295,9 @@ pinch = {d0: pdist(), v0: +$(target).value, target, a0: Math.atan2(b1.y-a1.y, b1
 }
 if (pts.size > 1) return;
 if (tool==='move'){
+const si = hitSticker(p);
+if (si >= 0){ selectSticker(si); const o = STK[si]; drag = {kind:'sticker', i: si, dx: p.x-o.x, dy: p.y-o.y}; cv.style.cursor = 'grabbing'; return; }
+if (selS >= 0){ selS = -1; syncStkUI(); draw(); }
 if (hitText(p,'en',T)) drag = {kind:'text', obj:T, dx:p.x-T.x, dy:p.y-T.y};
 else if (hitText(p,'dv',T2)) drag = {kind:'text', obj:T2, dx:p.x-T2.x, dy:p.y-T2.y};
 else if (cut) drag = {kind:'prod', dx:p.x-P.x, dy:p.y-P.y};   // drag anywhere moves the product
@@ -1081,6 +1308,13 @@ else if (cut && tool==='wand'){ const l = toLocal(p); wandAt(l.x, l.y); }
 cv.addEventListener('pointermove', e => {
 if (!pts.has(e.pointerId)) return;
 const p = toCanvas(e); pts.set(e.pointerId, p);
+if (pinch && pinch.stk !== undefined && pts.size >= 2){
+const o = STK[pinch.stk]; if (!o) return;
+const [a1,b1] = [...pts.values()];
+o.k = Math.max(0.3, Math.min(3, pinch.k0 * pdist()/pinch.d0));
+let r = pinch.r0 + (Math.atan2(b1.y-a1.y, b1.x-a1.x) - pinch.a0)*180/Math.PI; r = ((r+540)%360)-180; if (Math.abs(r) < 3) r = 0; o.rot = r;
+$('stkSize').value = Math.round(o.k*100); $('stkRot').value = Math.round(r); draw(); return;
+}
 if (pinch && pts.size >= 2){
 const el = $(pinch.target), v = Math.max(+el.min, Math.min(+el.max, pinch.v0 * pdist()/pinch.d0));
 el.value = v;
@@ -1094,6 +1328,7 @@ P.rot = r; $('rot').value = Math.round(r);
 draw(); return;
 }
 if (!drag) return;
+if (drag.kind==='sticker'){ const o = STK[drag.i]; if (o){ o.x = p.x-drag.dx; o.y = p.y-drag.dy; draw(); } return; }
 if (drag.kind==='text'){ drag.obj.x = p.x-drag.dx; drag.obj.y = p.y-drag.dy; draw(); }
 else if (drag.kind==='prod'){ P.x = p.x-drag.dx; P.y = p.y-drag.dy; draw(); }
 else if (drag.kind==='brush'){ brush(p); rebuildCut(false, true); }
