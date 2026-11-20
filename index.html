@@ -207,8 +207,11 @@ details.more .btn{margin-top:8px}
   .hint{display:none}
   .stage{position:sticky;top:0;z-index:6;border-radius:0 0 20px 20px;box-shadow:0 6px 18px rgba(0,0,0,.06);background:var(--bg);padding:max(6px, env(safe-area-inset-top)) 8px 6px}
   .canvasBox{background:transparent;padding:2px}
-  canvas#c{max-height:38vh;transition:max-height .2s}
-  .stage.compact canvas#c{max-height:30vh}
+  canvas#c{max-height:34vh}
+  body.typing canvas#c{max-height:20vh}
+  body.typing .strip{display:none}
+  .card input,.card textarea,.card details{scroll-margin-top:calc(var(--stageH,0px) + 56px);scroll-margin-bottom:120px}
+  .wrap{padding-bottom:24px}
   .strip{padding:2px 2px 0}
   .thumb{width:46px;height:46px}
   .steps{position:sticky!important;top:var(--stageH,0px);z-index:5;background:var(--bg)!important}
@@ -1871,12 +1874,17 @@ btn.disabled = false;
   const st = document.querySelector('.stage');
   const setH = () => document.documentElement.style.setProperty('--stageH', st.getBoundingClientRect().height + 'px');
   if (window.ResizeObserver) new ResizeObserver(setH).observe(st); setH();
-  // shrink the preview a little once the user scrolls into the settings
-  let ticking = false;
-  addEventListener('scroll', () => {
-    if (ticking) return; ticking = true;
-    requestAnimationFrame(() => { st.classList.toggle('compact', scrollY > 120 && innerWidth <= 900); ticking = false; });
-  }, {passive: true});
+  // while typing (keyboard open) make the preview smaller so the field stays visible
+  const isField = el => el && (el.tagName === 'TEXTAREA' || (el.tagName === 'INPUT' && /^(text|tel|password|search)$/.test(el.type)));
+  document.addEventListener('focusin', e => {
+    if (!isField(e.target) || innerWidth > 900) return;
+    document.body.classList.add('typing');
+    setTimeout(() => e.target.scrollIntoView({block: 'nearest', behavior: 'smooth'}), 250);
+  });
+  document.addEventListener('focusout', e => {
+    if (!isField(e.target)) return;
+    setTimeout(() => { if (!isField(document.activeElement)) document.body.classList.remove('typing'); }, 100);
+  });
 })();
 </script>
 </body>
