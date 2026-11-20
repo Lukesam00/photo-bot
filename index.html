@@ -267,6 +267,44 @@ details.more .btn{margin-top:8px}
 .mini.ok{background:var(--ink);color:#fff}.mini.no{background:#f1f1ef;color:#b91c1c}
 .adm input{display:block;width:100%;margin-top:8px;border:0;background:#f3f3f1;border-radius:10px;padding:11px 12px;font:500 15px Poppins}
 .sheet .box h3{font:700 17px Poppins}
+/* ===== landing / login page (dark) ===== */
+.gate{background:#0b0d12;color:#e8eaef}
+.gate .gateIn{max-width:520px;padding:max(36px, env(safe-area-inset-top)) 22px 48px}
+.eyebrow{display:flex;align-items:center;gap:10px;font:500 14px Poppins;color:#c7ccd6;margin:10px 0 18px}
+.eyebrow i{width:9px;height:9px;border-radius:50%;background:#5b9cf6;display:inline-block}
+.heroH{font:600 37px/1.1 Poppins;letter-spacing:-1.2px;margin:0 0 16px;color:#f3f4f7}
+.heroP{font:400 17px/1.55 Poppins;color:#98a1b0;margin:0 0 24px}
+.hbtn{display:block;width:100%;border-radius:14px;padding:16px;font:600 17px Poppins;cursor:pointer;margin-top:12px}
+.hbtn.pri{background:#5b9cf6;color:#0b1220;border:0}
+.hbtn.pri:hover{background:#6ea8f8}
+.hbtn.pri:disabled{opacity:.6}
+.hbtn.sec{background:#11141b;color:#e8eaef;border:1px solid #2a2f3a}
+.gate .gateCard{background:#12151c;border:1px solid #232834;box-shadow:none;margin-top:6px}
+.gate .gateCard input{background:#1a1e27;color:#eef0f4}
+.gate .gateCard input::placeholder{color:#6f7787}
+.gate .gateCard input:focus{outline:2px solid #5b9cf6;background:#1a1e27}
+.gate .seg{background:#1a1e27}
+.gate .seg button{color:#8a93a3}
+.gate .seg button.on{background:#262b36;color:#f3f4f7;box-shadow:none}
+.gate .msg{color:#8a93a3}
+.ticks{display:grid;grid-template-columns:auto auto;justify-content:start;gap:12px 24px;margin:24px 0 30px}
+.ticks span{font:400 16px Poppins;color:#c7ccd6;display:flex;align-items:center;gap:10px}
+.ticks span::before{content:'';width:12px;height:7px;border-left:2.5px solid #5b9cf6;border-bottom:2.5px solid #5b9cf6;transform:rotate(-45deg) translateY(-3px);display:inline-block}
+.mock{width:68%;max-width:300px;margin:6px auto 34px;background:#fbf8f3;border-radius:6px;transform:rotate(-1.6deg);box-shadow:0 24px 60px rgba(0,0,0,.5);overflow:hidden;position:relative;color:#1d1d1f}
+.mockTop{padding:14px 0 6px;text-align:center;font:800 13px Poppins;letter-spacing:2px;color:#7c1d45}
+.mockStk{position:absolute;top:44px;right:12px;width:62px;height:62px;border-radius:50%;background:#0f766e;color:#fff;font:700 9px/1.15 Poppins;display:flex;align-items:center;justify-content:center;text-align:center;transform:rotate(10deg);box-shadow:0 4px 10px rgba(0,0,0,.2);outline:1.5px solid rgba(255,255,255,.6);outline-offset:-6px}
+.mockStage{display:flex;justify-content:center;padding:6px 0 0;background:radial-gradient(circle at 50% 55%, #f1dfe6 0 38%, transparent 39%)}
+.mockName{text-align:center;font:800 19px Poppins;margin-top:4px}
+.mockDv{text-align:center;font:400 18px 'Mv Amaan XP',sans-serif;direction:rtl;color:#444;margin:2px 0 10px}
+.mockBar{display:flex;justify-content:center;gap:16px;background:#7c1d45;color:#fff;font:600 10px Poppins;padding:9px 0}
+.pkH{font:700 22px Poppins;letter-spacing:-.4px;margin:6px 0 4px;color:#f3f4f7}
+.pkP{font:400 14px Poppins;color:#98a1b0;margin:0 0 14px}
+.gate .pkg{background:#12151c;border:1px solid #232834;color:#e8eaef;box-shadow:none}
+.gate .pkg .per{color:#8a93a3}
+.gate .pkg .cr small{color:#8a93a3}
+.gate .pkg .badge{background:#5b9cf6;color:#0b1220}
+.gate .fine{color:#7d8696}
+@media(max-width:380px){.heroH{font-size:33px}}
 </style>
 </head>
 <body>
@@ -450,18 +488,34 @@ details.more .btn{margin-top:8px}
 <div class="modal" id="modal"><div><p style="margin-top:0;font-size:14px">Right-click (or long-press) the image and choose <b>Save image</b>.</p><img id="modalImg" alt="poster"><div id="modalList"></div><button class="btn ghost" id="closeModal">Close</button></div></div>
 <div id="authGate" class="gate" style="display:none">
 <div class="gateIn">
-<div class="gateHead"><img src="/icons/icon-192.png" alt=""><div><h1>Photo Bot</h1><p>Product posters in seconds — frame, AI background removal, English &amp; Dhivehi names.</p></div></div>
-<div class="gateCard">
+<div class="eyebrow"><i></i>For shop product posters · Photo Bot</div>
+<h1 class="heroH">Your product photos, turned into ready-to-post posters</h1>
+<p class="heroP">Add a photo of your product. The background is removed and it's placed in your frame with English and Dhivehi names, ready to save or send.</p>
+<div id="heroBtns">
+<button class="hbtn pri" id="heroIn">Sign in</button>
+<button class="hbtn sec" id="heroUp">Create an account</button>
+</div>
+<div class="gateCard" id="authForm" style="display:none">
 <div class="seg" id="authSeg"><button data-m="in" class="on">Sign in</button><button data-m="up">Create account</button></div>
 <input type="text" id="authId" placeholder="Mobile number or email" autocomplete="username">
 <input type="password" id="authPw" placeholder="Password" autocomplete="current-password">
-<button class="btn" id="authGo">Sign in</button>
+<button class="hbtn pri" id="authGo">Sign in</button>
 <div class="msg" id="authMsg"></div>
 <div class="msg" id="authHelp">Forgot your password? Message us<span id="authContact"></span>.</div>
 </div>
-<div class="sub" style="text-align:center">Credit packages · 1 credit = 1 poster</div>
+<div class="ticks"><span>AI background removal</span><span>Dhivehi names</span><span>Many photos at once</span><span>Save &amp; share</span></div>
+<div class="mock" aria-hidden="true">
+<div class="mockTop"><b>YOUR SHOP</b></div>
+<div class="mockStk">NEW<br>ARRIVAL</div>
+<div class="mockStage"><svg viewBox="0 0 120 160" width="120" height="160"><defs><linearGradient id="gb" x1="0" x2="1"><stop offset="0" stop-color="#7c1d45"/><stop offset=".5" stop-color="#b8285a"/><stop offset="1" stop-color="#7c1d45"/></linearGradient></defs><ellipse cx="60" cy="154" rx="40" ry="5" fill="rgba(0,0,0,.18)"/><rect x="30" y="58" width="60" height="96" rx="14" fill="url(#gb)"/><rect x="48" y="22" width="24" height="42" fill="url(#gb)"/><rect x="45" y="12" width="30" height="13" rx="2" fill="#1b1b1b"/><rect x="36" y="88" width="48" height="34" rx="3" fill="#f6e7cf"/><rect x="44" y="98" width="32" height="4" rx="2" fill="#b8285a"/><rect x="48" y="107" width="24" height="3" rx="1.5" fill="#d9a3b8"/></svg></div>
+<div class="mockName">Rose Perfume</div>
+<div class="mockDv">ރޯޒް ޕާފިއުމް</div>
+<div class="mockBar"><span>☎ 7xx xxxx</span><span>@yourshop</span></div>
+</div>
+<h2 class="pkH">Credit packages</h2>
+<p class="pkP">1 credit = 1 finished poster. Editing is free.</p>
 <div class="pkgs" id="gatePkgs"></div>
-<p class="fine">Editing is free. A credit is used when a finished poster is saved or sent. Pay by bank transfer and upload the slip — credits are added once approved.</p>
+<p class="fine">Pay by bank transfer and upload the slip — credits are added once approved.</p>
 </div>
 </div>
 <div class="sheet" id="acctSheet"><div class="box" id="acctBox"></div></div>
@@ -1834,6 +1888,7 @@ draw();
   async function showGate(){
     gate.style.display = '';
     $('authMsg').textContent = ''; $('authPw').value = '';
+    $('heroBtns').style.display = ''; $('authForm').style.display = 'none';
     $('credPill').style.display = 'none';
     try { const {data} = await sb.from('photobot_settings').select('value').eq('key', 'contact').maybeSingle(); $('authContact').textContent = data && data.value ? ' on ' + data.value : ''; } catch(e){}
     await loadPackages().catch(() => {}); pkgCards($('gatePkgs'), false);
@@ -1865,6 +1920,9 @@ draw();
     finally { $('authGo').disabled = false; }
   };
   $('authPw').addEventListener('keydown', e => { if (e.key === 'Enter') $('authGo').click(); });
+  const openForm = m => { $('heroBtns').style.display = 'none'; $('authForm').style.display = ''; document.querySelector(`#authSeg button[data-m=${m}]`).click(); setTimeout(() => $('authId').focus(), 50); };
+  $('heroIn').onclick = () => openForm('in');
+  $('heroUp').onclick = () => openForm('up');
 
   /* ---- signed in ---- */
   function pill(){
