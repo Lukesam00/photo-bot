@@ -6,7 +6,7 @@
 <title>Photo Bot</title>
 <link rel="manifest" href="/manifest.webmanifest">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<meta name="theme-color" content="#0f766e">
+<meta name="theme-color" content="#4a0a2f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -351,6 +351,42 @@ details.more .btn{margin-top:8px}
 .hist .plus{color:#15803d;font-weight:700}.hist .minus{color:#b91c1c;font-weight:700}
 .empty{color:var(--muted);font:500 13px Poppins;padding:14px 4px;text-align:center}
 #admSheetBox img.full{width:100%;border-radius:12px;display:block}
+/* ===== 3 TIMES theme (matches threetimes.tech) ===== */
+:root{--bg:#fbfaf8;--panel:#fff;--ink:#2a1420;--muted:#7a6470;--line:#ece6e9;--accent:#4a0a2f;--accent2:#2a0a1c}
+.stage,.card{box-shadow:0 1px 2px rgba(42,10,28,.05),0 6px 18px -8px rgba(42,10,28,.10)}
+.canvasBox{background:#f3eef0}
+.tool{background:#f3eef0}
+.mini.no{background:#f3eef0}
+.ttBrand{display:inline-flex;align-items:center;gap:7px;text-decoration:none;color:#4a0a2f;margin:0 0 6px}
+.ttBrand svg{width:17px;height:23px}
+.ttBrand b{font:500 17px/1 Poppins;letter-spacing:.14em}
+.gate{background:#fbfaf8;color:#2a1420}
+.eyebrow{font:500 12px Poppins;letter-spacing:.16em;text-transform:uppercase;color:#c2410c}
+.eyebrow i{width:26px;height:1px;border-radius:0;background:#c2410c}
+.heroH{font:300 36px/1.12 Poppins;letter-spacing:-.9px;color:#2a1420}
+.heroH em{font-style:normal;font-weight:500;color:#4a0a2f}
+.heroP{font:300 17px/1.7 Poppins;color:#5e4a55}
+.hbtn{border-radius:999px;font:500 16px Poppins}
+.hbtn.pri{background:#4a0a2f;color:#fff}
+.hbtn.pri:hover{background:#2a0a1c}
+.hbtn.sec{background:transparent;color:#4a0a2f;border:1px solid #4a0a2f}
+.gate .gateCard{background:#fff;border:1px solid #ece6e9;box-shadow:0 6px 18px -8px rgba(42,10,28,.12)}
+.gate .gateCard input{background:#f3eef0;color:#2a1420}
+.gate .gateCard input::placeholder{color:#9a7d8c}
+.gate .gateCard input:focus{outline:2px solid #4a0a2f;background:#fff}
+.gate .seg{background:#f3eef0}
+.gate .seg button{color:#7a6470}
+.gate .seg button.on{background:#fff;color:#4a0a2f;box-shadow:0 1px 2px rgba(42,10,28,.08)}
+.gate .msg{color:#7a6470}
+.ticks span{font:300 15px Poppins;color:#5e4a55}
+.ticks span::before{border-color:#c2410c}
+.mock{box-shadow:0 24px 60px -12px rgba(42,10,28,.28)}
+.pkH{font:500 22px Poppins;color:#2a1420}
+.pkP{color:#5e4a55;font-weight:300}
+.gate .pkg{background:#fff;border:1px solid #ece6e9;color:#2a1420;box-shadow:none}
+.gate .pkg .per,.gate .pkg .cr small{color:#7a6470}
+.gate .pkg .badge{background:#ff7a0f;color:#3a0624}
+.gate .fine{color:#7a6470}
 </style>
 </head>
 <body>
@@ -534,8 +570,9 @@ details.more .btn{margin-top:8px}
 <div class="modal" id="modal"><div><p style="margin-top:0;font-size:14px">Right-click (or long-press) the image and choose <b>Save image</b>.</p><img id="modalImg" alt="poster"><div id="modalList"></div><button class="btn ghost" id="closeModal">Close</button></div></div>
 <div id="authGate" class="gate" style="display:none">
 <div class="gateIn">
+<a class="ttBrand" href="https://threetimes.tech" aria-label="3 TIMES home"><svg viewBox="488 206 304 410" aria-hidden="true"><path d="M541 285 V236 H738 L636 396" fill="none" stroke="#FF7A0F" stroke-width="48" stroke-linecap="round" stroke-linejoin="round"/><path d="M517 462 A123 123 0 1 0 694 352" fill="none" stroke="#FF7A0F" stroke-width="48" stroke-linecap="round"/></svg><b>TIMES</b></a>
 <div class="eyebrow"><i></i>For shop product posters · Photo Bot</div>
-<h1 class="heroH">Your product photos, turned into ready-to-post posters</h1>
+<h1 class="heroH">Your product photos, <em>turned into ready-to-post posters.</em></h1>
 <p class="heroP">Add a photo of your product. The background is removed and it's placed in your frame with English and Dhivehi names, ready to save or send.</p>
 <div id="heroBtns">
 <button class="hbtn pri" id="heroIn">Sign in</button>
