@@ -142,6 +142,75 @@ html,body{overflow-x:hidden}
 .brandrow input{margin-bottom:6px;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font:500 16px Poppins}
 .logobox{width:84px;height:84px;flex:0 0 84px;border:2px dashed var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;font:600 12px Poppins;color:var(--muted);background:repeating-conic-gradient(#f3f3f3 0 25%,#fff 0 50%) 0 0/12px 12px;overflow:hidden}
 .logobox img{max-width:100%;max-height:100%}
+/* ===== clean & minimal theme ===== */
+:root{--bg:#f5f5f3;--panel:#fff;--ink:#141414;--muted:#8a8a86;--line:#ececea;--accent:#0f766e;--accent2:#0b5f58}
+body{background:var(--bg);-webkit-font-smoothing:antialiased}
+header{background:transparent;border:0;padding:14px 18px 6px}
+header h1{font-size:16px;font-weight:700;letter-spacing:-.2px}
+header span{display:none}
+.installBtn{background:var(--ink)}
+.stage,.card{border:0;border-radius:18px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.03)}
+.card{padding:18px}
+.card h2{font:700 15px Poppins;text-transform:none;letter-spacing:0;color:var(--ink);margin:0 0 12px}
+.card h2 b{display:none}
+.canvasBox{background:#f0f0ee;border-radius:14px}
+canvas#c{box-shadow:0 8px 30px rgba(0,0,0,.10);border-radius:4px}
+.tool{border:0;background:#f1f1ef;border-radius:999px;padding:7px 13px;font:600 12px Poppins;color:var(--ink)}
+.tool.on{background:var(--ink);color:#fff}
+.hint{font-size:11px;color:var(--muted)}
+.btn{background:var(--ink);border-radius:12px;font:600 14px Poppins;padding:13px}
+.btn:hover{background:#000}
+.btn.ghost{background:#f1f1ef;border:0;color:var(--ink)}
+.btn.ghost:hover{background:#e8e8e5}
+.btn.danger{color:#e11d48}
+.drop{border:1.5px dashed #dcdcd8;border-radius:14px;padding:20px;font:500 14px Poppins;color:var(--muted);background:#fafaf9}
+.drop:hover,.drop.over{border-color:var(--ink);color:var(--ink)}
+input[type=text],input[type=tel],textarea{border:0!important;background:#f3f3f1;border-radius:12px!important;padding:13px 14px!important}
+input[type=text]:focus,input[type=tel]:focus,textarea:focus{outline:2px solid var(--ink);outline-offset:0;background:#fff}
+label.row{font:500 13px Poppins;color:#444}
+select{border:0;background:#f3f3f1;border-radius:10px}
+input[type=color]{border:0;width:34px;height:34px;padding:0;background:none;border-radius:50%}
+input[type=range]{accent-color:var(--ink)}
+input[type=checkbox]{accent-color:var(--ink)}
+.chips button{border:0;background:#f1f1ef;padding:8px 14px;font:500 13px Poppins}
+.chips button.on{background:var(--ink);color:#fff}
+.sub{font:600 12px Poppins;text-transform:none;letter-spacing:0;color:var(--muted);margin:16px 0 8px}
+.preset,.tplgrid button,.dvfonts button{border:1.5px solid transparent;background:#f6f6f4}
+.preset.on,.tplgrid button.on,.dvfonts button.on{border-color:var(--ink);color:var(--ink);background:#fff}
+.dvfonts button.on small{color:var(--ink)}
+.stkgrid button{border:0;background:#f6f6f4;border-radius:12px}
+.thumb{border-radius:12px;border:1.5px solid var(--line)}
+.thumb.on{border-color:var(--ink);box-shadow:none}
+.msg{font-size:12px;color:var(--muted)}
+.msg:empty{display:none}
+.thumb .x{background:#141414;width:20px;height:20px;font-size:11px;line-height:15px}
+.thumb.add{color:var(--ink);border-style:solid;background:#f6f6f4;border-color:transparent}
+details.more{margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+details.more summary{list-style:none;cursor:pointer;font:600 13px Poppins;color:var(--muted);display:flex;align-items:center;justify-content:space-between;padding:4px 0}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::after{content:'';width:8px;height:8px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);margin-right:4px;transition:transform .15s}
+details.more[open] summary::after{transform:rotate(-135deg)}
+details.more[open] summary{color:var(--ink);margin-bottom:6px}
+details.more .btn{margin-top:8px}
+.dlrow{display:grid;grid-template-columns:1fr 56px;gap:8px}
+.dlrow .btn{margin-top:0}
+.btn.tg{background:#229ED9;display:flex;align-items:center;justify-content:center;padding:0}
+.dlcard{padding:12px 14px}
+.dlcard details.more{margin-top:8px;padding-top:6px}
+.which{font:600 12px Poppins;color:var(--muted)}
+#steps{display:none}
+@media(max-width:900px){
+  .steps{display:flex!important;gap:2px;background:transparent;border-bottom:1px solid var(--line);padding:0 4px;position:static}
+  .steps button{border:0!important;background:transparent!important;border-radius:0!important;color:var(--muted)!important;font:600 13px Poppins!important;padding:12px 10px!important;box-shadow:inset 0 -2px 0 transparent}
+  .steps button.on{color:var(--ink)!important;box-shadow:inset 0 -2px 0 var(--ink)}
+  body:not([data-step=photo]) .toolbar{display:none}
+  .hint{display:none}
+  .stage{border-radius:0 0 22px 22px;box-shadow:none;background:transparent;padding:4px 8px 0}
+  .canvasBox{background:transparent;padding:2px}
+  canvas#c{max-height:46vh}
+  .card{border-radius:18px}
+  .dlcard{border-radius:18px 18px 0 0;box-shadow:0 -6px 24px rgba(0,0,0,.07)}
+}
 </style>
 </head>
 <body>
@@ -163,114 +232,119 @@ html,body{overflow-x:hidden}
 <nav class="steps" id="steps">
 <button data-go="frame" class="on">Frame</button>
 <button data-go="photo">Photo</button>
-<button data-go="fx">✨ Effects</button>
-<button data-go="stk">🏷 Stickers</button>
+<button data-go="fx">Style</button>
+<button data-go="stk">Stickers</button>
 <button data-go="name">Name</button>
-<button data-go="dv">ދިވެހި</button>
 </nav>
 <div class="card" data-step="frame">
-<h2><b>1</b>Frame</h2>
-<div class="sub" style="margin-top:0">Ready-made templates</div>
-<div class="chips" id="tplSize"><button data-v="p">Portrait 4:5</button><button data-v="s">Square</button><button data-v="st">Story 9:16</button></div>
+<h2>Frame</h2>
+<div class="chips" id="tplSize"><button data-v="p">4:5</button><button data-v="s">Square</button><button data-v="st">Story</button></div>
 <div class="tplgrid" id="tplGrid"></div>
-<div class="sub">Your shop details</div>
+<details class="more" id="brandMore"><summary>Shop details</summary>
 <div class="brandrow">
 <div class="logobox" id="logoBox"><span>＋ Logo</span></div>
 <div style="flex:1;min-width:0">
 <input type="text" id="brShop" placeholder="Shop name (if no logo)">
-<input type="tel" id="brPhone" placeholder="Phone / WhatsApp e.g. 7xx xxxx">
-<input type="text" id="brSocial" placeholder="Instagram / website e.g. @kosik.mv">
+<input type="tel" id="brPhone" placeholder="Phone / WhatsApp">
+<input type="text" id="brSocial" placeholder="Instagram / website">
 </div>
 </div>
 <input type="file" id="logoIn" accept="image/*" hidden>
 <label class="row">Brand colour <input type="color" id="brColor" value="#0f766e"></label>
 <label class="row">Logo size <input type="range" id="brLogoSize" min="50" max="200" value="100"></label>
-<button class="btn ghost" id="logoDel" style="display:none;padding:8px;font-size:13px">Remove logo</button>
-<div class="sub">Or upload your own frame</div>
-<div class="drop" id="frameDrop"><span>Tap to upload your own frame / poster template</span></div>
+<button class="btn ghost" id="logoDel" style="display:none">Remove logo</button>
+</details>
+<details class="more"><summary>Use your own frame</summary>
+<div class="drop" id="frameDrop"><span>Upload your own frame</span></div>
 <input type="file" id="frameIn" accept="image/*" hidden>
 <label class="row">Product layer
 <select id="layer"><option value="front">In front of frame</option><option value="behind">Behind frame (PNG hole)</option></select>
 </label>
+</details>
 <div class="msg" id="frameMsg"></div>
 </div>
 <div class="card" data-step="photo">
-<h2><b>2</b>Product photo</h2>
-<div class="drop" id="photoDrop"><span>Tap to add product photos — you can pick several at once</span></div>
+<h2>Photo</h2>
+<div class="drop" id="photoDrop"><span>Add product photos</span></div>
 <input type="file" id="photoIn" accept="image/*" multiple hidden>
-<label class="row">Background tolerance <input type="range" id="tol" min="5" max="120" value="38"></label>
+<div class="msg" id="bgMsg"></div>
+<details class="more"><summary>Touch up &amp; adjust</summary>
 <div class="two">
 <button class="btn" id="removeBg" disabled>Remove background</button>
 <button class="btn ghost" id="refine" disabled>Refine</button>
 </div>
 <button class="btn ghost" id="resetBg" disabled>Show original photo</button>
+<label class="row">Background tolerance <input type="range" id="tol" min="5" max="120" value="38"></label>
 <label class="row">Brush size <input type="range" id="bsize" min="1" max="10" value="3" step="0.5"></label>
 <label class="row">Size <input type="range" id="scale" min="5" max="300" value="100"></label>
 <label class="row">Rotate <input type="range" id="rot" min="-180" max="180" value="0" step="1"></label>
 <label class="row">Width <input type="range" id="sx" min="50" max="160" value="100" step="1"></label>
 <div class="two">
-<button class="btn ghost" id="flip">⇋ Flip sideways</button>
-<button class="btn ghost" id="straight">↺ Reset turn</button>
+<button class="btn ghost" id="flip">Flip</button>
+<button class="btn ghost" id="straight">Reset turn</button>
 </div>
 <button class="btn ghost" id="fit" disabled>Fit to frame</button>
-<div class="msg" id="bgMsg"></div>
+</details>
 </div>
 <div class="card" data-step="fx">
-<h2><b>✨</b>Effects</h2>
+<h2>Style</h2>
 <div class="presets" id="presets"></div>
-<label class="row">Brightness <input type="range" class="fxr" id="fxB" min="-50" max="50" value="0"></label>
-<label class="row">Contrast <input type="range" class="fxr" id="fxC" min="-50" max="60" value="0"></label>
-<label class="row">Colour <input type="range" class="fxr" id="fxS" min="-100" max="100" value="0"></label>
-<label class="row">Warmth <input type="range" class="fxr" id="fxW" min="-50" max="50" value="0"></label>
-<label class="row">Sharpness <input type="range" class="fxr" id="fxSh" min="0" max="100" value="0"></label>
-<label class="row">Sticker outline
-<select id="fxOl"><option value="none">None</option><option value="#ffffff">White</option><option value="#111111">Black</option><option value="#d4af37">Gold</option><option value="#0f766e">Teal</option></select>
-</label>
-<label class="row">Outline thickness <input type="range" id="fxOlw" min="1" max="8" value="3" step="0.5"></label>
 <div class="sub">Shadow</div>
 <div class="chips" id="shChips">
 <button data-v="none">None</button><button data-v="soft">Soft</button><button data-v="hard">Hard</button>
 <button data-v="floor">Floor</button><button data-v="long">Long</button><button data-v="glow">Glow</button><button data-v="reflection">Reflection</button>
 </div>
-<label class="row">Shadow strength <input type="range" id="fxShStr" min="10" max="100" value="60"></label>
-<label class="row">Glow colour <input type="color" id="fxGlowC" value="#ffd166"></label>
 <div class="sub">Glass</div>
 <div class="chips" id="glChips">
-<button data-v="none">None</button><button data-v="card">Glass card</button><button data-v="circle">Glass circle</button>
-<button data-v="shine">Glass shine</button><button data-v="cardshine">Card + shine</button>
+<button data-v="none">None</button><button data-v="card">Card</button><button data-v="circle">Circle</button>
+<button data-v="shine">Shine</button><button data-v="cardshine">Card + shine</button>
 </div>
+<details class="more"><summary>Adjust</summary>
+<label class="row">Brightness <input type="range" class="fxr" id="fxB" min="-50" max="50" value="0"></label>
+<label class="row">Contrast <input type="range" class="fxr" id="fxC" min="-50" max="60" value="0"></label>
+<label class="row">Colour <input type="range" class="fxr" id="fxS" min="-100" max="100" value="0"></label>
+<label class="row">Warmth <input type="range" class="fxr" id="fxW" min="-50" max="50" value="0"></label>
+<label class="row">Sharpness <input type="range" class="fxr" id="fxSh" min="0" max="100" value="0"></label>
+<label class="row">Shadow strength <input type="range" id="fxShStr" min="10" max="100" value="60"></label>
+<label class="row">Glow colour <input type="color" id="fxGlowC" value="#ffd166"></label>
 <label class="row">Glass colour <input type="color" id="fxGlassC" value="#ffffff"></label>
+<label class="row">Sticker outline
+<select id="fxOl"><option value="none">None</option><option value="#ffffff">White</option><option value="#111111">Black</option><option value="#d4af37">Gold</option><option value="#0f766e">Teal</option></select>
+</label>
+<label class="row">Outline thickness <input type="range" id="fxOlw" min="1" max="8" value="3" step="0.5"></label>
 <div class="two">
-<button class="btn ghost" id="fxReset">Reset effects</button>
-<button class="btn ghost" id="fxAll">Apply to all photos</button>
+<button class="btn ghost" id="fxReset">Reset</button>
+<button class="btn ghost" id="fxAll">Apply to all</button>
 </div>
+</details>
 <div class="msg" id="fxMsg"></div>
 </div>
 <div class="card" data-step="stk">
-<h2><b>🏷</b>Stickers</h2>
+<h2>Stickers</h2>
 <div class="stkgrid" id="stkGrid"></div>
 <div id="stkEdit" style="display:none">
-<div class="sub">Selected sticker</div>
-<textarea id="stkText" rows="2" placeholder="Sticker text — new line for 2 lines"></textarea>
-<div class="chips" id="stkShapes" style="margin-top:8px">
+<div class="sub">Edit sticker</div>
+<textarea id="stkText" rows="2" placeholder="Sticker text"></textarea>
+<div class="swatches" id="stkColors"></div>
+<details class="more"><summary>Shape, size &amp; more</summary>
+<div class="chips" id="stkShapes">
 <button data-v="burst">Burst</button><button data-v="circle">Circle</button><button data-v="pill">Pill</button><button data-v="ribbon">Ribbon</button>
 <button data-v="tag">Tag</button><button data-v="stamp">Stamp</button><button data-v="rosette">Rosette</button><button data-v="corner">Corner</button>
 </div>
-<div class="swatches" id="stkColors"></div>
 <label class="row">Size <input type="range" id="stkSize" min="30" max="300" value="100"></label>
 <label class="row">Rotate <input type="range" id="stkRot" min="-180" max="180" value="0"></label>
-<div class="two">
-<button class="btn ghost" id="stkDup">⧉ Duplicate</button>
-<button class="btn ghost" id="stkDel" style="color:#e11d48">🗑 Delete</button>
+<button class="btn ghost" id="stkDup">Duplicate</button>
+<button class="btn ghost" id="stkAll">Copy to all posters</button>
+</details>
+<button class="btn ghost danger" id="stkDel">Delete sticker</button>
 </div>
-<button class="btn ghost" id="stkAll">Copy stickers to all posters</button>
-</div>
-<div class="msg" id="stkMsg">Tap a sticker to add it. Drag it on the poster to move, pinch to resize, twist to rotate. Tap a sticker on the poster to edit its words, colour or shape.</div>
+<div class="msg" id="stkMsg">Tap to add · tap one on the poster to edit</div>
 </div>
 <div class="card" data-step="name">
 <div class="which" id="which"></div>
-<h2><b>3</b>Product name</h2>
-<input type="text" id="name" placeholder="Type product name…">
+<h2>Name</h2>
+<input type="text" id="name" placeholder="Product name">
+<details class="more"><summary>Font &amp; colour</summary>
 <label class="row">Font
 <select id="font">
 <option value="Poppins|800">Poppins Bold</option>
@@ -284,32 +358,35 @@ html,body{overflow-x:hidden}
 <label class="row">Colour <input type="color" id="fcolor" value="#1d1d1f"></label>
 <label class="row">Outline <input type="checkbox" id="fstroke"></label>
 <label class="row">Outline colour <input type="color" id="fscolor" value="#ffffff"></label>
+</details>
 </div>
-<div class="card" data-step="dv">
-<h2><b>3b</b>Dhivehi name · ދިވެހި ނަން</h2>
-<input type="text" id="dvName" dir="rtl" lang="dv" placeholder="ދިވެހިން ނަން ލިޔުއްވާ…" style="font-family:'Mv Amaan XP','Noto Sans Thaana',sans-serif;font-size:19px">
-<label class="row">Type with English keys (phonetic) <input type="checkbox" id="dvPhon" checked></label>
-<div class="msg">Type in English letters, e.g. <b>kurtA</b> = <span style="font-family:'Mv Amaan XP';font-size:15px">ކުރތާ</span>, <b>abAyA</b> = <span style="font-family:'Mv Amaan XP';font-size:15px">އަބާޔާ</span>. Capital A, I, U = long vowels.</div>
+<div class="card" data-step="name">
+<input type="text" id="dvName" dir="rtl" lang="dv" placeholder="ދިވެހި ނަން" style="font-family:'Mv Amaan XP','Noto Sans Thaana',sans-serif;font-size:20px">
 <div class="dvfonts" id="dvFonts"></div>
+<details class="more"><summary>Dhivehi options</summary>
+<label class="row">Type with English keys <input type="checkbox" id="dvPhon" checked></label>
+<div class="msg">Type in English letters, e.g. <b>kurtA</b> = <span style="font-family:'Mv Amaan XP';font-size:15px">ކުރތާ</span>, <b>abAyA</b> = <span style="font-family:'Mv Amaan XP';font-size:15px">އަބާޔާ</span>. Capital A, I, U = long vowels.</div>
 <label class="row">Weight
 <select id="dvWeight"><option value="400">Regular</option><option value="700">Bold</option></select>
 </label>
 <label class="row">Size <input type="range" id="dvSize" min="2" max="20" value="6" step="0.5"></label>
 <label class="row">Colour <input type="color" id="dvColor" value="#1d1d1f"></label>
-<div class="msg">Drag it on the poster to move. Outline setting is shared with the name above.</div>
+</details>
 </div>
 <div class="card dlcard">
-<h2><b>4</b>Download</h2>
+<div class="dlrow">
+<button class="btn" id="saveMain">Save</button>
+<button class="btn tg" id="tgSend" title="Send to Telegram" aria-label="Send to Telegram"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg></button>
+</div>
+<details class="more"><summary>More download options</summary>
 <div class="two">
-<button class="btn" id="dlPng">⬇ Download PNG</button>
-<button class="btn ghost" id="dlJpg">⬇ JPG</button>
+<button class="btn ghost" id="dlPng">PNG</button>
+<button class="btn ghost" id="dlJpg">JPG</button>
 </div>
-<button class="btn" id="saveAll" style="display:none">⬇ Save all photos</button>
-<button class="btn ghost" id="dlAll" style="display:none;padding:9px;font-size:13px">Download all as one ZIP (for computer)</button>
-<div class="two" style="grid-template-columns:1fr auto">
-<button class="btn tg" id="tgSend">📤 Send to Telegram</button>
-<button class="btn ghost" id="tgSet" title="Telegram settings" style="width:52px">⚙</button>
-</div>
+<button class="btn ghost" id="saveAll" style="display:none">Save all photos</button>
+<button class="btn ghost" id="dlAll" style="display:none">Download all as ZIP</button>
+<button class="btn ghost" id="tgSet">Telegram settings</button>
+</details>
 <div class="msg" id="dlMsg"></div>
 </div>
 </aside>
@@ -355,7 +432,9 @@ cv.width = W; cv.height = H;
 function showStep(name){
 document.querySelectorAll('.card[data-step]').forEach(c => c.classList.toggle('active', c.dataset.step===name));
 document.querySelectorAll('#steps button').forEach(b => b.classList.toggle('on', b.dataset.go===name));
+document.body.dataset.step = name;
 }
+$('saveMain').onclick = () => { if (items.length > 1) $('saveAll').click(); else $('dlPng').click(); };
 document.querySelectorAll('#steps button').forEach(b => b.onclick = () => showStep(b.dataset.go));
 showStep('frame');
 /* ---------- loading ---------- */
@@ -545,6 +624,7 @@ $('logoIn').onchange = async () => {
 $('logoDel').onclick = async () => { BR.logo = ''; await loadLogo(); syncBrandUI(); brandChanged(); };
 document.querySelectorAll('#tplSize button').forEach(b => b.onclick = () => { TPL.size = b.dataset.v; saveTpl(); renderTplGrid(); if (TPL.id) applyTemplate(false); });
 syncBrandUI();
+if (!BR.logo && !BR.phone && !BR.shop && !BR.social) $('brandMore').open = true;
 loadLogo().then(() => { renderTplGrid(); document.fonts.ready.then(renderTplGrid); });
 
 try {
@@ -590,7 +670,8 @@ add.onclick = () => $('photoIn').click(); st.appendChild(add);
 $('which').textContent = items.length > 1 ? `Poster ${cur+1} of ${items.length} — name for this photo` : '';
 $('dlAll').style.display = items.length > 1 ? '' : 'none';
 $('saveAll').style.display = items.length > 1 ? '' : 'none';
-$('saveAll').textContent = `⬇ Save all ${items.length} photos`;
+$('saveAll').textContent = `Save all ${items.length} photos`;
+$('saveMain').textContent = items.length > 1 ? `Save all ${items.length}` : 'Save';
 }
 async function addPhotos(files){
 if (busy) return;
