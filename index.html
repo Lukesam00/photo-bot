@@ -6,7 +6,8 @@
 <title>Photo Bot</title>
 <link rel="manifest" href="/manifest.webmanifest">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<meta name="theme-color" content="#4a0a2f">
+<meta name="theme-color" content="#fbfaf8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#120a0e" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -387,6 +388,38 @@ details.more .btn{margin-top:8px}
 .gate .pkg .per,.gate .pkg .cr small{color:#7a6470}
 .gate .pkg .badge{background:#ff7a0f;color:#3a0624}
 .gate .fine{color:#7a6470}
+/* ===== 3 TIMES dark mode: clean & minimal, follows the phone setting ===== */
+@media (prefers-color-scheme: dark){
+:root{--bg:#120a0e;--panel:#1a1015;--ink:#f3e8ee;--muted:#b9a3af;--line:#2e1f28;--accent:#f0c9dc;--accent2:#ffffff;--soft:#24161d;color-scheme:dark}
+body{background:var(--bg);color:var(--ink)}
+.stage,.card,.dvfonts button,.btn.ghost,.modal div,.steps button,.preset,.chips button,.sheet .box,.chatlist button,.tplgrid button,.preset.on,.tplgrid button.on,.dvfonts button.on,.credPill,.gateCard,.seg button.on,.pkg,.copy,.stat,.acard,.stkgrid button,.paybox,.admIn{background:var(--panel)!important;color:var(--ink);border-color:var(--line)}
+.stage,.card{box-shadow:none}
+.canvasBox,.tool,.drop,input[type=text],input[type=tel],input[type=password],input[type=number],textarea,select,.thumb.add,.gateCard input,.seg,.mini.no,.adm input,.payc .slip,.urow .av,.pkrow input,.slipimg,.chatlist button.on{background:var(--soft)!important;color:var(--ink);border-color:var(--line)}
+input::placeholder,textarea::placeholder{color:#8c7480}
+.tool.on,.installBtn,.adminBtn,.mini.ok,.chips button.on,.pkg .badge,.tag{background:var(--accent)!important;color:#1a0812!important}
+.btn:not(.ghost){background:var(--accent);color:#1a0812}
+.preset.on,.tplgrid button.on,.dvfonts button.on{border-color:var(--accent)!important;color:var(--accent)}
+.admWrap,.admHead,.admTabs{background:var(--bg)}
+.stat.alert{background:#2e1a10!important}.stat.alert .v{color:#ffb877}
+.credPill.low,.st.pending{background:#2e1a10!important;color:#ffb877}
+.st.rejected{background:#2e1214!important;color:#ff8a80}
+.gate{background:var(--bg);color:var(--ink)}
+.ttBrand{color:#f3e8ee}
+.eyebrow{color:#ff9a4d}.eyebrow i{background:#ff9a4d}
+.heroH{color:var(--ink)}.heroH em{color:var(--accent)}
+.heroP,.ticks span,.pkP,.gate .msg,.gate .fine,.gate .pkg .per,.gate .pkg .cr small{color:var(--muted)}
+.ticks span::before{border-color:#ff9a4d}
+.hbtn.pri{background:var(--accent);color:#1a0812}.hbtn.pri:hover{background:#fff}
+.hbtn.sec{color:var(--accent);border-color:var(--accent)}
+.gate .gateCard{background:var(--panel)!important;border-color:var(--line);box-shadow:none}
+.gate .gateCard input{background:var(--soft)!important;color:var(--ink)}
+.gate .gateCard input:focus{outline-color:var(--accent);background:var(--soft)!important}
+.gate .seg{background:var(--soft)!important}.gate .seg button{color:var(--muted)}
+.gate .seg button.on{background:var(--panel)!important;color:var(--accent);box-shadow:none}
+.gate .pkg{background:var(--panel)!important;border-color:var(--line);color:var(--ink)}
+.pkH{color:var(--ink)}
+.mock{box-shadow:0 24px 60px -12px rgba(0,0,0,.6)}
+}
 </style>
 </head>
 <body>
