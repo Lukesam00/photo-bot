@@ -1833,6 +1833,7 @@ draw();
   });
   async function showGate(){
     gate.style.display = '';
+    $('authMsg').textContent = ''; $('authPw').value = '';
     $('credPill').style.display = 'none';
     try { const {data} = await sb.from('photobot_settings').select('value').eq('key', 'contact').maybeSingle(); $('authContact').textContent = data && data.value ? ' on ' + data.value : ''; } catch(e){}
     await loadPackages().catch(() => {}); pkgCards($('gatePkgs'), false);
