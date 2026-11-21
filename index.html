@@ -426,6 +426,66 @@ html.ttdark .pkH{color:var(--ink)}
 html.ttdark .mock{box-shadow:0 24px 60px -12px rgba(0,0,0,.6)}
 .ttmode{display:inline-grid;place-items:center;width:38px;height:38px;flex:none;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;padding:0;margin-left:8px}
 .ttmode.float{position:fixed;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:60;margin:0}
+/* ===== match Input Tax Capture: sign-in cards and admin panel (works in light and dark) ===== */
+:root{--soft:#f3eef0;--on-accent:#fff;--warnsoft:#fff0e3;--warn:#b4470b;--bad:#b3261e;--goodsoft:#e3f2ea;--good:#1f7a4d}
+html.ttdark{--on-accent:#1a0812;--warnsoft:#2e1a10;--warn:#ffb877;--bad:#ff8a80;--goodsoft:#132a1f;--good:#7fd6a6}
+html:root .gate .gateCard{background:var(--panel)!important;border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:0 24px 48px -24px rgba(42,10,28,.25)}
+html:root .gate .gateCard input{background:var(--bg)!important;border:1px solid var(--line);border-radius:12px;color:var(--ink);font:400 16px Poppins}
+html:root .gate .gateCard input:focus{outline:0;border-color:var(--accent);background:var(--panel)!important}
+html:root .gate .seg,html:root .seg{background:var(--soft)!important;border-radius:999px;padding:3px}
+html:root .seg button{border-radius:999px;font:500 14px Poppins;color:var(--muted)}
+html:root .seg button.on{background:var(--panel)!important;color:var(--ink);box-shadow:0 0 0 1px var(--line)}
+html:root .hbtn{border-radius:999px;font:500 16px Poppins}
+html:root .hbtn.pri{background:var(--accent);color:var(--on-accent);border:0}
+html:root .hbtn.pri:hover{background:var(--accent2)}
+html.ttdark .hbtn.pri:hover{background:#fff}
+html:root .hbtn.sec{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+html:root .gate .pkg,html:root .pkg{background:var(--panel)!important;border:1px solid var(--line);border-radius:16px;box-shadow:none;padding:18px;color:var(--ink)}
+html:root .pkg.on{border:1.5px solid var(--accent)}
+html:root .pkg h4{font:500 15px Poppins}
+html:root .pkg .cr{font:500 26px Poppins;letter-spacing:-.6px}
+html:root .pkg .pr{font:500 14px Poppins}
+html:root .pkg .badge,html:root .gate .pkg .badge{background:var(--warnsoft)!important;color:var(--warn)!important;text-transform:none;letter-spacing:0;font:600 11px Poppins;padding:3px 10px}
+html:root .paybox{background:var(--bg);border:1px solid var(--line);border-radius:14px}
+html:root .paybox .ln{border-bottom-color:var(--line)}
+html:root .copy{background:var(--soft)!important;color:var(--accent);border-radius:999px}
+html:root .st{text-transform:none;font:500 11px Poppins;padding:3px 10px}
+html:root .st.pending{background:var(--warnsoft)!important;color:var(--warn)!important}
+html:root .st.approved{background:var(--goodsoft)!important;color:var(--good)!important}
+html:root .st.rejected{background:color-mix(in srgb,var(--bad) 12%,transparent)!important;color:var(--bad)!important}
+html:root .sheet .box{border-radius:20px 20px 0 0}
+html:root .sheet .box h3{font:500 18px Poppins}
+html:root .adminBtn{font:500 12px Poppins}
+html:root .admWrap,html:root .admHead{background:var(--bg)}
+html:root .admHead b{font:300 26px Poppins;letter-spacing:-.8px}
+html:root .admTabs{background:var(--bg);border-bottom:0;gap:6px;padding:6px 14px 10px;scrollbar-width:none}
+html:root .admTabs::-webkit-scrollbar{display:none}
+html:root .admTabs button{flex:none;border:1px solid var(--line);border-radius:999px;background:var(--panel);padding:8px 14px;font:500 14px Poppins;color:var(--muted);box-shadow:none}
+html:root .admTabs button.on{color:var(--accent);border-color:var(--accent);box-shadow:none}
+html:root .admTabs .dot{background:var(--warn);color:var(--on-accent)}
+html:root .admBody{max-width:1120px;padding:18px 16px 60px}
+html:root .stats{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+html:root .stat{background:var(--soft)!important;border:0;border-radius:16px;padding:16px 18px;box-shadow:none}
+html:root .stat .k{font:400 13px Poppins;color:var(--muted)}
+html:root .stat .v{font:500 26px Poppins;letter-spacing:-.6px}
+html:root .stat .s{font:300 12px Poppins}
+html:root .stat.alert{background:var(--warnsoft)!important}
+html:root .stat.alert .v{color:var(--warn)}
+html:root .acard{background:var(--panel)!important;border:1px solid var(--line);border-radius:20px;padding:20px 22px;box-shadow:none;margin-top:14px}
+html:root .acard h4{font:500 16px Poppins;margin-bottom:10px}
+html:root .payc .info .who,html:root .urow .g .n{font:500 15px Poppins}
+html:root .payc .info .amt,html:root .urow .c{font:500 18px Poppins}
+html:root .payc .slip{background:var(--soft)!important;border-radius:12px}
+html:root .mini{border-radius:999px;font:500 13px Poppins;padding:9px 14px}
+html:root .mini.ok{background:var(--accent)!important;color:var(--on-accent)!important}
+html:root .mini.no{background:transparent!important;border:1px solid var(--line);color:var(--bad)}
+html:root .adm input,html:root .admIn,html:root .pkrow input{background:var(--bg)!important;border:1px solid var(--line);border-radius:12px;color:var(--ink)}
+html:root .adm input:focus,html:root .admIn:focus,html:root .pkrow input:focus{outline:0;border-color:var(--accent)}
+html:root .urow{border-bottom-color:var(--line)}
+html:root .urow .av{background:var(--soft)!important;color:var(--accent);font:500 13px Poppins}
+html:root .tag{background:var(--soft)!important;color:var(--accent)!important;border-radius:999px;font:600 10px Poppins;text-transform:none;padding:2px 8px}
+html:root .hist .plus{color:var(--good)}html:root .hist .minus{color:var(--bad)}
+html:root .empty{font:300 13px Poppins}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
