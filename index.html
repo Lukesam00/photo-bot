@@ -598,6 +598,26 @@ html:root #addMsg{margin:10px 0 0}
 html:root #secUsers .acHead #uSearch{margin:0;max-width:280px;border-radius:999px;padding:10px 18px}
 html:root #uList .urow{padding:14px 6px}
 @media (max-width:640px){html:root #secUsers .acHead #uSearch{max-width:none;width:100%}html:root .admTitle h1{font-size:30px}}
+/* customers table like Input Tax Capture */
+.ctable{min-width:900px}
+.ctable td{vertical-align:middle}
+.cin{display:block;width:100%;min-width:120px;box-sizing:border-box;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:9px 11px;font:400 14px Poppins}
+.cin:focus{outline:0;border-color:var(--accent);background:var(--panel)}
+.cin.sub{margin-top:6px;border-color:transparent;background:transparent;padding:2px 11px;font:300 12px Poppins;color:var(--muted)}
+.cin.sub:hover,.cin.sub:focus{border-color:var(--line);background:var(--bg)}
+.cnote{font:400 12px Poppins;color:var(--muted);margin-top:4px;text-align:center}
+td .cnote{text-align:left}
+.ctable b{font:600 15px Poppins;font-variant-numeric:tabular-nums}
+.ctable b.zero{color:var(--bad)}
+.cacts{display:flex;flex-wrap:wrap;gap:6px;max-width:400px}
+html:root .cacts .mini{padding:8px 14px;font:500 13px Poppins;background:transparent!important;border:1px solid var(--line);color:var(--ink)}
+html:root .cacts .mini.ok{background:var(--accent)!important;border-color:var(--accent);color:var(--on-accent)!important}
+html:root .cacts .mini.no{color:var(--bad)}
+.cform{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;max-width:400px}
+.cform .cin{flex:1 1 140px;width:auto}
+html:root .cform .mini{padding:8px 14px;font:500 13px Poppins;border:1px solid var(--line);background:transparent!important;color:var(--ink)}
+html:root .cform .mini.ok{background:var(--accent)!important;color:var(--on-accent)!important;border-color:var(--accent)}
+.cmsg{font:400 12px Poppins;color:var(--muted);margin-top:6px;max-width:400px}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -2391,6 +2411,8 @@ draw();
         <div class="tblWrap"><table class="atable"><thead><tr><th>Date</th><th>Customer</th><th>Package</th><th class="n">Credits</th><th class="n">Amount</th><th>Approved</th></tr></thead><tbody id="salesBody"><tr><td colspan="6" class="empty">Loading sales…</td></tr></tbody></table></div></section>
       <section class="acard" id="secAdd"><div class="acHead"><h4>Add a customer</h4></div>
         <form class="addform" id="addForm" novalidate>
+          <label>Name<input class="admIn" id="addName" autocomplete="off"></label>
+          <label>Business<input class="admIn" id="addBiz" placeholder="Shop or company" autocomplete="off"></label>
           <label>Mobile number or email<input class="admIn" id="addLogin" placeholder="7xxxxxx" autocomplete="off"></label>
           <label>Password<input class="admIn" id="addPw" placeholder="At least 6 characters" autocomplete="off"></label>
           <label>Starting credits<input class="admIn" id="addCr" inputmode="numeric" placeholder="e.g. 10"></label>
@@ -2450,7 +2472,7 @@ draw();
     const b = $('addGo'); b.disabled = true; $('addMsg').textContent = 'Adding…';
     try {
       const {data: {session}} = await sb.auth.getSession();
-      const r = await fetch(SB_URL + '/functions/v1/photobot-admin-user', {method: 'POST', headers: {'content-type': 'application/json', apikey: SB_KEY, authorization: 'Bearer ' + (session ? session.access_token : SB_KEY)}, body: JSON.stringify({action: 'create', login, password: pw, credits, admin: isAdm})});
+      const r = await fetch(SB_URL + '/functions/v1/photobot-admin-user', {method: 'POST', headers: {'content-type': 'application/json', apikey: SB_KEY, authorization: 'Bearer ' + (session ? session.access_token : SB_KEY)}, body: JSON.stringify({action: 'create', login, password: pw, credits, admin: isAdm, name: $('addName').value, business: $('addBiz').value})});
       const j = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(j.error || 'Could not add the customer.');
       $('addMsg').textContent = `Added ${showId(j.email)} with ${credits} credit${credits === 1 ? '' : 's'}. Send them their login and password.`;
@@ -2535,17 +2557,87 @@ draw();
     if ($('uSearch').value !== userQ) $('uSearch').value = userQ;
     loadUsers();
   }
+  async function adminUserCall(body){
+    const {data: {session}} = await sb.auth.getSession();
+    const r = await fetch(SB_URL + '/functions/v1/photobot-admin-user', {method: 'POST', headers: {'content-type': 'application/json', apikey: SB_KEY, authorization: 'Bearer ' + (session ? session.access_token : SB_KEY)}, body: JSON.stringify(body)});
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error || 'Something went wrong. Try again.');
+    return j;
+  }
   async function loadUsers(){
     const {data, error} = await sb.rpc('photobot_admin_users', {p_search: userQ || null});
     const L = $('uList'); if (!L) return;
     if (error){ L.innerHTML = `<div class="empty">${esc(error.message)}</div>`; return; }
-    if (!data.length){ L.innerHTML = '<div class="empty">No users found.</div>'; return; }
     if ($('usersTitle')) $('usersTitle').textContent = `All customers · ${data.length}`;
-    L.innerHTML = data.map(u => `<div class="urow" data-u="${u.user_id}">
-      <div class="av">${esc(initials(u.email))}</div>
-      <div class="g"><div class="n">${esc(showId(u.email))}${u.is_admin ? '<span class="tag">Admin</span>' : ''}${(u.email || '').endsWith(OLD_DOM) ? '<span class="tag" style="background:#9ca3af">input-tax login</span>' : ''}</div><div class="m">${u.posters} posters · ${mvr(u.paid_mvr)} paid · joined ${fmtDay(u.created_at)}</div></div>
-      <div class="c">${u.credits}<small>credits</small></div></div>`).join('');
-    L.querySelectorAll('.urow').forEach(r => r.onclick = () => openUser(r.dataset.u));
+    if (!data.length){ L.innerHTML = '<div class="empty">No customers found.</div>'; return; }
+    const self = PB.me ? PB.me.user_id : null;
+    L.innerHTML = `<div class="tblWrap"><table class="atable ctable"><thead><tr><th>Name</th><th>Mobile or email</th><th class="n">Posters</th><th class="n">Credits</th><th>Status</th><th>Actions</th></tr></thead><tbody>` +
+      data.map(u => {
+        const me = u.user_id === self, shared = (u.email || '').endsWith(OLD_DOM);
+        return `<tr data-u="${u.user_id}">
+        <td><input class="cin" data-f="name" value="${esc(u.name || '')}" placeholder="Name" aria-label="Name"><input class="cin sub" data-f="business" value="${esc(u.business || '')}" placeholder="Business" aria-label="Business"></td>
+        <td><input class="cin" data-f="login" value="${esc(showId(u.email))}" aria-label="Mobile or email">${shared ? '<div class="cnote">Shared with Input Tax</div>' : ''}</td>
+        <td class="n">${u.posters}</td>
+        <td class="n"><b class="${u.credits <= 0 ? 'zero' : ''}">${u.credits}</b></td>
+        <td><span class="st ${u.blocked ? 'rejected' : 'approved'}">${u.blocked ? 'Blocked' : 'Active'}</span>${u.is_admin ? '<div class="cnote">Admin</div>' : ''}</td>
+        <td><div class="cacts">
+          <button class="mini ok" data-a="credits" type="button">Add credits</button>
+          <button class="mini" data-a="history" type="button">Credit history</button>
+          <button class="mini" data-a="pw" type="button">Reset password</button>
+          ${me ? '' : `<button class="mini" data-a="block" type="button">${u.blocked ? 'Unblock' : 'Block'}</button><button class="mini no" data-a="delete" type="button">Delete</button>`}
+        </div><div class="cform" hidden></div><div class="msg cmsg"></div></td></tr>`;
+      }).join('') + '</tbody></table></div>';
+    L.querySelectorAll('tbody tr').forEach(tr => {
+      const uid = tr.dataset.u, u = data.find(x => x.user_id === uid), msg = tr.querySelector('.cmsg'), form = tr.querySelector('.cform');
+      const say = (t) => { msg.textContent = t; };
+      const saveInfo = async () => {
+        const nm = tr.querySelector('[data-f=name]').value, bz = tr.querySelector('[data-f=business]').value;
+        if ((nm || '') === (u.name || '') && (bz || '') === (u.business || '')) return;
+        const {error} = await sb.rpc('photobot_admin_set_info', {p_user: uid, p_name: nm, p_business: bz});
+        if (error) say(error.message); else { u.name = nm; u.business = bz; say('Saved.'); setTimeout(() => say(''), 1500); }
+      };
+      tr.querySelectorAll('[data-f=name],[data-f=business]').forEach(i => { i.onchange = saveInfo; i.onkeydown = e => { if (e.key === 'Enter') i.blur(); }; });
+      const li = tr.querySelector('[data-f=login]');
+      li.onkeydown = e => { if (e.key === 'Enter') li.blur(); };
+      li.onchange = async () => {
+        if (li.value.trim() === showId(u.email)) return;
+        say('Saving login…');
+        try { const j = await adminUserCall({action: 'login', user_id: uid, login: li.value}); u.email = j.email; li.value = showId(j.email); say('Login updated. They now sign in with ' + showId(j.email) + '.'); }
+        catch(e){ li.value = showId(u.email); say(e.message); }
+      };
+      const openForm = (html, wire) => { if (!form.hidden && form.dataset.k === html.slice(0, 20)){ form.hidden = true; return; } form.innerHTML = html; form.dataset.k = html.slice(0, 20); form.hidden = false; wire(); };
+      tr.querySelector('[data-a=credits]').onclick = () => openForm(
+        `<input class="cin" type="number" inputmode="numeric" placeholder="Credits, e.g. 10 or -5"><input class="cin" placeholder="Reason (optional)"><button class="mini ok" type="button">Save</button>`,
+        () => { const [n, r] = form.querySelectorAll('input'); n.focus(); form.querySelector('button').onclick = async () => {
+          const v = parseInt(n.value, 10); if (!v){ say('Enter a number like 10 or -5.'); return; }
+          const {data: total, error} = await sb.rpc('photobot_admin_user_credits', {p_user: uid, p_credits: v, p_reason: r.value});
+          if (error){ say(error.message); return; }
+          tr.querySelector('td.n b').textContent = total; tr.querySelector('td.n b').classList.toggle('zero', total <= 0); u.credits = total;
+          form.hidden = true; say(`Done: now ${total} credits.`); if (uid === self) refreshMe().catch(() => {});
+        }; });
+      tr.querySelector('[data-a=history]').onclick = () => openUser(uid);
+      tr.querySelector('[data-a=pw]').onclick = () => openForm(
+        `<input class="cin" placeholder="New password (6+ characters)" autocomplete="off"><button class="mini" type="button" data-g>Suggest</button><button class="mini ok" type="button" data-s>Reset</button>`,
+        () => { const i = form.querySelector('input'); i.focus();
+          form.querySelector('[data-g]').onclick = () => { const a = 'abcdefghjkmnpqrstuvwxyz23456789'; let x = ''; const r = new Uint32Array(8); crypto.getRandomValues(r); r.forEach(k => x += a[k % a.length]); i.value = x; };
+          form.querySelector('[data-s]').onclick = async () => { const pw = i.value.trim(); if (pw.length < 6){ say('Password must be at least 6 characters.'); return; }
+            try { await adminUserCall({action: 'password', user_id: uid, password: pw}); form.hidden = true; say('Password reset. Send them their new password: ' + pw); } catch(e){ say(e.message); } };
+        });
+      const bb = tr.querySelector('[data-a=block]');
+      if (bb) bb.onclick = async () => {
+        bb.disabled = true;
+        try { const j = await adminUserCall({action: u.blocked ? 'unblock' : 'block', user_id: uid}); u.blocked = j.blocked; bb.textContent = u.blocked ? 'Unblock' : 'Block';
+          const st = tr.querySelector('.st'); st.className = 'st ' + (u.blocked ? 'rejected' : 'approved'); st.textContent = u.blocked ? 'Blocked' : 'Active'; say(u.blocked ? 'Blocked: they can no longer sign in.' : 'Unblocked.'); }
+        catch(e){ say(e.message); } finally { bb.disabled = false; }
+      };
+      const db = tr.querySelector('[data-a=delete]');
+      if (db) db.onclick = async () => {
+        if (!db.dataset.sure){ db.dataset.sure = '1'; db.textContent = 'Tap again to delete'; say(shared ? 'This removes their Photo Bot account and credits. Their Input Tax login stays.' : 'This permanently deletes the customer, their credits and payment history.'); setTimeout(() => { if (db.isConnected){ delete db.dataset.sure; db.textContent = 'Delete'; } }, 5000); return; }
+        db.disabled = true; say('Deleting…');
+        try { await adminUserCall({action: 'delete', user_id: uid}); tr.remove(); const c = L.querySelectorAll('tbody tr').length; if ($('usersTitle')) $('usersTitle').textContent = `All customers · ${c}`; }
+        catch(e){ db.disabled = false; say(e.message); }
+      };
+    });
   }
   async function openUser(uid){
     ASB.innerHTML = '<div class="empty">Loading…</div>'; AS.classList.add('show');
