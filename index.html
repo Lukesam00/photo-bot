@@ -2579,6 +2579,9 @@ draw();
     gate.style.display = '';
     $('authMsg').textContent = ''; $('authPw').value = '';
     $('heroBtns').style.display = ''; $('authForm').style.display = 'none';
+    // returning customers (already have an account on this device) go straight to the sign-in form
+    let known = ''; try { known = localStorage.getItem('photobot.acct') || ''; } catch(e){}
+    if (known){ $('authForm').style.display = ''; document.querySelector('#authSeg button[data-m=in]').click(); if (known !== '1' && !$('authId').value) $('authId').value = known; setTimeout(() => ($('authId').value ? $('authPw') : $('authId')).focus(), 80); }
     $('credPill').style.display = 'none'; $('adminBtn').style.display = 'none'; $('adminPanel').style.display = 'none';
     try { const {data} = await sb.from('photobot_settings').select('value').eq('key', 'contact').maybeSingle(); $('authContact').textContent = data && data.value ? ' on ' + data.value : ''; } catch(e){}
     await loadPackages().catch(() => {}); pkgCards($('gatePkgs'), false);
@@ -2600,6 +2603,7 @@ draw();
         const j = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(j.error || 'Could not create account');
         PB.pendingInfo = null;
+        try { localStorage.setItem('photobot.acct', phone); } catch(e){}
         if (j.pending){
           document.querySelector('#authSeg button[data-m=in]').click();
           $('authId').value = phone; $('authPw').value = ''; $('authPw2').value = '';
@@ -2612,6 +2616,7 @@ draw();
       }
       if (r.error) throw r.error;
       if (!r.data.session){ $('authMsg').textContent = 'Check your email to confirm, then sign in.'; return; }
+      try { localStorage.setItem('photobot.acct', phone || $('authId').value.trim() || '1'); } catch(e){}
       await afterLogin();
       if (PB.me) notifyEvent({event: 'signed_in'});
     } catch(e){ $('authMsg').textContent = niceErr(e.message || String(e)); }
@@ -2691,6 +2696,7 @@ draw();
     const {data} = await sb.from('photobot_settings').select('key,value'); PB.settings = Object.fromEntries((data || []).map(r => [r.key, r.value]));
     await loadPackages().catch(() => {});
     gate.style.display = 'none';
+    try { if (!localStorage.getItem('photobot.acct')) localStorage.setItem('photobot.acct', '1'); } catch(e){}
     const admin = !!PB.me.is_admin;
     $('adminBtn').style.display = admin ? '' : 'none';
     $('hdWho').textContent = PB.me.name || showId(PB.me.email); $('hdPw').style.display = ''; $('hdOut').style.display = '';
