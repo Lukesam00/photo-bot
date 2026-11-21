@@ -486,6 +486,32 @@ html:root .urow .av{background:var(--soft)!important;color:var(--accent);font:50
 html:root .tag{background:var(--soft)!important;color:var(--accent)!important;border-radius:999px;font:600 10px Poppins;text-transform:none;padding:2px 8px}
 html:root .hist .plus{color:var(--good)}html:root .hist .minus{color:var(--bad)}
 html:root .empty{font:300 13px Poppins}
+/* ===== sign-in page laid out like Input Tax Capture ===== */
+html:root .pkg{padding:24px 22px;display:grid;gap:4px;align-content:start}
+html:root .pkg h4{font:500 17px Poppins;letter-spacing:.01em;margin:0 0 6px}
+html:root .pkg .price{font:500 36px/1.1 Poppins;letter-spacing:-.8px;color:var(--ink)}
+html:root .pkg .price small{font:500 14px Poppins;color:var(--muted);margin-right:6px;letter-spacing:0}
+html:root .pkg .crl{font:600 14px Poppins;margin-top:8px}
+html:root .pkg .per{font:300 12px Poppins;color:var(--muted)}
+html:root .pkg .badge,html:root .gate .pkg .badge{position:absolute;top:-11px;left:16px;right:auto;border-radius:999px}
+html:root .pkg.hl{border-color:var(--accent)}
+html:root .gate .pkgs{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:16px;max-width:1000px;margin:0 auto;padding-top:12px}
+html:root .pkH{text-align:center;font:500 26px Poppins;letter-spacing:-.4px;margin:56px 0 8px}
+html:root .pkP{text-align:center;max-width:52ch;margin:0 auto 22px;font:300 15px/1.7 Poppins}
+html:root .gate .fine{text-align:center}
+.credit{text-align:center;font:300 13px Poppins;color:var(--muted);border-top:1px solid var(--line);margin:48px -22px 0;padding:24px 0 8px}
+.credit b{color:var(--ink);font-weight:600}.credit span{color:#e0245e}
+@media (min-width:900px){
+  html:root .gate .gateIn{max-width:1120px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);column-gap:56px;align-items:start;padding-top:44px}
+  html:root .gate .gateIn > *{grid-column:1}
+  html:root .gate .gateIn > .mock{grid-column:2;grid-row:1 / span 7;align-self:center;width:72%;max-width:340px;margin:24px auto}
+  html:root .gate .gateIn > .pkH,html:root .gate .gateIn > .pkP,html:root .gate .gateIn > .pkgs,html:root .gate .gateIn > .fine,html:root .gate .gateIn > .credit{grid-column:1 / -1}
+  html:root .gate #heroBtns{display:flex;gap:10px;flex-wrap:wrap}
+  html:root .gate #heroBtns .hbtn{width:auto;min-width:170px;padding:14px 26px}
+  html:root .gate .gateCard{max-width:440px}
+  html:root .heroH{font-size:46px}
+  .credit{margin:56px 0 0}
+}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -701,10 +727,11 @@ m.addEventListener&&m.addEventListener('change',function(){ttApply();window.ttPa
 <div class="mockDv">ރޯޒް ޕާފިއުމް</div>
 <div class="mockBar"><span>☎ 7xx xxxx</span><span>@yourshop</span></div>
 </div>
-<h2 class="pkH">Credit packages</h2>
-<p class="pkP">1 credit = 1 finished poster. Editing is free.</p>
+<h2 class="pkH">Pricing</h2>
+<p class="pkP">Credits are used as posters are saved: 1 credit per finished poster, editing is free. Sign in to buy a package by bank transfer.</p>
 <div class="pkgs" id="gatePkgs"></div>
 <p class="fine">Pay by bank transfer and upload the slip — credits are added once approved.</p>
+<p class="credit">Crafted by <b>SaM</b> With <span aria-label="love">♥</span></p>
 </div>
 </div>
 <div id="adminPanel" class="admWrap" style="display:none">
@@ -2060,13 +2087,16 @@ draw();
     const best = PB.packages.reduce((b, p) => (!b || p.credits/p.price_mvr > b.credits/b.price_mvr) ? p : b, null);
     if (!selectable){
       const f = document.createElement('div'); f.className = 'pkg';
-      f.innerHTML = `<h4>Free</h4><div class="cr">5<small>credits</small></div><div class="pr">MVR 0</div><div class="per">when you sign up</div>`;
+      f.innerHTML = `<h4>Free</h4><div class="price"><small>MVR</small>0</div><div class="crl">5 credits · 5 posters</div><div class="per">When you sign up</div>`;
       box.appendChild(f);
     }
     PB.packages.forEach(p => {
       const b = document.createElement(selectable ? 'button' : 'div'); b.className = 'pkg';
       const per = (p.price_mvr / p.credits).toFixed(2);
-      b.innerHTML = `${p.name === 'Pro' ? '<span class="badge">Popular</span>' : (best && best.id === p.id && PB.packages.length > 1 ? '<span class="badge">Best value</span>' : '')}<h4>${esc(p.name)}</h4><div class="cr">${p.credits}<small>credits</small></div><div class="pr">${mvr(p.price_mvr)}</div><div class="per">MVR ${per} per poster</div>`;
+      const tag = p.name === 'Pro' ? 'Popular' : (best && best.id === p.id && PB.packages.length > 1 ? 'Best value' : '');
+      if (tag) b.classList.add('hl');
+      const nf = n => Number(n).toLocaleString('en-US', { maximumFractionDigits: 2 });
+      b.innerHTML = `${tag ? '<span class="badge">' + tag + '</span>' : ''}<h4>${esc(p.name)}</h4><div class="price"><small>MVR</small>${nf(p.price_mvr)}</div><div class="crl">${nf(p.credits)} credits · ${nf(p.credits)} posters</div><div class="per">MVR ${per} per poster</div>`;
       if (selectable) b.onclick = () => { [...box.children].forEach(x => x.classList.remove('on')); b.classList.add('on'); onPick(p); };
       box.appendChild(b);
     });
