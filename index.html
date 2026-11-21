@@ -512,6 +512,20 @@ html:root .gate .fine{text-align:center}
   html:root .heroH{font-size:46px}
   .credit{margin:56px 0 0}
 }
+/* ===== admin sign-in page (matches Input Tax Capture) ===== */
+.admGate{display:block}
+.admGateIn{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:max(32px,env(safe-area-inset-top)) 18px 24px;box-sizing:border-box}
+html:root .gate .admCard{width:100%;max-width:420px;box-sizing:border-box;padding:32px 30px;border-radius:24px;display:grid;gap:14px;margin:auto 0 0}
+.admBadge{justify-self:start;display:inline-flex;align-items:center;gap:7px;background:var(--soft);color:var(--accent);border-radius:999px;padding:6px 14px;font:600 13px Poppins}
+.admCard h1{margin:4px 0 0;font:500 28px/1.15 Poppins;letter-spacing:-.6px;color:var(--ink)}
+.admCard .sub{margin:-6px 0 4px;font:300 15px/1.6 Poppins;color:var(--muted)}
+.admCard label{display:grid;gap:8px;font:400 14px Poppins;color:var(--ink)}
+html:root .gate .admCard input{margin:0;padding:14px}
+html:root .gate .admCard .hbtn{margin-top:6px}
+.admCard .msg{min-height:0;font:400 13px Poppins;color:var(--bad)}
+.admSwitch{margin:10px 0 0;font:300 14px Poppins;color:var(--muted)}
+.admSwitch a{color:var(--accent);font-weight:600;text-underline-offset:3px}
+.admGateIn .credit{width:100%;max-width:1120px;margin-top:auto}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -731,6 +745,21 @@ m.addEventListener&&m.addEventListener('change',function(){ttApply();window.ttPa
 <p class="pkP">Credits are used as posters are saved: 1 credit per finished poster, editing is free. Sign in to buy a package by bank transfer.</p>
 <div class="pkgs" id="gatePkgs"></div>
 <p class="fine">Pay by bank transfer and upload the slip — credits are added once approved.</p>
+<p class="credit">Crafted by <b>SaM</b> With <span aria-label="love">♥</span></p>
+</div>
+</div>
+<div id="admGate" class="gate admGate" style="display:none">
+<div class="admGateIn">
+<div class="gateCard admCard">
+<span class="admBadge"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Admin only</span>
+<h1>Admin sign in</h1>
+<p class="sub">Manage users, credits, payments and packages.</p>
+<label for="admId">Mobile number or email<input type="text" id="admId" autocomplete="username" placeholder="7xxxxxx"></label>
+<label for="admPw">Password<input type="password" id="admPw" autocomplete="current-password" placeholder="Password"></label>
+<button class="hbtn pri" id="admGo">Sign in</button>
+<div class="msg" id="admMsg" role="status"></div>
+<p class="admSwitch">Not an admin? <a href="/">Go to customer sign in</a></p>
+</div>
 <p class="credit">Crafted by <b>SaM</b> With <span aria-label="love">♥</span></p>
 </div>
 </div>
@@ -2438,9 +2467,48 @@ draw();
   }
   PB.openAccount = openAccount;
 
+  /* ---- admin sign-in page (/admin), like Input Tax Capture ---- */
+  const ADMIN_PAGE = location.pathname.replace(/\/+$/, '') === '/admin';
+  if (ADMIN_PAGE) document.title = 'Admin sign in · Photo Bot';
+  const admGate = $('admGate');
+  function showAdminGate(msg){
+    gate.style.display = 'none'; admGate.style.display = '';
+    $('adminPanel').style.display = 'none'; $('credPill').style.display = 'none'; $('adminBtn').style.display = 'none';
+    $('admPw').value = ''; $('admMsg').textContent = msg || '';
+  }
+  async function enterAdmin(){
+    await afterLogin();
+    if (!PB.me || !PB.me.is_admin){
+      await sb.auth.signOut().catch(() => {});
+      showAdminGate('This login is not an admin. Customers sign in on the main page.');
+      return false;
+    }
+    admGate.style.display = 'none'; openAdmin('ov'); return true;
+  }
+  $('admGo').onclick = async () => {
+    const raw = $('admId').value, id = toLogin(raw), pw = $('admPw').value;
+    if (!id || !pw){ $('admMsg').textContent = 'Enter your mobile number or email and password.'; return; }
+    $('admGo').disabled = true; $('admMsg').textContent = 'Signing in…';
+    try {
+      let r = await sb.auth.signInWithPassword({email: id, password: pw});
+      const phone = phoneOf(raw);
+      if (r.error && phone){ const r2 = await sb.auth.signInWithPassword({email: phone + OLD_DOM, password: pw}); if (!r2.error) r = r2; }
+      if (r.error) throw r.error;
+      $('admMsg').textContent = '';
+      await enterAdmin();
+    } catch(e){ $('admMsg').textContent = niceErr(e.message || String(e)); }
+    finally { $('admGo').disabled = false; }
+  };
+  $('admPw').addEventListener('keydown', e => { if (e.key === 'Enter') $('admGo').click(); });
+  if (ADMIN_PAGE) showGate = async function(){ showAdminGate(); };
+
   /* ---- start ---- */
   (async () => {
     const {data: {session}} = await sb.auth.getSession();
+    if (ADMIN_PAGE){
+      if (session){ try { await enterAdmin(); return; } catch(e){ /* expired */ } }
+      showAdminGate(); return;
+    }
     if (session){ try { await afterLogin(); return; } catch(e){ /* expired */ } }
     showGate();
   })();
