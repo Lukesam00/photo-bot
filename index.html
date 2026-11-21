@@ -643,6 +643,7 @@ html:root .authPanel .hbtn{margin:4px 0 0;width:100%}
 .authLink{border:0;background:none;padding:0;font:600 14px Poppins;color:var(--accent);cursor:pointer}
 .authLink:hover{text-decoration:underline;text-underline-offset:3px}
 @media (min-width:900px){html:root .gate .gateIn > .authBoard{grid-column:auto}}
+.authPanel .msg.ok{color:var(--good)}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -2288,7 +2289,7 @@ draw();
   $('authGo').onclick = async () => {
     const id = toLogin($('authId').value), pw = $('authPw').value;
     if (!id || !pw){ $('authMsg').textContent = 'Enter your phone/email and password.'; return; }
-    $('authGo').disabled = true; $('authMsg').textContent = mode === 'in' ? 'Signing in…' : 'Creating account…';
+    $('authGo').disabled = true; $('authMsg').classList.remove('ok'); $('authMsg').textContent = mode === 'in' ? 'Signing in…' : 'Creating account…';
     try {
       const phone = phoneOf($('authId').value);
       let r;
@@ -2297,9 +2298,16 @@ draw();
         // older accounts made in the input-tax app use a different address for the same phone number
         if (r.error && phone) { const r2 = await sb.auth.signInWithPassword({email: phone + OLD_DOM, password: pw}); if (!r2.error) r = r2; }
       } else if (phone){
-        const res = await fetch(SB_URL + '/functions/v1/photobot-signup', {method: 'POST', headers: {'content-type': 'application/json', apikey: SB_KEY, authorization: 'Bearer ' + SB_KEY}, body: JSON.stringify({phone, password: pw})});
+        const res = await fetch(SB_URL + '/functions/v1/photobot-signup', {method: 'POST', headers: {'content-type': 'application/json', apikey: SB_KEY, authorization: 'Bearer ' + SB_KEY}, body: JSON.stringify({phone, password: pw, name: $('authName').value.trim(), business: $('authBiz').value.trim()})});
         const j = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(j.error || 'Could not create account');
+        PB.pendingInfo = null;
+        if (j.pending){
+          document.querySelector('#authSeg button[data-m=in]').click();
+          $('authId').value = phone; $('authPw').value = ''; $('authPw2').value = '';
+          $('authMsg').classList.add('ok'); $('authMsg').textContent = "Account created. You can sign in as soon as it's approved. We'll let you know.";
+          return;
+        }
         r = await sb.auth.signInWithPassword({email: j.email, password: pw});
       } else {
         r = await sb.auth.signUp({email: id, password: pw});
@@ -2307,6 +2315,7 @@ draw();
       if (r.error) throw r.error;
       if (!r.data.session){ $('authMsg').textContent = 'Check your email to confirm, then sign in.'; return; }
       await afterLogin();
+      if (PB.me) notifyEvent({event: 'signed_in'});
     } catch(e){ $('authMsg').textContent = niceErr(e.message || String(e)); }
     finally { $('authGo').disabled = false; }
   };
@@ -2356,8 +2365,25 @@ draw();
     p.style.display = ''; p.textContent = `${c} credit${c === 1 ? '' : 's'}`; p.classList.toggle('low', c < 3);
   }
   async function refreshMe(){ const {data, error} = await sb.rpc('photobot_me'); if (error) throw error; PB.me = data; pill(); return data; }
+  async function notifyEvent(body){
+    try {
+      const {data: {session}} = await sb.auth.getSession(); if (!session) return;
+      await fetch(SB_URL + '/functions/v1/photobot-notify', {method: 'POST', headers: {'content-type': 'application/json', apikey: SB_KEY, authorization: 'Bearer ' + session.access_token}, body: JSON.stringify(body)});
+    } catch(e){ /* alerts never block the app */ }
+  }
   async function afterLogin(){
     await refreshMe();
+    if (PB.me && (PB.me.approved === false || PB.me.blocked) && !PB.me.is_admin){
+      const waiting = PB.me.approved === false;
+      await sb.auth.signOut().catch(() => {});
+      PB.me = null;
+      setTimeout(() => {
+        $('authForm').style.display = ''; document.querySelector('#authSeg button[data-m=in]').click();
+        $('authMsg').classList.remove('ok');
+        $('authMsg').textContent = waiting ? "Your account is waiting for approval. You can sign in as soon as it's approved." : 'This login has been blocked. Contact us for help.';
+      }, 60);
+      return;
+    }
     if (PB.pendingInfo){ const pi = PB.pendingInfo; PB.pendingInfo = null; await sb.rpc('photobot_set_my_info', {p_name: pi.name, p_business: pi.business}).catch(() => {}); }
     const {data} = await sb.from('photobot_settings').select('key,value'); PB.settings = Object.fromEntries((data || []).map(r => [r.key, r.value]));
     await loadPackages().catch(() => {});
@@ -2435,12 +2461,13 @@ draw();
         const path = `${PB.me.user_id}/${Date.now()}.${ext}`;
         const up = await sb.storage.from('photobot-slips').upload(path, f, {contentType: f.type || 'image/jpeg', upsert: false});
         if (up.error) throw up.error;
-        const {error} = await sb.rpc('photobot_request_topup', {p_package: p.id, p_slip: path});
+        const {data: topupId, error} = await sb.rpc('photobot_request_topup', {p_package: p.id, p_slip: path});
         if (error) throw error;
+        notifyEvent({event: 'topup', id: topupId});
         $('acPay').innerHTML = `<div class="paybox" style="background:#dcfce7">Slip received ✓ Your ${p.credits} credits will be added once the payment is approved.</div>`;
         loadMine();
       } catch(e){
-        $('acPayMsg').textContent = /TOO_MANY_PENDING/.test(e.message) ? 'You already have 3 payments waiting for approval.' : 'Upload failed: ' + e.message;
+        $('acPayMsg').textContent = /TOO_MANY_PENDING/.test(e.message) ? 'You already have 3 payments waiting for approval.' : /NOT_APPROVED/.test(e.message) ? 'Your account is waiting for approval.' : 'Upload failed: ' + e.message;
         $('acUp').disabled = false;
       }
     };
@@ -2639,11 +2666,13 @@ draw();
     return j;
   }
   async function loadUsers(){
-    const {data, error} = await sb.rpc('photobot_admin_users', {p_search: userQ || null});
+    const {data, error} = await sb.rpc('photobot_admin_users_v2', {p_search: userQ || null});
     const L = $('uList'); if (!L) return;
     if (error){ L.innerHTML = `<div class="empty">${esc(error.message)}</div>`; return; }
-    if ($('usersTitle')) $('usersTitle').textContent = `All customers · ${data.length}`;
+    const waitingN = data.filter(u => u.approved === false).length;
+    if ($('usersTitle')) $('usersTitle').textContent = `All customers · ${data.length}` + (waitingN ? ` · ${waitingN} waiting for approval` : '');
     if (!data.length){ L.innerHTML = '<div class="empty">No customers found.</div>'; return; }
+    window.updateWaiting = () => { const n = L.querySelectorAll('.st.pending').length; $('usersTitle').textContent = `All customers · ${L.querySelectorAll('tbody tr').length}` + (n ? ` · ${n} waiting for approval` : ''); };
     const self = PB.me ? PB.me.user_id : null;
     L.innerHTML = `<div class="tblWrap"><table class="atable ctable"><thead><tr><th>Name</th><th>Mobile or email</th><th class="n">Posters</th><th class="n">Credits</th><th>Status</th><th>Actions</th></tr></thead><tbody>` +
       data.map(u => {
@@ -2653,9 +2682,9 @@ draw();
         <td><input class="cin" data-f="login" value="${esc(showId(u.email))}" aria-label="Mobile or email">${shared ? '<div class="cnote">Shared with Input Tax</div>' : ''}</td>
         <td class="n">${u.posters}</td>
         <td class="n"><b class="${u.credits <= 0 ? 'zero' : ''}">${u.credits}</b></td>
-        <td><span class="st ${u.blocked ? 'rejected' : 'approved'}">${u.blocked ? 'Blocked' : 'Active'}</span>${u.is_admin ? '<div class="cnote">Admin</div>' : ''}</td>
+        <td><span class="st ${u.approved === false ? 'pending' : u.blocked ? 'rejected' : 'approved'}">${u.approved === false ? 'Waiting' : u.blocked ? 'Blocked' : 'Active'}</span>${u.is_admin ? '<div class="cnote">Admin</div>' : ''}</td>
         <td><div class="cacts">
-          <button class="mini ok" data-a="credits" type="button">Add credits</button>
+          ${u.approved === false ? '<button class="mini ok" data-a="approve" type="button">Approve</button>' : ''}<button class="mini ${u.approved === false ? '' : 'ok'}" data-a="credits" type="button">Add credits</button>
           <button class="mini" data-a="history" type="button">Credit history</button>
           <button class="mini" data-a="pw" type="button">Reset password</button>
           ${me ? '' : `<button class="mini" data-a="block" type="button">${u.blocked ? 'Unblock' : 'Block'}</button><button class="mini no" data-a="delete" type="button">Delete</button>`}
@@ -2690,6 +2719,14 @@ draw();
           form.hidden = true; say(`Done: now ${total} credits.`); if (uid === self) refreshMe().catch(() => {});
         }; });
       tr.querySelector('[data-a=history]').onclick = () => openUser(uid);
+      const ab = tr.querySelector('[data-a=approve]');
+      if (ab) ab.onclick = async () => {
+        ab.disabled = true;
+        const {error} = await sb.rpc('photobot_admin_approve_user', {p_user: uid});
+        if (error){ ab.disabled = false; say(error.message); return; }
+        u.approved = true; ab.remove(); tr.querySelector('[data-a=credits]').classList.add('ok');
+        const st = tr.querySelector('.st'); st.className = 'st approved'; st.textContent = 'Active'; say('Approved: they can sign in now.'); window.updateWaiting && window.updateWaiting();
+      };
       tr.querySelector('[data-a=pw]').onclick = () => openForm(
         `<input class="cin" placeholder="New password (6+ characters)" autocomplete="off"><button class="mini" type="button" data-g>Suggest</button><button class="mini ok" type="button" data-s>Reset</button>`,
         () => { const i = form.querySelector('input'); i.focus();
@@ -2858,7 +2895,7 @@ draw();
       if (r.error && phone){ const r2 = await sb.auth.signInWithPassword({email: phone + OLD_DOM, password: pw}); if (!r2.error) r = r2; }
       if (r.error) throw r.error;
       $('admMsg').textContent = '';
-      await enterAdmin();
+      if (await enterAdmin()) notifyEvent({event: 'signed_in'});
     } catch(e){ $('admMsg').textContent = niceErr(e.message || String(e)); }
     finally { $('admGo').disabled = false; }
   };
