@@ -561,9 +561,12 @@ html:root .chips button.on{background:var(--panel)!important;color:var(--ink)!im
 html:root #uSearch{border-radius:999px;padding:11px 18px;max-width:320px;margin:0 0 14px}
 html:root .lst .it,html:root .hist .it{font:400 14px Poppins;padding:12px 0}
 @media (max-width:640px){.admTitle h1{font-size:30px}.admPage{padding-top:24px}.admWho{display:none}html:root .admTabs{top:58px}}
+/* the /admin page is admin only: no poster editor */
+html.admpage body > header,html.admpage body > .wrap,html.admpage #authGate,html.admpage #admClose,html.admpage #adminBtn,html.admpage #credPill{display:none!important}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
+if(/^\/admin\/?$/.test(location.pathname))document.documentElement.classList.add('admpage');
 (function(){var r=document.documentElement,m=matchMedia('(prefers-color-scheme: dark)'),k='tt-theme';
 function pick(){var v=null;try{v=localStorage.getItem(k)}catch(e){}return v==='dark'||(v!=='light'&&m.matches)}
 window.ttApply=function(){r.classList.toggle('ttdark',pick())};ttApply();
@@ -2513,6 +2516,7 @@ draw();
 
   /* ---- admin sign-in page (/admin), like Input Tax Capture ---- */
   const ADMIN_PAGE = location.pathname.replace(/\/+$/, '') === '/admin';
+  if (ADMIN_PAGE) document.documentElement.classList.add('admpage');
   if (ADMIN_PAGE) document.title = 'Admin sign in · Photo Bot';
   const admGate = $('admGate');
   function showAdminGate(msg){
