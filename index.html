@@ -618,6 +618,30 @@ html:root .cacts .mini.no{color:var(--bad)}
 html:root .cform .mini{padding:8px 14px;font:500 13px Poppins;border:1px solid var(--line);background:transparent!important;color:var(--ink)}
 html:root .cform .mini.ok{background:var(--accent)!important;color:var(--on-accent)!important;border-color:var(--accent)}
 .cmsg{font:400 12px Poppins;color:var(--muted);margin-top:6px;max-width:400px}
+/* ===== sign-in / create-account card (like Input Tax Capture) ===== */
+.authBoard{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));background:rgba(42,10,28,.45);overflow-y:auto}
+html.ttdark .authBoard{background:rgba(0,0,0,.6)}
+.authPanel{position:relative;width:100%;max-width:380px;box-sizing:border-box;background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:28px 26px 24px;display:grid;gap:14px;box-shadow:0 24px 48px -24px rgba(42,10,28,.35);color:var(--ink);text-align:left}
+.authX{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--muted);display:grid;place-items:center;cursor:pointer;padding:0}
+.authX:hover{color:var(--accent);border-color:var(--accent)}
+.authPanel h2{margin:0;padding-right:44px;font:500 27px/1.15 Poppins;letter-spacing:-.6px;color:var(--ink)}
+.authSub{margin:-8px 0 2px;font:300 15px/1.6 Poppins;color:var(--muted)}
+.authPanel label{display:grid;gap:7px;font:500 14px Poppins;color:var(--ink)}
+#upFields{display:grid;gap:14px}#upFields[hidden]{display:none}
+.authPanel input{display:block;width:100%;box-sizing:border-box;margin:0;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:12px;padding:13px 14px;font:400 15px Poppins}
+.authPanel input::placeholder{color:#9a8a93}
+.authPanel input:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 14%,transparent)}
+.authTwo{display:grid;gap:14px}
+.authTwo.two{grid-template-columns:1fr 1fr;gap:10px}
+.authTwo [hidden]{display:none}
+html:root .authPanel .hbtn{margin:4px 0 0;width:100%}
+.authPanel .msg{margin:0;font:400 13px Poppins;color:var(--bad);min-height:0}
+.authPanel .msg:empty{display:none}
+#authHelp{color:var(--muted)}
+.authSwitch{margin:10px 0 0;font:300 14px Poppins;color:var(--muted)}
+.authLink{border:0;background:none;padding:0;font:600 14px Poppins;color:var(--accent);cursor:pointer}
+.authLink:hover{text-decoration:underline;text-underline-offset:3px}
+@media (min-width:900px){html:root .gate .gateIn > .authBoard{grid-column:auto}}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -817,13 +841,26 @@ m.addEventListener&&m.addEventListener('change',function(){ttApply();window.ttPa
 <button class="hbtn pri" id="heroIn">Sign in</button>
 <button class="hbtn sec" id="heroUp">Create an account</button>
 </div>
-<div class="gateCard" id="authForm" style="display:none">
-<div class="seg" id="authSeg"><button data-m="in" class="on">Sign in</button><button data-m="up">Create account</button></div>
-<input type="text" id="authId" placeholder="Mobile number or email" autocomplete="username">
-<input type="password" id="authPw" placeholder="Password" autocomplete="current-password">
+<div class="authBoard" id="authForm" style="display:none" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+<div class="authPanel">
+<button class="authX" id="authX" type="button" aria-label="Close"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+<div class="seg" id="authSeg" hidden><button data-m="in" class="on">Sign in</button><button data-m="up">Create account</button></div>
+<h2 id="authTitle">Sign in</h2>
+<p class="authSub" id="authSub">Sign in with your mobile number or email and your password.</p>
+<div id="upFields" hidden>
+<label for="authName">Your name<input type="text" id="authName" autocomplete="name"></label>
+<label for="authBiz">Business name<input type="text" id="authBiz" placeholder="Shop or company name" autocomplete="organization"></label>
+</div>
+<label for="authId"><span id="authIdLbl">Mobile number or email</span><input type="text" id="authId" placeholder="7xxxxxx" autocomplete="username"></label>
+<div class="authTwo" id="authTwo">
+<label for="authPw"><span id="authPwLbl">Password</span><input type="password" id="authPw" placeholder="Password" autocomplete="current-password"></label>
+<label for="authPw2" id="pw2Wrap" hidden>Repeat password<input type="password" id="authPw2" placeholder="Repeat" autocomplete="new-password"></label>
+</div>
 <button class="hbtn pri" id="authGo">Sign in</button>
-<div class="msg" id="authMsg"></div>
+<div class="msg" id="authMsg" role="status"></div>
+<p class="authSwitch"><span id="authSwTxt">New here?</span> <button type="button" class="authLink" id="authSwap">Create an account</button></p>
 <div class="msg" id="authHelp">Forgot your password? Message us<span id="authContact"></span>.</div>
+</div>
 </div>
 <div class="ticks"><span>AI background removal</span><span>Dhivehi names</span><span>Many photos at once</span><span>Save &amp; share</span></div>
 <div class="mock" aria-hidden="true">
@@ -2274,8 +2311,43 @@ draw();
   };
   $('authPw').addEventListener('keydown', e => { if (e.key === 'Enter') $('authGo').click(); });
   const openForm = m => { $('heroBtns').style.display = 'none'; $('authForm').style.display = ''; document.querySelector(`#authSeg button[data-m=${m}]`).click(); setTimeout(() => $('authId').focus(), 50); };
-  $('heroIn').onclick = () => openForm('in');
-  $('heroUp').onclick = () => openForm('up');
+  const modeUI = m => {
+    const up = m === 'up';
+    $('authTitle').textContent = up ? 'Create an account' : 'Sign in';
+    $('authSub').textContent = up ? "Make product posters in minutes, with 5 free credits to start. You'll sign in with your mobile number and the password you choose here." : 'Sign in with your mobile number or email and your password.';
+    $('upFields').hidden = !up; $('pw2Wrap').hidden = !up; $('authTwo').classList.toggle('two', up);
+    $('authIdLbl').textContent = up ? 'Mobile number' : 'Mobile number or email';
+    $('authPwLbl').textContent = up ? 'Choose a password' : 'Password';
+    $('authPw').placeholder = up ? '6+ characters' : 'Password';
+    $('authSwTxt').textContent = up ? 'Already have an account?' : 'New here?';
+    $('authSwap').textContent = up ? 'Sign in' : 'Create an account';
+    $('authHelp').hidden = up;
+    $('authGo').textContent = up ? 'Create account' : 'Sign in';
+  };
+  document.querySelectorAll('#authSeg button').forEach(b => b.addEventListener('click', () => modeUI(b.dataset.m)));
+  const openBoard = m => {
+    $('authForm').style.display = ''; document.querySelector(`#authSeg button[data-m=${m}]`).click();
+    $('authMsg').textContent = '';
+    setTimeout(() => (m === 'up' ? $('authName') : $('authId')).focus(), 50);
+  };
+  const closeBoard = () => { $('authForm').style.display = 'none'; };
+  $('heroIn').onclick = () => openBoard('in');
+  $('heroUp').onclick = () => openBoard('up');
+  $('authX').onclick = closeBoard;
+  $('authForm').addEventListener('click', e => { if (e.target === $('authForm')) closeBoard(); });
+  $('authForm').addEventListener('keydown', e => { if (e.key === 'Escape') closeBoard(); });
+  $('authSwap').onclick = () => document.querySelector(`#authSeg button[data-m=${mode === 'in' ? 'up' : 'in'}]`).click();
+  $('authPw2').addEventListener('keydown', e => { if (e.key === 'Enter') $('authGo').click(); });
+  $('authGo').addEventListener('click', e => {
+    if (mode !== 'up') return;
+    let bad = '';
+    if (!$('authName').value.trim()) bad = 'Enter your name.';
+    else if (!phoneOf($('authId').value)) bad = 'Enter your 7-digit mobile number.';
+    else if ($('authPw').value.length < 6) bad = 'Password must be at least 6 characters.';
+    else if ($('authPw').value !== $('authPw2').value) bad = 'The two passwords are not the same.';
+    if (bad){ $('authMsg').textContent = bad; e.stopImmediatePropagation(); e.preventDefault(); return; }
+    PB.pendingInfo = {name: $('authName').value.trim(), business: $('authBiz').value.trim()};
+  }, true);
 
   /* ---- signed in ---- */
   function pill(){
@@ -2285,6 +2357,7 @@ draw();
   async function refreshMe(){ const {data, error} = await sb.rpc('photobot_me'); if (error) throw error; PB.me = data; pill(); return data; }
   async function afterLogin(){
     await refreshMe();
+    if (PB.pendingInfo){ const pi = PB.pendingInfo; PB.pendingInfo = null; await sb.rpc('photobot_set_my_info', {p_name: pi.name, p_business: pi.business}).catch(() => {}); }
     const {data} = await sb.from('photobot_settings').select('key,value'); PB.settings = Object.fromEntries((data || []).map(r => [r.key, r.value]));
     await loadPackages().catch(() => {});
     gate.style.display = 'none';
