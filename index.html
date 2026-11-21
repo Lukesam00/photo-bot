@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Photo Bot</title>
 <link rel="manifest" href="/manifest.webmanifest">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -741,6 +741,9 @@ html:root .modal div{border-radius:20px;background:var(--panel);color:var(--ink)
 }
 /* iPhone: 16px inputs so Safari does not zoom in while typing */
 html:root input[type=text],html:root input[type=tel],html:root input[type=email],html:root input[type=password],html:root input[type=number],html:root input[type=search],html:root select,html:root textarea{font-size:16px!important}
+html,body{touch-action:pan-x pan-y}
+button,a,input,select,textarea,label{touch-action:manipulation}
+canvas#c{touch-action:none}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -3342,6 +3345,16 @@ b.addEventListener('click',function(){var d=!r.classList.contains('ttdark');try{
 function place(){var bp=document.getElementById('buyPage'),bn=document.getElementById('bpNav');if(bp&&bn&&bp.style.display!=='none'){if(b.parentNode!==bn){b.classList.remove('float');bn.appendChild(b)}return}var ap=document.getElementById('adminPanel'),an=document.querySelector('#adminPanel .admNav');if(ap&&an&&ap.style.display!=='none'){if(b.parentNode!==an){b.classList.remove('float');an.appendChild(b)}return}var h=document.querySelector('body > header .hdNav');var shown=h&&h.offsetParent!==null&&!document.querySelector('#authGate[style*="block"],#authGate:not([style*="none"])');
 if(shown){if(b.parentNode!==h){b.classList.remove('float');h.appendChild(b)}}else if(!b.classList.contains('float')||b.parentNode!==document.body){b.classList.add('float');document.body.appendChild(b)}}
 ttPaint();place();var t;new MutationObserver(function(){clearTimeout(t);t=setTimeout(place,80)}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['style','hidden']});})();
+</script>
+<script>
+/* Lock page zoom (pinch + double-tap); the poster canvas keeps its own pinch-to-resize. */
+(function(){
+  const onPoster = e => e.target && e.target.closest && e.target.closest('canvas#c');
+  ['gesturestart','gesturechange','gestureend'].forEach(t => document.addEventListener(t, e => { e.preventDefault(); }, {passive:false}));
+  document.addEventListener('touchmove', e => { if (e.touches.length > 1 && !onPoster(e)) e.preventDefault(); }, {passive:false});
+  let last = 0;
+  document.addEventListener('touchend', e => { const now = Date.now(); if (now - last < 320 && !onPoster(e) && !(e.target.closest && e.target.closest('input,textarea,select'))) e.preventDefault(); last = now; }, {passive:false});
+})();
 </script>
 </body>
 </html>
