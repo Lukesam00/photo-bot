@@ -741,6 +741,17 @@ html:root .modal div{border-radius:20px;background:var(--panel);color:var(--ink)
 }
 /* iPhone: 16px inputs so Safari does not zoom in while typing */
 html:root input[type=text],html:root input[type=tel],html:root input[type=email],html:root input[type=password],html:root input[type=number],html:root input[type=search],html:root select,html:root textarea{font-size:16px!important}
+/* compact credits card with bar */
+html:root .credCard{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:14px;padding:12px 14px 12px 18px;border-radius:16px;margin:0 0 12px}
+html:root .ccTop{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+html:root .ccK{font:400 13px Poppins;color:var(--muted)}
+html:root .ccV{font:500 20px/1 Poppins;margin:0;letter-spacing:0}
+html:root .ccBar{height:6px;border-radius:999px;background:var(--soft);overflow:hidden;margin:8px 0 6px}
+html:root .ccBar i{display:block;height:100%;width:0;border-radius:999px;background:var(--accent);transition:width .4s}
+html:root .credCard.low .ccBar i{background:var(--bad)}
+html:root .ccS{font:300 11.5px Poppins;color:var(--muted)}
+html:root .ccBuy{font:500 13px Poppins;padding:9px 16px}
+@media(max-width:900px){html:root .credCard{padding:10px 12px 10px 14px;margin:0}html:root .ccV{font-size:18px}}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -758,7 +769,7 @@ window.ttApply=function(){r.classList.toggle('ttdark',pick())};ttApply();
 </div></header>
 <div class="wrap">
 <div class="credCard" id="credCard" style="display:none">
-<div class="ccL"><div class="ccK">Credits left</div><div class="ccV" id="ccV">0</div><div class="ccS">1 credit per finished poster</div></div>
+<div class="ccL"><div class="ccTop"><span class="ccK">Credits left</span><span class="ccV" id="ccV">0</span></div><div class="ccBar"><i id="ccBar"></i></div><div class="ccS" id="ccS">1 credit per poster</div></div>
 <button class="ccBuy" id="ccBuy" type="button">Buy credits</button>
 </div>
 <section class="stage">
@@ -2593,7 +2604,11 @@ draw();
   function pill(){
     const c = PB.me ? PB.me.credits : 0, p = $('credPill');
     p.style.display = ''; p.textContent = `${c} credit${c === 1 ? '' : 's'}`; p.classList.toggle('low', c < 3);
-    if ($('credCard')){ $('credCard').style.display = ''; $('ccV').textContent = c.toLocaleString('en-US'); $('credCard').classList.toggle('low', c < 3); }
+    if ($('credCard')){ $('credCard').style.display = ''; $('ccV').textContent = c.toLocaleString('en-US'); $('credCard').classList.toggle('low', c < 3);
+      let mx = 0; try { mx = +localStorage.getItem('photobot.credMax') || 0; } catch(e){}
+      if (c > mx || !mx) { mx = Math.max(c, 1); try { localStorage.setItem('photobot.credMax', mx); } catch(e){} }
+      $('ccBar').style.width = Math.max(0, Math.min(100, c / mx * 100)) + '%';
+      $('ccS').textContent = `${c.toLocaleString('en-US')} of ${mx.toLocaleString('en-US')} left · 1 credit per poster`; }
   }
   async function refreshMe(){ const {data, error} = await sb.rpc('photobot_me'); if (error) throw error; PB.me = data; pill(); return data; }
   async function notifyEvent(body){
