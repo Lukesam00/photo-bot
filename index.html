@@ -1335,14 +1335,20 @@ function buildTemplate(id, w, h){
   return c0;
 }
 function renderTplGrid(){
-  const g = $('tplGrid'); g.innerHTML = '';
+  // update the tiles in place (no clearing) so the page does not jump while typing shop details
+  const g = $('tplGrid');
   const [fw, fh] = SIZES[TPL.size] || SIZES.p, k = 200/fw;
-  TEMPLATES.forEach(t => {
-    const b = document.createElement('button'); b.className = TPL.id === t.id ? 'on' : '';
-    const im = new Image(); im.src = buildTemplate(t.id, Math.round(fw*k), Math.round(fh*k)).toDataURL('image/jpeg', 0.85);
-    b.appendChild(im); b.appendChild(document.createTextNode(t.name));
-    b.onclick = () => { TPL.id = t.id; saveTpl(); applyTemplate(false); renderTplGrid(); };
-    g.appendChild(b);
+  TEMPLATES.forEach((t, i) => {
+    let b = g.children[i];
+    if (!b){
+      b = document.createElement('button'); const im = new Image(); b.appendChild(im); b.appendChild(document.createTextNode(t.name));
+      b.onclick = () => { TPL.id = t.id; saveTpl(); applyTemplate(false); renderTplGrid(); };
+      g.appendChild(b);
+    }
+    b.className = TPL.id === t.id ? 'on' : '';
+    const im = b.querySelector('img'), w = Math.round(fw*k), h = Math.round(fh*k);
+    im.style.aspectRatio = w + '/' + h;
+    im.src = buildTemplate(t.id, w, h).toDataURL('image/jpeg', 0.85);
   });
   document.querySelectorAll('#tplSize button').forEach(b => b.classList.toggle('on', b.dataset.v === TPL.size));
 }
