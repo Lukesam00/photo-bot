@@ -644,6 +644,15 @@ html:root .authPanel .hbtn{margin:4px 0 0;width:100%}
 .authLink:hover{text-decoration:underline;text-underline-offset:3px}
 @media (min-width:900px){html:root .gate .gateIn > .authBoard{grid-column:auto}}
 .authPanel .msg.ok{color:var(--good)}
+/* credits card like Input Tax Capture */
+.credCard{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 22px;margin:0 0 14px}
+.ccK{font:500 14px Poppins;color:var(--ink)}
+.ccV{font:400 40px/1.1 Poppins;color:var(--accent);letter-spacing:-.5px;margin:4px 0 2px;font-variant-numeric:tabular-nums}
+.credCard.low .ccV{color:var(--bad)}
+.ccS{font:300 13px Poppins;color:var(--muted)}
+.ccBuy{flex:none;border:0;border-radius:999px;background:#ff7a0f;color:#2a0a1c;font:500 16px Poppins;padding:14px 24px;cursor:pointer}
+.ccBuy:hover{background:#ff9a4d}
+html.admpage .credCard{display:none!important}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -657,6 +666,10 @@ m.addEventListener&&m.addEventListener('change',function(){ttApply();window.ttPa
 <body>
 <header><img src="/icons/icon-192.png" alt="" style="width:30px;height:30px;border-radius:8px"><h1>Photo Bot</h1><span>Frame → Photo → Name → Download</span><button id="credPill" class="credPill" style="display:none"></button><button id="adminBtn" class="adminBtn" style="display:none">Admin</button><button id="installBtn" class="installBtn" style="display:none">⬇ Install app</button></header>
 <div class="wrap">
+<div class="credCard" id="credCard" style="display:none">
+<div class="ccL"><div class="ccK">Credits left</div><div class="ccV" id="ccV">0</div><div class="ccS">1 credit per finished poster</div></div>
+<button class="ccBuy" id="ccBuy" type="button">Buy credits</button>
+</div>
 <section class="stage">
 <div class="toolbar" id="tools">
 <button class="tool on" data-t="move">✥ Move</button>
@@ -2363,6 +2376,7 @@ draw();
   function pill(){
     const c = PB.me ? PB.me.credits : 0, p = $('credPill');
     p.style.display = ''; p.textContent = `${c} credit${c === 1 ? '' : 's'}`; p.classList.toggle('low', c < 3);
+    if ($('credCard')){ $('credCard').style.display = ''; $('ccV').textContent = c.toLocaleString('en-US'); $('credCard').classList.toggle('low', c < 3); }
   }
   async function refreshMe(){ const {data, error} = await sb.rpc('photobot_me'); if (error) throw error; PB.me = data; pill(); return data; }
   async function notifyEvent(body){
@@ -2395,6 +2409,7 @@ draw();
     $('tgSend').parentElement.style.gridTemplateColumns = admin ? '' : '1fr';
   }
   $('credPill').onclick = () => openAccount();
+  $('ccBuy').onclick = () => openAccount();
   sb.auth.onAuthStateChange((ev) => { if (ev === 'SIGNED_OUT'){ PB.me = null; showGate(); } });
 
   /* ---- spending credits (called before saving / sending) ---- */
