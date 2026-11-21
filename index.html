@@ -752,6 +752,19 @@ html:root .credCard.low .ccBar i{background:var(--bad)}
 html:root .ccS{font:300 11.5px Poppins;color:var(--muted)}
 html:root .ccBuy{font:500 13px Poppins;padding:9px 16px}
 @media(max-width:900px){html:root .credCard{padding:10px 12px 10px 14px;margin:0}html:root .ccV{font-size:18px}}
+/* easy use: frames and stickers in one swipe row; tidy shop details */
+html:root .tplgrid{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;padding:2px 2px 8px;margin:12px -4px 0;scrollbar-width:none}
+html:root .tplgrid::-webkit-scrollbar,html:root .stkgrid::-webkit-scrollbar{display:none}
+html:root .tplgrid button{flex:0 0 92px;scroll-snap-align:start;border:1.5px solid transparent;border-radius:14px;padding:4px 4px 6px;gap:5px;font:400 11px Poppins;white-space:nowrap}
+html:root .tplgrid button img{border-radius:10px}
+html:root .tplgrid button.on{border-color:var(--accent);color:var(--accent);font-weight:500}
+html:root .stkgrid{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:2px 2px 8px;margin:0 -4px;scrollbar-width:none}
+html:root .stkgrid button{flex:0 0 76px;border-radius:14px}
+html:root .brandrow{gap:12px}
+html:root .brandrow input{margin-bottom:8px}
+html:root .logobox{width:76px;height:76px;flex:0 0 76px;border:1.5px dashed var(--line);border-radius:16px;background:var(--bg);font:400 12px Poppins}
+html:root details.more summary{font:500 14px Poppins;padding:6px 0}
+html:root .card .sub{font:400 12px Poppins;color:var(--muted)}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -1346,6 +1359,7 @@ function renderTplGrid(){
       g.appendChild(b);
     }
     b.className = TPL.id === t.id ? 'on' : '';
+    if (TPL.id === t.id && g.dataset.sel !== t.id){ g.dataset.sel = t.id; setTimeout(() => { g.scrollLeft = Math.max(0, b.offsetLeft - g.offsetLeft - (g.clientWidth - b.offsetWidth)/2); }, 0); }
     const im = b.querySelector('img'), w = Math.round(fw*k), h = Math.round(fh*k);
     im.style.aspectRatio = w + '/' + h;
     im.src = buildTemplate(t.id, w, h).toDataURL('image/jpeg', 0.85);
