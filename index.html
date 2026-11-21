@@ -691,6 +691,16 @@ html:root .bpMine .it:has(.st.rejected){border-left-color:var(--bad)}
 html:root .bpMine .it .grow{flex:1;min-width:0}
 html:root .bpMine .it .grow > div:last-child{font:300 12px Poppins;color:var(--muted);margin-top:2px}
 @media (max-width:640px){.bpBack{width:100%}.bpAmount b{font-size:22px}}
+/* ===== top bar like Input Tax Capture ===== */
+html:root body > header.topbar{display:block;padding:0;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.hdIn{max-width:1400px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;padding:max(10px,env(safe-area-inset-top)) 18px 10px;box-sizing:border-box}
+.hdNav{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;margin-left:auto}
+.hdNav .admWho{font:300 14px Poppins;color:var(--muted);margin:0 6px}
+.hdNav .admWho:empty{display:none}
+html:root .hdNav .credPill{display:none!important}
+html:root .hdNav #adminBtn{color:var(--accent)}
+.pwOk,.authPanel .msg.ok{color:var(--good)}
+@media (max-width:640px){.hdNav .admWho{display:none}.hdIn{gap:6px 10px}.hdNav .admLink{padding:8px 8px;font-size:13px}}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -702,7 +712,10 @@ m.addEventListener&&m.addEventListener('change',function(){ttApply();window.ttPa
 </script>
 </head>
 <body>
-<header><img src="/icons/icon-192.png" alt="" style="width:30px;height:30px;border-radius:8px"><h1>Photo Bot</h1><span>Frame → Photo → Name → Download</span><button id="credPill" class="credPill" style="display:none"></button><button id="adminBtn" class="adminBtn" style="display:none">Admin</button><button id="installBtn" class="installBtn" style="display:none">⬇ Install app</button></header>
+<header class="topbar"><div class="hdIn">
+<span class="admBrand"><svg viewBox="488 206 304 410" width="17" height="23" aria-hidden="true"><path d="M541 285 V236 H738 L636 396" fill="none" stroke="#FF7A0F" stroke-width="48" stroke-linecap="round" stroke-linejoin="round"/><path d="M517 462 A123 123 0 1 0 694 352" fill="none" stroke="#FF7A0F" stroke-width="48" stroke-linecap="round"/></svg><b>Photo Bot</b><small>v2</small></span>
+<span class="hdNav"><button id="installBtn" class="admLink" style="display:none">Install app</button><button id="adminBtn" class="admLink" style="display:none">Admin</button><button id="credPill" class="credPill" style="display:none"></button><span class="admWho" id="hdWho"></span><button class="admLink" id="hdPw" type="button" style="display:none">Change password</button><button class="admLink" id="hdOut" type="button" style="display:none">Sign out</button></span>
+</div></header>
 <div class="wrap">
 <div class="credCard" id="credCard" style="display:none">
 <div class="ccL"><div class="ccK">Credits left</div><div class="ccV" id="ccV">0</div><div class="ccS">1 credit per finished poster</div></div>
@@ -929,6 +942,19 @@ m.addEventListener&&m.addEventListener('change',function(){ttApply();window.ttPa
 <div class="pkgs" id="gatePkgs"></div>
 <p class="fine">Pay by bank transfer and upload the slip — credits are added once approved.</p>
 <p class="credit">Crafted by <b>SaM</b> With <span aria-label="love">♥</span></p>
+</div>
+</div>
+<div class="authBoard" id="pwBoard" style="display:none" role="dialog" aria-modal="true" aria-labelledby="pwTitle">
+<div class="authPanel">
+<button class="authX" id="pwX" type="button" aria-label="Close"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+<h2 id="pwTitle">Change password</h2>
+<p class="authSub">Choose a new password for this login. Use it the next time you sign in.</p>
+<div class="authTwo two">
+<label for="pwNew">New password<input type="password" id="pwNew" placeholder="6+ characters" autocomplete="new-password"></label>
+<label for="pwNew2">Repeat password<input type="password" id="pwNew2" placeholder="Repeat" autocomplete="new-password"></label>
+</div>
+<button class="hbtn pri" id="pwSave" type="button">Save password</button>
+<div class="msg" id="pwMsg" role="status"></div>
 </div>
 </div>
 <div id="buyPage" class="admWrap buyWrap" style="display:none">
@@ -2456,11 +2482,28 @@ draw();
     gate.style.display = 'none';
     const admin = !!PB.me.is_admin;
     $('adminBtn').style.display = admin ? '' : 'none';
+    $('hdWho').textContent = PB.me.name || showId(PB.me.email); $('hdPw').style.display = ''; $('hdOut').style.display = '';
     if (admin) refreshPendingDot();
     $('tgSend').style.display = admin ? '' : 'none'; $('tgSet').style.display = admin ? '' : 'none';
     $('tgSend').parentElement.style.gridTemplateColumns = admin ? '' : '1fr';
   }
   $('credPill').onclick = () => openAccount();
+  $('hdOut').onclick = async () => { await sb.auth.signOut().catch(() => {}); };
+  $('hdPw').onclick = () => { $('pwBoard').style.display = ''; $('pwNew').value = $('pwNew2').value = ''; $('pwMsg').textContent = ''; $('pwMsg').classList.remove('ok'); setTimeout(() => $('pwNew').focus(), 50); };
+  $('pwX').onclick = () => { $('pwBoard').style.display = 'none'; };
+  $('pwBoard').addEventListener('click', e => { if (e.target === $('pwBoard')) $('pwBoard').style.display = 'none'; });
+  $('pwBoard').addEventListener('keydown', e => { if (e.key === 'Escape') $('pwBoard').style.display = 'none'; });
+  $('pwSave').onclick = async () => {
+    const a = $('pwNew').value, b = $('pwNew2').value; $('pwMsg').classList.remove('ok');
+    if (a.length < 6){ $('pwMsg').textContent = 'Password must be at least 6 characters.'; return; }
+    if (a !== b){ $('pwMsg').textContent = 'The two passwords are not the same.'; return; }
+    $('pwSave').disabled = true; $('pwMsg').textContent = 'Saving…';
+    const {error} = await sb.auth.updateUser({password: a});
+    $('pwSave').disabled = false;
+    if (error){ $('pwMsg').textContent = error.message; return; }
+    $('pwMsg').classList.add('ok'); $('pwMsg').textContent = 'Password changed.';
+    setTimeout(() => { $('pwBoard').style.display = 'none'; }, 1200);
+  };
   $('ccBuy').onclick = () => openAccount();
   sb.auth.onAuthStateChange((ev) => { if (ev === 'SIGNED_OUT'){ PB.me = null; showGate(); } });
 
@@ -3157,7 +3200,7 @@ var SUN='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="cur
 var MOON='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
 window.ttPaint=function(){var d=r.classList.contains('ttdark');b.innerHTML=d?SUN:MOON;b.setAttribute('aria-label',d?'Switch to light mode':'Switch to dark mode');b.title=d?'Light mode':'Dark mode'};
 b.addEventListener('click',function(){var d=!r.classList.contains('ttdark');try{localStorage.setItem(k,d?'dark':'light')}catch(e){}ttApply();ttPaint()});
-function place(){var bp=document.getElementById('buyPage'),bn=document.getElementById('bpNav');if(bp&&bn&&bp.style.display!=='none'){if(b.parentNode!==bn){b.classList.remove('float');bn.appendChild(b)}return}var ap=document.getElementById('adminPanel'),an=document.querySelector('#adminPanel .admNav');if(ap&&an&&ap.style.display!=='none'){if(b.parentNode!==an){b.classList.remove('float');an.appendChild(b)}return}var h=document.querySelector('body > header');var shown=h&&h.offsetParent!==null&&!document.querySelector('#authGate[style*="block"],#authGate:not([style*="none"])');
+function place(){var bp=document.getElementById('buyPage'),bn=document.getElementById('bpNav');if(bp&&bn&&bp.style.display!=='none'){if(b.parentNode!==bn){b.classList.remove('float');bn.appendChild(b)}return}var ap=document.getElementById('adminPanel'),an=document.querySelector('#adminPanel .admNav');if(ap&&an&&ap.style.display!=='none'){if(b.parentNode!==an){b.classList.remove('float');an.appendChild(b)}return}var h=document.querySelector('body > header .hdNav');var shown=h&&h.offsetParent!==null&&!document.querySelector('#authGate[style*="block"],#authGate:not([style*="none"])');
 if(shown){if(b.parentNode!==h){b.classList.remove('float');h.appendChild(b)}}else if(!b.classList.contains('float')||b.parentNode!==document.body){b.classList.add('float');document.body.appendChild(b)}}
 ttPaint();place();var t;new MutationObserver(function(){clearTimeout(t);t=setTimeout(place,80)}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['style','hidden']});})();
 </script>
