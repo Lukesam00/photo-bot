@@ -526,6 +526,41 @@ html:root .gate .admCard .hbtn{margin-top:6px}
 .admSwitch{margin:10px 0 0;font:300 14px Poppins;color:var(--muted)}
 .admSwitch a{color:var(--accent);font-weight:600;text-underline-offset:3px}
 .admGateIn .credit{width:100%;max-width:1120px;margin-top:auto}
+/* ===== admin panel laid out like Input Tax Capture ===== */
+html:root .admWrap{background:var(--bg)}
+html:root .admHead{position:sticky;top:0;z-index:3;display:block;padding:0;background:var(--panel);border-bottom:1px solid var(--line)}
+.admHeadIn{max-width:1180px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;padding:max(12px,env(safe-area-inset-top)) 18px 12px;box-sizing:border-box}
+.admBrand{display:inline-flex;align-items:center;gap:10px}
+.admBrand b{font:500 17px Poppins;color:var(--accent)}
+.admBrand small{font:400 11px Poppins;color:var(--muted)}
+.admNav{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;margin-left:auto}
+.admWho{font:300 14px Poppins;color:var(--muted);margin-right:6px}
+.admLink{border:0;background:transparent;font:500 14px Poppins;color:var(--muted);padding:8px 12px;border-radius:999px;cursor:pointer}
+.admLink:hover{background:var(--soft);color:var(--accent)}
+.admPage{max-width:1120px;margin:0 auto;padding:36px 18px 64px;box-sizing:border-box}
+.admTitle h1{margin:0;font:300 38px/1.1 Poppins;letter-spacing:-1px;color:var(--ink)}
+.admTitle .sub{margin:8px 0 22px;font:300 15px/1.6 Poppins;color:var(--muted);max-width:62ch}
+html:root .admTabs{position:sticky;top:64px;z-index:2;display:inline-flex;gap:2px;padding:3px;margin:0 0 18px;background:var(--soft);border:0;border-radius:999px;max-width:100%;overflow-x:auto}
+html:root .admTabs button{flex:none;border:0;background:transparent;border-radius:999px;padding:8px 16px;font:500 14px Poppins;color:var(--muted);box-shadow:none}
+html:root .admTabs button.on{background:var(--panel);color:var(--ink);border:0;box-shadow:0 0 0 1px var(--line)}
+html:root .admBody{max-width:none;margin:0;padding:0}
+html:root .acard{border-radius:20px;padding:24px;margin:0 0 20px}
+html:root .acard h4{font:500 17px Poppins;margin:0 0 14px}
+.acHead{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:14px}
+.acHead h4{margin:0!important;margin-right:auto!important}
+html:root .acHead .mini{background:transparent!important;border:1px solid var(--line);color:var(--ink)}
+html:root .stats{grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:12px}
+html:root .stat{padding:18px 18px;border-radius:16px}
+html:root .stats .stat:nth-child(3){background:var(--soft)!important}
+html:root .stats .stat:nth-child(3) .v{color:var(--accent)}
+html:root .stat .k{font:400 14px Poppins}
+html:root .stat .v{font:400 28px Poppins;margin-top:6px}
+html:root .chips{display:inline-flex;gap:2px;padding:3px;background:var(--soft);border-radius:999px;margin:0 0 16px}
+html:root .chips button{border:0!important;background:transparent!important;border-radius:999px;padding:8px 16px;font:500 14px Poppins;color:var(--muted)}
+html:root .chips button.on{background:var(--panel)!important;color:var(--ink)!important;box-shadow:0 0 0 1px var(--line)}
+html:root #uSearch{border-radius:999px;padding:11px 18px;max-width:320px;margin:0 0 14px}
+html:root .lst .it,html:root .hist .it{font:400 14px Poppins;padding:12px 0}
+@media (max-width:640px){.admTitle h1{font-size:30px}.admPage{padding-top:24px}.admWho{display:none}html:root .admTabs{top:58px}}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -764,9 +799,15 @@ m.addEventListener&&m.addEventListener('change',function(){ttApply();window.ttPa
 </div>
 </div>
 <div id="adminPanel" class="admWrap" style="display:none">
-<div class="admHead"><b>Admin</b><button id="admClose" class="mini" style="background:#f1f1ef">Done</button></div>
-<nav class="admTabs" id="admTabs"><button data-a="ov" class="on">Overview</button><button data-a="pay">Payments<span id="admPendN" class="dot" style="display:none"></span></button><button data-a="users">Users</button><button data-a="set">Settings</button></nav>
+<div class="admHead"><div class="admHeadIn">
+<span class="admBrand"><svg viewBox="488 206 304 410" width="17" height="23" aria-hidden="true"><path d="M541 285 V236 H738 L636 396" fill="none" stroke="#FF7A0F" stroke-width="48" stroke-linecap="round" stroke-linejoin="round"/><path d="M517 462 A123 123 0 1 0 694 352" fill="none" stroke="#FF7A0F" stroke-width="48" stroke-linecap="round"/></svg><b>Photo Bot</b><small>Admin</small></span>
+<span class="admNav"><span class="admWho" id="admWho"></span><button id="admClose" class="admLink" type="button">Editor</button><button id="admOut" class="admLink" type="button">Sign out</button></span>
+</div></div>
+<div class="admPage">
+<div class="admTitle"><h1>Admin</h1><p class="sub">Approve payments, manage users and credits, and edit packages and bank details.</p></div>
+<nav class="admTabs" id="admTabs" aria-label="Admin sections"><button data-a="ov" class="on">Overview</button><button data-a="pay">Payments<span id="admPendN" class="dot" style="display:none"></span></button><button data-a="users">Users</button><button data-a="set">Settings</button></nav>
 <div id="admBody" class="admBody"></div>
+</div>
 </div>
 <div class="sheet" id="admSheet"><div class="box" id="admSheetBox"></div></div>
 <div class="sheet" id="acctSheet"><div class="box" id="acctBox"></div></div>
@@ -2285,6 +2326,7 @@ draw();
   const initials = e => { const id = showId(e); return /^\d/.test(id) ? id.slice(-2) : id.slice(0, 2).toUpperCase(); };
   AS.addEventListener('click', e => { if (e.target === AS) AS.classList.remove('show'); });
   $('admClose').onclick = () => { AP.style.display = 'none'; refreshMe().catch(() => {}); };
+  $('admOut').onclick = async () => { AP.style.display = 'none'; await sb.auth.signOut().catch(() => {}); };
   $('adminBtn').onclick = () => openAdmin(admTab);
   document.querySelectorAll('#admTabs button').forEach(b => b.onclick = () => openAdmin(b.dataset.a));
   async function refreshPendingDot(){
@@ -2296,6 +2338,7 @@ draw();
   }
   function openAdmin(tab){
     admTab = tab; AP.style.display = '';
+    if ($('admWho') && PB.me) $('admWho').textContent = showId(PB.me.email) + ' · Admin';
     document.querySelectorAll('#admTabs button').forEach(b => b.classList.toggle('on', b.dataset.a === tab));
     AB.innerHTML = '<div class="empty">Loading…</div>';
     ({ov: admOverview, pay: admPayments, users: admUsers, set: admSettings})[tab]();
@@ -2313,16 +2356,17 @@ draw();
     const st = await refreshPendingDot().catch(e => null);
     if (!st){ AB.innerHTML = '<div class="empty">Could not load.</div>'; return; }
     const {data: recent} = await sb.rpc('photobot_admin_topups', {p_status: null});
-    AB.innerHTML = `<div class="stats">
+    AB.innerHTML = `<div class="acard"><div class="acHead"><h4>At a glance</h4><button class="mini" id="ovPay" type="button">Review payments</button></div><div class="stats">
       <div class="stat ${st.pending ? 'alert' : ''}" id="stPend"><div class="k">Payments to approve</div><div class="v">${st.pending}</div><div class="s">${st.pending ? 'Tap to review' : 'All clear'}</div></div>
       <div class="stat"><div class="k">Users</div><div class="v">${st.users}</div><div class="s">+${st.new_7d} this week</div></div>
       <div class="stat"><div class="k">Revenue</div><div class="v">${mvr(st.revenue)}</div><div class="s">${mvr(st.revenue_30d)} last 30 days</div></div>
       <div class="stat"><div class="k">Posters made</div><div class="v">${st.posters}</div><div class="s">${st.posters_7d} this week</div></div>
       <div class="stat"><div class="k">Credits sold</div><div class="v">${st.credits_sold}</div><div class="s">approved packages</div></div>
       <div class="stat"><div class="k">Credits held by users</div><div class="v">${st.credits_outstanding}</div><div class="s">not yet used</div></div>
-    </div>
+    </div></div>
     <div class="acard"><h4>Recent payments</h4><div class="lst">${(recent || []).slice(0, 6).map(t => `<div class="it"><div class="grow"><div><b>${esc(showId(t.email))}</b> · ${esc(t.package_name)}</div><div>${mvr(t.amount_mvr)} · ${fmtD(t.created_at)}</div></div><span class="st ${t.status}">${t.status}</span></div>`).join('') || '<div class="empty">No payments yet.</div>'}</div></div>`;
     $('stPend').onclick = () => { payFilter = 'pending'; openAdmin('pay'); };
+    if ($('ovPay')) $('ovPay').onclick = () => { payFilter = 'pending'; openAdmin('pay'); };
   }
 
   /* ---- payments ---- */
@@ -2694,7 +2738,7 @@ var SUN='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="cur
 var MOON='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
 window.ttPaint=function(){var d=r.classList.contains('ttdark');b.innerHTML=d?SUN:MOON;b.setAttribute('aria-label',d?'Switch to light mode':'Switch to dark mode');b.title=d?'Light mode':'Dark mode'};
 b.addEventListener('click',function(){var d=!r.classList.contains('ttdark');try{localStorage.setItem(k,d?'dark':'light')}catch(e){}ttApply();ttPaint()});
-function place(){var h=document.querySelector('body > header');var shown=h&&h.offsetParent!==null&&!document.querySelector('#authGate[style*="block"],#authGate:not([style*="none"])');
+function place(){var ap=document.getElementById('adminPanel'),an=document.querySelector('.admNav');if(ap&&an&&ap.style.display!=='none'){if(b.parentNode!==an){b.classList.remove('float');an.appendChild(b)}return}var h=document.querySelector('body > header');var shown=h&&h.offsetParent!==null&&!document.querySelector('#authGate[style*="block"],#authGate:not([style*="none"])');
 if(shown){if(b.parentNode!==h){b.classList.remove('float');h.appendChild(b)}}else if(!b.classList.contains('float')||b.parentNode!==document.body){b.classList.add('float');document.body.appendChild(b)}}
 ttPaint();place();var t;new MutationObserver(function(){clearTimeout(t);t=setTimeout(place,80)}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['style','hidden']});})();
 </script>
