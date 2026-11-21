@@ -2688,9 +2688,11 @@ draw();
     const ready = S.account_number;
     const details = [S.bank_name ? `Bank: ${S.bank_name}` : '', S.account_name ? `Account name: ${S.account_name}` : '', S.account_number ? `Account number: ${S.account_number}` : '', `Remarks: ${ref}`].filter(Boolean).join('\n');
     $('bpAmt').innerHTML = `<div class="bpAmount"><span>Amount to transfer</span><b>${mvr(p.price_mvr)}</b></div>
-      ${ready ? `<pre class="bpAcct">${esc(details)}</pre><button class="bpCopy" id="bpCopy" type="button">Copy account details</button>`
+      ${ready ? `<pre class="bpAcct">${esc(details)}</pre><button class="bpCopy" id="bpCopy" type="button">Copy account number</button>`
         : `<p class="bpHint">Bank details are not set up yet${S.contact ? '. Contact ' + esc(S.contact) : ''}.</p>`}`;
-    if (ready) $('bpCopy').onclick = () => { navigator.clipboard && navigator.clipboard.writeText(details).then(() => { $('bpCopy').textContent = 'Copied'; setTimeout(() => $('bpCopy').textContent = 'Copy account details', 1500); }).catch(() => {}); };
+    // copy just the account number: the longest run of 7+ digits (spaces / dashes allowed inside)
+    const acctNo = ((details.match(/\d[\d \-]{5,}\d/g) || []).map(x => x.replace(/[ \-]/g, '')).filter(x => x.length >= 7).sort((a, b) => b.length - a.length)[0]) || details;
+    if (ready) $('bpCopy').onclick = () => { navigator.clipboard && navigator.clipboard.writeText(acctNo).then(() => { $('bpCopy').textContent = 'Copied ' + acctNo; setTimeout(() => $('bpCopy').textContent = 'Copy account number', 1800); }).catch(() => {}); };
     $('acPay').innerHTML = `<div class="bpForm">
       <label for="acSlip">Transfer slip (photo or PDF, up to 8 MB)<input type="file" id="acSlip" accept="image/*,application/pdf"></label>
       <p class="bpPkgLine">${esc(p.name)} · ${p.credits.toLocaleString('en-US')} credits · ${mvr(p.price_mvr)}</p>
