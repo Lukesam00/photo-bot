@@ -563,6 +563,8 @@ html:root .lst .it,html:root .hist .it{font:400 14px Poppins;padding:12px 0}
 @media (max-width:640px){.admTitle h1{font-size:30px}.admPage{padding-top:24px}.admWho{display:none}html:root .admTabs{top:58px}}
 /* the /admin page is admin only: no poster editor */
 html.admpage body > header,html.admpage body > .wrap,html.admpage #authGate,html.admpage #admClose,html.admpage #adminBtn,html.admpage #credPill{display:none!important}
+.udL{display:grid;gap:6px;font:400 13px Poppins;color:var(--muted)}
+html:root .udL .admIn{margin:0}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -2450,6 +2452,14 @@ draw();
       <div class="acard"><h4>Add or remove credits</h4>
         <div class="acts" style="margin-top:4px"><input class="admIn" id="udN" type="number" inputmode="numeric" placeholder="e.g. 10 or -5" style="margin:0;flex:1"><input class="admIn" id="udR" placeholder="Reason (optional)" style="margin:0;flex:1.4"></div>
         <button class="btn" id="udAdd" style="margin-top:8px">Update credits</button><div class="msg" id="udMsg"></div></div>
+      <div class="acard"><h4>Edit customer</h4>
+        ${(p.email || '').endsWith(OLD_DOM) ? '<div class="paybox" style="margin:0 0 12px">This login is shared with Input Tax Capture. A new password, login or block also applies there.</div>' : ''}
+        <label class="udL">Login (mobile number or email)<input class="admIn" id="udLogin" value="${esc(showId(p.email))}" autocomplete="off"></label>
+        <button class="mini" id="udLoginSave" type="button" style="margin-top:8px">Save login</button><div class="msg" id="udLoginMsg"></div>
+        <label class="udL" style="margin-top:14px">New password<input class="admIn" id="udPw" type="text" placeholder="At least 6 characters" autocomplete="off"></label>
+        <div class="acts" style="margin-top:8px"><button class="mini" id="udPwGen" type="button">Suggest one</button><button class="mini ok" id="udPwSave" type="button">Reset password</button></div><div class="msg" id="udPwMsg"></div>
+        <div class="acts" style="margin-top:14px;align-items:center"><span class="msg" id="udBlockState" style="margin:0;flex:1">Checking access…</span><button class="mini no" id="udBlock" type="button" style="flex:0 0 auto">Block access</button></div>
+      </div>
       <div class="acard"><h4>Admin access</h4><label class="row" style="margin-top:0">Can open admin panel <input type="checkbox" id="udAdm" ${p.is_admin ? 'checked' : ''}></label><div class="msg" id="udAdmMsg"></div></div>
       <div class="acard"><h4>Payments</h4><div class="lst">${data.topups.map(t => `<div class="it"><div class="grow"><div><b>${esc(t.package_name)}</b> · ${t.credits} cr · ${mvr(t.amount_mvr)}</div><div>${fmtD(t.created_at)}${t.note ? ' · ' + esc(t.note) : ''}</div></div><span class="st ${t.status}">${t.status}</span></div>`).join('') || '<div class="empty">No payments.</div>'}</div></div>
       <div class="acard"><h4>Credit history</h4><div class="hist">${data.ledger.map(l => `<div class="it"><span>${esc(l.reason || '')}<br><span class="msg" style="font-size:11px">${fmtD(l.created_at)}</span></span><span class="${l.delta > 0 ? 'plus' : 'minus'}">${l.delta > 0 ? '+' : ''}${l.delta}</span></div>`).join('') || '<div class="empty">No activity.</div>'}</div></div>`;
@@ -2468,6 +2478,34 @@ draw();
       if (error){ $('udAdm').checked = !v; $('udAdmMsg').textContent = /CANNOT_REMOVE_SELF/.test(error.message) ? "You can't remove your own admin access." : error.message; return; }
       $('udAdmMsg').textContent = v ? 'Now an admin.' : 'Admin access removed.';
       if (admTab === 'users') loadUsers();
+    };
+    const call = async (body) => {
+      const {data: {session}} = await sb.auth.getSession();
+      const r = await fetch(SB_URL + '/functions/v1/photobot-admin-user', {method: 'POST', headers: {'content-type': 'application/json', apikey: SB_KEY, authorization: 'Bearer ' + (session ? session.access_token : SB_KEY)}, body: JSON.stringify({user_id: uid, ...body})});
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.error || 'Something went wrong. Try again.');
+      return j;
+    };
+    $('udLoginSave').onclick = async () => {
+      const b = $('udLoginSave'); b.disabled = true; $('udLoginMsg').textContent = 'Saving…';
+      try { const j = await call({action: 'login', login: $('udLogin').value}); $('udLogin').value = showId(j.email); $('udLoginMsg').textContent = 'Login updated. The customer now signs in with ' + showId(j.email) + '.'; if (admTab === 'users') loadUsers(); }
+      catch(e){ $('udLoginMsg').textContent = e.message; } finally { b.disabled = false; }
+    };
+    $('udPwGen').onclick = () => { const a = 'abcdefghjkmnpqrstuvwxyz23456789'; let x = ''; const r = new Uint32Array(8); crypto.getRandomValues(r); r.forEach(n => x += a[n % a.length]); $('udPw').value = x; $('udPwMsg').textContent = ''; };
+    $('udPwSave').onclick = async () => {
+      const pw = $('udPw').value.trim();
+      if (pw.length < 6){ $('udPwMsg').textContent = 'Password must be at least 6 characters.'; return; }
+      const b = $('udPwSave'); b.disabled = true; $('udPwMsg').textContent = 'Resetting…';
+      try { await call({action: 'password', password: pw}); $('udPwMsg').textContent = 'Password reset. Send the customer their new password: ' + pw; }
+      catch(e){ $('udPwMsg').textContent = e.message; } finally { b.disabled = false; }
+    };
+    let blocked = false;
+    const paintBlock = () => { $('udBlockState').textContent = blocked ? 'Access blocked: this customer cannot sign in.' : 'Access active.'; $('udBlock').textContent = blocked ? 'Unblock access' : 'Block access'; };
+    call({action: 'status'}).then(j => { blocked = !!j.blocked; paintBlock(); }).catch(() => { $('udBlockState').textContent = ''; });
+    $('udBlock').onclick = async () => {
+      const b = $('udBlock'); b.disabled = true;
+      try { const j = await call({action: blocked ? 'unblock' : 'block'}); blocked = !!j.blocked; paintBlock(); }
+      catch(e){ $('udBlockState').textContent = e.message; } finally { b.disabled = false; }
     };
   }
 
