@@ -653,6 +653,44 @@ html:root .authPanel .hbtn{margin:4px 0 0;width:100%}
 .ccBuy{flex:none;border:0;border-radius:999px;background:#ff7a0f;color:#2a0a1c;font:500 16px Poppins;padding:14px 24px;cursor:pointer}
 .ccBuy:hover{background:#ff9a4d}
 html.admpage .credCard{display:none!important}
+/* ===== Buy credits page, like Input Tax Capture ===== */
+.buyWrap{z-index:55}
+.bpTop{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;margin-bottom:22px}
+.bpTop .admTitle .sub{margin-bottom:0}
+.bpBack{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:12px 20px;font:500 15px Poppins;cursor:pointer}
+.bpBack:hover{border-color:var(--accent);color:var(--accent)}
+.stepN{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:999px;background:var(--soft);color:var(--accent);font:600 13px Poppins;margin-right:10px;vertical-align:1px}
+.bpBal{font:400 14px Poppins;color:var(--muted)}
+.bpNote{background:var(--warnsoft);color:var(--warn);border-radius:14px;padding:12px 16px;font:400 14px Poppins;margin:0 0 16px}
+.bpHint{margin:0;font:300 14px Poppins;color:var(--muted)}
+html:root .bpPkgs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:14px;margin:0;padding-top:10px}
+html:root .bpPkgs .pkg{position:relative;text-align:left;cursor:pointer;font:inherit}
+html:root .bpPkgs .pkg::after{content:"";position:absolute;top:16px;right:16px;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);background:var(--panel);box-sizing:border-box}
+html:root .bpPkgs .pkg.on{border:1.5px solid var(--accent)!important;background:color-mix(in srgb,var(--soft) 40%,var(--panel))!important}
+html:root .bpPkgs .pkg.on::after{border-color:var(--accent);background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/13px no-repeat}
+html.ttdark .bpPkgs .pkg.on::after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231a0812' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E")}
+html:root .bpPkgs .pkg h4{padding-right:34px}
+.bpAmount{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+.bpAmount span{font:500 15px Poppins}
+.bpAmount b{font:600 26px Poppins;letter-spacing:-.4px;color:var(--ink)}
+.bpAcct{margin:0 0 12px;white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:18px 22px;font:400 15px/1.9 ui-monospace,Menlo,Consolas,monospace;color:var(--ink);overflow-wrap:anywhere}
+.bpCopy{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:8px 14px;font:500 13px Poppins;cursor:pointer}
+.bpCopy:hover{border-color:var(--accent);color:var(--accent)}
+.bpForm{display:grid;gap:12px;max-width:520px}
+.bpForm label{display:grid;gap:8px;font:400 14px Poppins;color:var(--ink)}
+.bpForm input[type=file]{border:1px dashed var(--line);border-radius:12px;padding:8px;background:var(--panel);font:400 14px Poppins;color:var(--ink)}
+.bpForm input[type=file]::file-selector-button{font:600 13px Poppins;border:0;border-radius:999px;background:var(--soft);color:var(--accent);padding:10px 16px;margin-right:12px;cursor:pointer}
+.bpPkgLine{margin:0;font:300 13px Poppins;color:var(--muted)}
+html:root .bpForm .hbtn{width:100%}
+.bpForm .msg{margin:0;font:400 13px Poppins;color:var(--bad)}.bpForm .msg:empty{display:none}
+.bpDone{background:var(--goodsoft);color:var(--good);border-radius:14px;padding:14px 16px;font:400 14px Poppins}
+html:root .bpMine .it{border:1px solid var(--line);border-left:4px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 10px;font:400 14px Poppins;display:flex;align-items:center;gap:10px}
+html:root .bpMine .it:has(.st.pending){border-left-color:#ff7a0f}
+html:root .bpMine .it:has(.st.approved){border-left-color:var(--good)}
+html:root .bpMine .it:has(.st.rejected){border-left-color:var(--bad)}
+html:root .bpMine .it .grow{flex:1;min-width:0}
+html:root .bpMine .it .grow > div:last-child{font:300 12px Poppins;color:var(--muted);margin-top:2px}
+@media (max-width:640px){.bpBack{width:100%}.bpAmount b{font-size:22px}}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -891,6 +929,20 @@ m.addEventListener&&m.addEventListener('change',function(){ttApply();window.ttPa
 <div class="pkgs" id="gatePkgs"></div>
 <p class="fine">Pay by bank transfer and upload the slip — credits are added once approved.</p>
 <p class="credit">Crafted by <b>SaM</b> With <span aria-label="love">♥</span></p>
+</div>
+</div>
+<div id="buyPage" class="admWrap buyWrap" style="display:none">
+<div class="admHead"><div class="admHeadIn">
+<span class="admBrand"><svg viewBox="488 206 304 410" width="17" height="23" aria-hidden="true"><path d="M541 285 V236 H738 L636 396" fill="none" stroke="#FF7A0F" stroke-width="48" stroke-linecap="round" stroke-linejoin="round"/><path d="M517 462 A123 123 0 1 0 694 352" fill="none" stroke="#FF7A0F" stroke-width="48" stroke-linecap="round"/></svg><b>Photo Bot</b></span>
+<span class="admNav" id="bpNav"><span class="admWho" id="bpWho"></span><button class="admLink" id="bpAdmin" type="button" hidden>Admin</button><button class="admLink" id="bpOut" type="button">Sign out</button></span>
+</div></div>
+<div class="admPage">
+<div class="bpTop"><div class="admTitle"><h1>Buy credits</h1><p class="sub">Choose a package, transfer the amount to the account below, then upload your transfer slip. Credits are added as soon as the slip is checked.</p></div><button class="bpBack" id="bpBack" type="button">Back to posters</button></div>
+<div id="bpNotice"></div>
+<section class="acard"><div class="acHead"><h4><span class="stepN">1</span>Choose a package</h4><span class="bpBal" id="bpBal"></span></div><div class="pkgs bpPkgs" id="acPkgs"></div></section>
+<section class="acard"><div class="acHead"><h4><span class="stepN">2</span>Transfer the amount</h4></div><div id="bpAmt"><p class="bpHint">Choose a package first.</p></div></section>
+<section class="acard"><div class="acHead"><h4><span class="stepN">3</span>Upload your transfer slip</h4></div><div id="acPay"><p class="bpHint">Choose a package first.</p></div></section>
+<section class="acard"><div class="acHead"><h4>Your purchases</h4></div><div class="lst bpMine" id="acMine"></div></section>
 </div>
 </div>
 <div id="admGate" class="gate admGate" style="display:none">
@@ -2428,48 +2480,44 @@ draw();
   /* ---- account / buy credits / admin sheet ---- */
   const sheet = $('acctSheet'), box = $('acctBox');
   sheet.addEventListener('click', e => { if (e.target === sheet) sheet.classList.remove('show'); });
+  const BP = $('buyPage');
   async function openAccount(notice){
     if (!PB.me) return showGate();
     await refreshMe().catch(() => {});
-    const S = PB.settings;
-    box.innerHTML = `
-      <div class="acctTop"><div><div class="msg" style="margin:0">${esc(showId(PB.me.email))}</div><div class="big">${PB.me.credits}<small>credits</small></div></div>
-      <button class="mini no" id="acClose" style="color:var(--ink)">Close</button></div>
-      ${notice ? `<div class="paybox" style="background:#fef3c7;margin:0 0 10px">${esc(notice)}</div>` : ''}
-      <h3>Buy credits</h3>
-      <div class="pkgs" id="acPkgs" style="margin-top:10px"></div>
-      <div id="acPay"></div>
-      <h3 style="margin-top:20px">My payments</h3>
-      <div class="lst" id="acMine"><div class="msg">Loading…</div></div>
-      ${PB.me.is_admin ? '<button class="btn" id="acAdminOpen" style="margin-top:18px">Open admin panel</button>' : ''}
-      <button class="btn ghost" id="acOut" style="margin-top:18px">Sign out</button>`;
-    sheet.classList.add('show');
-    $('acClose').onclick = () => sheet.classList.remove('show');
-    $('acOut').onclick = async () => { sheet.classList.remove('show'); await sb.auth.signOut(); };
+    sheet.classList.remove('show');
+    BP.style.display = ''; BP.scrollTop = 0;
+    $('bpWho').textContent = PB.me.name || showId(PB.me.email);
+    $('bpAdmin').hidden = !PB.me.is_admin;
+    $('bpBal').textContent = `${PB.me.credits.toLocaleString('en-US')} credit${PB.me.credits === 1 ? '' : 's'} left`;
+    $('bpNotice').innerHTML = notice ? `<div class="bpNote">${esc(notice)}</div>` : '';
+    $('bpAmt').innerHTML = '<p class="bpHint">Choose a package first.</p>';
+    $('acPay').innerHTML = '<p class="bpHint">Choose a package first.</p>';
+    $('acMine').innerHTML = '<div class="msg">Loading…</div>';
     pkgCards($('acPkgs'), true, p => renderPay(p));
+    const pre = $('acPkgs').querySelector('.pkg.hl') || $('acPkgs').querySelector('.pkg');
+    if (pre) pre.click();
     loadMine();
-    if (PB.me.is_admin) $('acAdminOpen').onclick = () => { sheet.classList.remove('show'); openAdmin('ov'); };
   }
+  $('bpBack').onclick = () => { BP.style.display = 'none'; refreshMe().catch(() => {}); };
+  $('bpOut').onclick = async () => { BP.style.display = 'none'; await sb.auth.signOut().catch(() => {}); };
+  $('bpAdmin').onclick = () => { BP.style.display = 'none'; openAdmin('ov'); };
   function renderPay(p){
-    const S = PB.settings, ref = showId(PB.me.email);
+    const S = PB.settings || {}, ref = showId(PB.me.email);
     const ready = S.account_number;
-    $('acPay').innerHTML = `<div class="paybox">
-      <div class="ln"><span>Package</span><b>${esc(p.name)} · ${p.credits} credits</b></div>
-      <div class="ln"><span>Amount</span><b>${mvr(p.price_mvr)}</b></div>
-      ${ready ? `<div class="ln"><span>Bank</span><b>${esc(S.bank_name || '')}</b></div>
-      <div class="ln"><span>Account name</span><b>${esc(S.account_name || '')}</b></div>
-      <div class="ln"><span>Account no.</span><b>${esc(S.account_number)}<button class="copy" data-c="${esc(S.account_number)}">Copy</button></b></div>
-      <div class="ln"><span>Remarks</span><b>${esc(ref)}<button class="copy" data-c="${esc(ref)}">Copy</button></b></div>` :
-      `<div class="ln"><span>Bank details</span><b>Not set up yet${S.contact ? ' — contact ' + esc(S.contact) : ''}</b></div>`}
-    </div>
-    <p class="fine" style="text-align:left;margin:10px 2px">Transfer the amount, then upload your payment slip. Credits are added once the payment is checked.</p>
-    <input type="file" id="acSlip" accept="image/*,application/pdf" hidden>
-    <button class="btn" id="acUp">Upload payment slip</button>
-    <div class="msg" id="acPayMsg"></div>`;
-    $('acPay').querySelectorAll('.copy').forEach(b => b.onclick = () => { navigator.clipboard && navigator.clipboard.writeText(b.dataset.c).then(() => { b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1500); }).catch(() => {}); });
-    $('acUp').onclick = () => $('acSlip').click();
-    $('acSlip').onchange = async () => {
-      const f = $('acSlip').files[0]; if (!f) return;
+    const details = [S.bank_name ? `Bank: ${S.bank_name}` : '', S.account_name ? `Account name: ${S.account_name}` : '', S.account_number ? `Account number: ${S.account_number}` : '', `Remarks: ${ref}`].filter(Boolean).join('\n');
+    $('bpAmt').innerHTML = `<div class="bpAmount"><span>Amount to transfer</span><b>${mvr(p.price_mvr)}</b></div>
+      ${ready ? `<pre class="bpAcct">${esc(details)}</pre><button class="bpCopy" id="bpCopy" type="button">Copy account details</button>`
+        : `<p class="bpHint">Bank details are not set up yet${S.contact ? '. Contact ' + esc(S.contact) : ''}.</p>`}`;
+    if (ready) $('bpCopy').onclick = () => { navigator.clipboard && navigator.clipboard.writeText(details).then(() => { $('bpCopy').textContent = 'Copied'; setTimeout(() => $('bpCopy').textContent = 'Copy account details', 1500); }).catch(() => {}); };
+    $('acPay').innerHTML = `<div class="bpForm">
+      <label for="acSlip">Transfer slip (photo or PDF, up to 8 MB)<input type="file" id="acSlip" accept="image/*,application/pdf"></label>
+      <p class="bpPkgLine">${esc(p.name)} · ${p.credits.toLocaleString('en-US')} credits · ${mvr(p.price_mvr)}</p>
+      <button class="hbtn pri" id="acUp" type="button">Send for approval</button>
+      <div class="msg" id="acPayMsg"></div></div>`;
+    $('acUp').onclick = async () => {
+      const f = $('acSlip').files[0];
+      if (!f){ $('acPayMsg').textContent = 'Choose your transfer slip first.'; return; }
+      if (f.size > 8 * 1024 * 1024){ $('acPayMsg').textContent = 'That file is over 8 MB. Use a smaller photo or PDF.'; return; }
       $('acUp').disabled = true; $('acPayMsg').textContent = 'Uploading slip…';
       try {
         const ext = ((f.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '')) || 'jpg';
@@ -2479,7 +2527,7 @@ draw();
         const {data: topupId, error} = await sb.rpc('photobot_request_topup', {p_package: p.id, p_slip: path});
         if (error) throw error;
         notifyEvent({event: 'topup', id: topupId});
-        $('acPay').innerHTML = `<div class="paybox" style="background:#dcfce7">Slip received ✓ Your ${p.credits} credits will be added once the payment is approved.</div>`;
+        $('acPay').innerHTML = `<div class="bpDone">Slip received. Your ${p.credits.toLocaleString('en-US')} credits will be added once the payment is approved.</div>`;
         loadMine();
       } catch(e){
         $('acPayMsg').textContent = /TOO_MANY_PENDING/.test(e.message) ? 'You already have 3 payments waiting for approval.' : /NOT_APPROVED/.test(e.message) ? 'Your account is waiting for approval.' : 'Upload failed: ' + e.message;
@@ -3109,7 +3157,7 @@ var SUN='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="cur
 var MOON='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
 window.ttPaint=function(){var d=r.classList.contains('ttdark');b.innerHTML=d?SUN:MOON;b.setAttribute('aria-label',d?'Switch to light mode':'Switch to dark mode');b.title=d?'Light mode':'Dark mode'};
 b.addEventListener('click',function(){var d=!r.classList.contains('ttdark');try{localStorage.setItem(k,d?'dark':'light')}catch(e){}ttApply();ttPaint()});
-function place(){var ap=document.getElementById('adminPanel'),an=document.querySelector('.admNav');if(ap&&an&&ap.style.display!=='none'){if(b.parentNode!==an){b.classList.remove('float');an.appendChild(b)}return}var h=document.querySelector('body > header');var shown=h&&h.offsetParent!==null&&!document.querySelector('#authGate[style*="block"],#authGate:not([style*="none"])');
+function place(){var bp=document.getElementById('buyPage'),bn=document.getElementById('bpNav');if(bp&&bn&&bp.style.display!=='none'){if(b.parentNode!==bn){b.classList.remove('float');bn.appendChild(b)}return}var ap=document.getElementById('adminPanel'),an=document.querySelector('#adminPanel .admNav');if(ap&&an&&ap.style.display!=='none'){if(b.parentNode!==an){b.classList.remove('float');an.appendChild(b)}return}var h=document.querySelector('body > header');var shown=h&&h.offsetParent!==null&&!document.querySelector('#authGate[style*="block"],#authGate:not([style*="none"])');
 if(shown){if(b.parentNode!==h){b.classList.remove('float');h.appendChild(b)}}else if(!b.classList.contains('float')||b.parentNode!==document.body){b.classList.add('float');document.body.appendChild(b)}}
 ttPaint();place();var t;new MutationObserver(function(){clearTimeout(t);t=setTimeout(place,80)}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['style','hidden']});})();
 </script>
