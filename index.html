@@ -1381,10 +1381,16 @@ Object.assign(FX, it.fx || {...FX}); syncFxUI();
 if (!stkSync) STK = (it.stickers || []).map(o => ({...o})); selS = -1; syncStkUI();
 }
 function selectItem(i){ if (busy) return; saveCur(); loadItem(i); renderStrip(); schedulePresets(); draw(); }
+function clearPhotos(){ cur = -1; orig = mask = cut = bbox = null; ['removeBg','resetBg','fit','refine'].forEach(id => $(id).disabled = true);
+$('photoDrop').innerHTML = '<span>Add product photos</span>'; $('bgMsg').textContent = ''; renderStrip(); draw(); }
 function removeItem(i){
-if (busy) return;
+if (busy){ // still uploading / removing backgrounds: drop it from the queue
+  items[i].removed = true; items.splice(i, 1);
+  if (i < cur) cur--; else if (i === cur) cur = -1;
+  renderStrip(); return;
+}
 saveCur(); items.splice(i, 1);
-if (!items.length){ cur = -1; orig = mask = cut = bbox = null; ['removeBg','resetBg','fit','refine'].forEach(id => $(id).disabled = true); renderStrip(); draw(); return; }
+if (!items.length){ clearPhotos(); return; }
 loadItem(Math.min(i, items.length-1)); renderStrip(); draw();
 }
 function renderStrip(working){
@@ -1392,7 +1398,7 @@ const st = $('strip'); st.innerHTML = '';
 items.forEach((it, i) => {
 const b = document.createElement('button'); b.className = 'thumb' + (i===cur ? ' on' : '');
 b.style.backgroundImage = `url(${it.thumb})`;
-b.innerHTML = `<span class="n">${i+1}</span>` + (it.pending ? '<span class="busy">…</span>' : '') + (items.length > 1 ? '<span class="x" title="Remove">×</span>' : '');
+b.innerHTML = `<span class="n">${i+1}</span>` + (it.pending ? '<span class="busy">…</span>' : '') + '<span class="x" title="Remove">×</span>';
 b.onclick = e => { if (e.target.classList.contains('x')) removeItem(i); else selectItem(i); };
 st.appendChild(b);
 });
@@ -1424,15 +1430,20 @@ stickers: stkSync ? STK.map(o => ({...o})) : [], fx: {...FX}, thumb: tc.toDataUR
 }
 ['removeBg','resetBg','fit'].forEach(id => $(id).disabled = false);
 thumb($('photoDrop'), items[items.length-1].thumb, 'Tap to add more photos');
-for (let i = start; i < items.length; i++){
-loadItem(i); fillMask(255); renderStrip();
-if (items.length - start > 1) $('bgMsg').textContent = `Removing background ${i-start+1} of ${items.length-start}…`;
+const queue = items.slice(start);
+for (let q = 0; q < queue.length; q++){
+const it = queue[q]; if (it.removed) continue;
+loadItem(items.indexOf(it)); fillMask(255); renderStrip();
+if (queue.length > 1) $('bgMsg').textContent = `Removing background ${q+1} of ${queue.length}…`;
 await smartRemove(false);
-items[i].pending = false; saveCur();
+if (it.removed) continue;
+it.pending = false; cur = items.indexOf(it); saveCur();
 }
 busy = false;
-loadItem(start); renderStrip(); draw();
-if (items.length - start > 1) $('bgMsg').textContent = `Done — ${items.length-start} photos ready. Tap a thumbnail to edit each one.`;
+if (!items.length){ clearPhotos(); return; }
+const first = queue.find(it => !it.removed);
+loadItem(first ? items.indexOf(first) : items.length-1); renderStrip(); draw();
+if (queue.filter(it => !it.removed).length > 1) $('bgMsg').textContent = `Done — ${queue.filter(it => !it.removed).length} photos ready. Tap a thumbnail to edit each one.`;
 showStep('name');
 }
 hookDrop($('photoDrop'), $('photoIn'), addPhotos, true);
