@@ -701,6 +701,44 @@ html:root .hdNav .credPill{display:none!important}
 html:root .hdNav #adminBtn{color:var(--accent)}
 .pwOk,.authPanel .msg.ok{color:var(--good)}
 @media (max-width:640px){.hdNav .admWho{display:none}.hdIn{gap:6px 10px}.hdNav .admLink{padding:8px 8px;font-size:13px}}
+/* ===== customer portal: clean & minimal (matches Input Tax Capture) ===== */
+html:root .wrap{max-width:1280px;padding:24px 18px 48px;gap:20px}
+html:root .stage{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:none;gap:12px}
+html:root .toolbar{gap:6px}
+html:root .tool{border:1px solid var(--line);background:transparent;border-radius:999px;padding:8px 14px;font:500 13px Poppins;color:var(--muted);box-shadow:none}
+html:root .tool:hover{color:var(--accent);border-color:var(--accent)}
+html:root .tool.on,html.ttdark .tool.on{background:var(--soft)!important;color:var(--accent)!important;border-color:var(--accent)}
+html:root .tool:disabled{opacity:.4}
+html:root .canvasBox{background:repeating-conic-gradient(var(--soft) 0 25%,var(--panel) 0 50%) 0 0/20px 20px;border-radius:14px;padding:12px}
+html:root canvas#c{box-shadow:0 10px 30px -12px rgba(42,10,28,.25);border-radius:4px}
+html:root .hint{font:300 12px Poppins;color:var(--muted)}
+html:root .side{gap:14px}
+html:root .card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px 22px;box-shadow:none}
+html:root .card h2{font:500 16px Poppins;text-transform:none;letter-spacing:-.1px;color:var(--ink);margin:0 0 14px;gap:10px}
+html:root .card h2 b{width:26px;height:26px;background:var(--soft);color:var(--accent);font:600 12px Poppins;border-radius:999px}
+html:root .drop{border:1.5px dashed var(--line);border-radius:14px;background:var(--bg);padding:16px;font:400 14px Poppins;color:var(--muted)}
+html:root .drop:hover,html:root .drop.over{border-color:var(--accent);color:var(--accent);background:var(--soft)}
+html:root .wrap input[type=text],html:root .wrap input[type=number],html:root .wrap select,html:root .wrap textarea{border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:400 15px Poppins;padding:11px 13px}
+html:root .wrap input[type=text]:focus,html:root .wrap select:focus,html:root .wrap textarea:focus{outline:0;border-color:var(--accent);background:var(--panel)}
+html:root .wrap select{padding:9px 12px}
+html:root label.row{font:400 14px Poppins;color:var(--ink);margin-top:12px}
+html:root input[type=range]{accent-color:var(--accent)}
+html:root input[type=checkbox]{accent-color:var(--accent)}
+html:root .wrap .btn{border-radius:999px;font:500 15px Poppins;padding:13px 18px;background:var(--accent);color:var(--on-accent);box-shadow:none;margin-top:10px}
+html:root .wrap .btn:hover:not(:disabled){background:var(--accent2)}
+html.ttdark .wrap .btn:hover:not(:disabled){background:#fff}
+html:root .wrap .btn.ghost{background:transparent!important;color:var(--ink)!important;border:1px solid var(--line)}
+html:root .wrap .btn.ghost:hover:not(:disabled){border-color:var(--accent);color:var(--accent)!important}
+html:root .wrap .msg{font:300 13px Poppins;color:var(--muted)}
+html:root .credCard{border-radius:20px;padding:20px 24px}
+html:root .modal div{border-radius:20px;background:var(--panel);color:var(--ink)}
+@media(max-width:900px){
+  html:root .wrap{padding:10px 10px 32px;gap:12px}
+  html:root .stage{border-radius:0 0 20px 20px;border-top:0;padding:10px;box-shadow:0 8px 20px -16px rgba(42,10,28,.35)}
+  html:root .card{padding:16px 18px;border-radius:18px}
+  html:root .credCard{padding:16px 18px;margin:0}
+  html:root .ccV{font-size:34px}
+}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
