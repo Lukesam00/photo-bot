@@ -791,7 +791,8 @@ window.ttApply=function(){r.classList.toggle('ttdark',pick())};ttApply();
 <div style="flex:1;min-width:0">
 <input type="text" id="brShop" placeholder="Shop name (if no logo)">
 <input type="tel" id="brPhone" placeholder="Phone / WhatsApp">
-<input type="text" id="brSocial" placeholder="Instagram / website">
+<input type="text" id="brSocial" placeholder="Instagram">
+<input type="text" id="brWeb" placeholder="Website">
 </div>
 </div>
 <input type="file" id="logoIn" accept="image/*" hidden>
@@ -1123,7 +1124,7 @@ try { localStorage.setItem(savedFrameKey, im.src); } catch(e){ $('frameMsg').tex
 });
 /* ---------- frame templates with shop details ---------- */
 const BR_KEY = 'photobot.brand', TPL_KEY = 'photobot.tpl';
-let BR = {shop:'', phone:'', social:'', color:'#0f766e', logo:'', logoSize:100}, logoImg = null;
+let BR = {shop:'', phone:'', social:'', web:'', color:'#0f766e', logo:'', logoSize:100}, logoImg = null;
 let TPL = {id: null, size: 'p'};
 try { Object.assign(BR, JSON.parse(localStorage.getItem(BR_KEY) || '{}')); } catch(e){}
 try { Object.assign(TPL, JSON.parse(localStorage.getItem(TPL_KEY) || '{}')); } catch(e){}
@@ -1142,6 +1143,9 @@ function mix(hex, to, t){ const a = parseInt(hex.slice(1),16), b = parseInt(to.s
   const c = s => Math.round(((a>>s)&255)*(1-t) + ((b>>s)&255)*t); return `rgb(${c(16)},${c(8)},${c(0)})`; }
 function iconPhone(c, x, y, s, col){ c.save(); c.strokeStyle = col; c.lineWidth = s*0.12; c.lineCap = 'round';
   rrect(c, x - s*0.3, y - s*0.5, s*0.6, s, s*0.12); c.stroke(); c.beginPath(); c.moveTo(x - s*0.08, y + s*0.33); c.lineTo(x + s*0.08, y + s*0.33); c.stroke(); c.restore(); }
+function iconWeb(c, x, y, s, col){ c.save(); c.strokeStyle = col; c.lineWidth = s*0.1; const r = s*0.46;
+  c.beginPath(); c.arc(x, y, r, 0, 7); c.stroke(); c.beginPath(); c.ellipse(x, y, r*0.45, r, 0, 0, 7); c.stroke();
+  c.beginPath(); c.moveTo(x - r, y); c.lineTo(x + r, y); c.stroke(); c.restore(); }
 function iconCam(c, x, y, s, col){ c.save(); c.strokeStyle = col; c.fillStyle = col; c.lineWidth = s*0.11;
   rrect(c, x - s*0.48, y - s*0.48, s*0.96, s*0.96, s*0.28); c.stroke(); c.beginPath(); c.arc(x, y, s*0.22, 0, 7); c.stroke(); c.beginPath(); c.arc(x + s*0.25, y - s*0.25, s*0.06, 0, 7); c.fill(); c.restore(); }
 // draw logo (or shop name) centred in a box
@@ -1163,6 +1167,7 @@ function drawContact(c, cx, cy, w, h, col){
   const parts = [];
   if (BR.phone) parts.push(['phone', BR.phone]);
   if (BR.social) parts.push(['cam', BR.social]);
+  if (BR.web) parts.push(['web', BR.web]);
   if (!parts.length) return;
   let fs = h*0.42; c.font = `600 ${fs}px Poppins`;
   const gap = fs*1.6, ic = fs*1.05, pad = fs*0.45;
@@ -1173,7 +1178,7 @@ function drawContact(c, cx, cy, w, h, col){
   let x = cx - tot/2;
   c.fillStyle = col; c.textAlign = 'left'; c.textBaseline = 'middle';
   parts.forEach(([kind, s]) => {
-    (kind === 'phone' ? iconPhone : iconCam)(c, x + ic2/2, cy, ic2, col);
+    ({phone: iconPhone, cam: iconCam, web: iconWeb}[kind])(c, x + ic2/2, cy, ic2, col);
     x += ic2 + pad2; c.fillText(s, x, cy + fs*0.04); x += c.measureText(s).width + gap2;
   });
 }
@@ -1329,13 +1334,13 @@ function applyTemplate(keepLayout){
 let brT = 0;
 function brandChanged(){ saveBr(); clearTimeout(brT); brT = setTimeout(() => { renderTplGrid(); if (TPL.id) applyTemplate(true); }, 250); }
 function syncBrandUI(){
-  $('brShop').value = BR.shop || ''; $('brPhone').value = BR.phone || ''; $('brSocial').value = BR.social || '';
+  $('brShop').value = BR.shop || ''; $('brPhone').value = BR.phone || ''; $('brSocial').value = BR.social || ''; $('brWeb').value = BR.web || '';
   $('brColor').value = BR.color || '#0f766e'; $('brLogoSize').value = BR.logoSize || 100;
   $('logoBox').innerHTML = BR.logo ? `<img src="${BR.logo}" alt="logo">` : '<span>＋ Logo</span>';
   $('logoDel').style.display = BR.logo ? '' : 'none';
 }
 function loadLogo(){ logoImg = null; if (!BR.logo) return Promise.resolve(); return new Promise(r => { const im = new Image(); im.onload = () => { logoImg = im; r(); }; im.onerror = () => r(); im.src = BR.logo; }); }
-['brShop','brPhone','brSocial'].forEach(id => $(id).addEventListener('input', () => { BR[{brShop:'shop', brPhone:'phone', brSocial:'social'}[id]] = $(id).value.trim(); brandChanged(); }));
+['brShop','brPhone','brSocial','brWeb'].forEach(id => $(id).addEventListener('input', () => { BR[{brShop:'shop', brPhone:'phone', brSocial:'social', brWeb:'web'}[id]] = $(id).value.trim(); brandChanged(); }));
 $('brColor').addEventListener('input', () => { BR.color = $('brColor').value; brandChanged(); });
 $('brLogoSize').addEventListener('input', () => { BR.logoSize = +$('brLogoSize').value; brandChanged(); });
 $('logoBox').onclick = () => $('logoIn').click();
@@ -1350,7 +1355,7 @@ $('logoIn').onchange = async () => {
 $('logoDel').onclick = async () => { BR.logo = ''; await loadLogo(); syncBrandUI(); brandChanged(); };
 document.querySelectorAll('#tplSize button').forEach(b => b.onclick = () => { TPL.size = b.dataset.v; saveTpl(); renderTplGrid(); if (TPL.id) applyTemplate(false); });
 syncBrandUI();
-if (!BR.logo && !BR.phone && !BR.shop && !BR.social) $('brandMore').open = true;
+if (!BR.logo && !BR.phone && !BR.shop && !BR.social && !BR.web) $('brandMore').open = true;
 loadLogo().then(() => { renderTplGrid(); document.fonts.ready.then(renderTplGrid); });
 
 try {
