@@ -565,6 +565,39 @@ html:root .lst .it,html:root .hist .it{font:400 14px Poppins;padding:12px 0}
 html.admpage body > header,html.admpage body > .wrap,html.admpage #authGate,html.admpage #admClose,html.admpage #adminBtn,html.admpage #credPill{display:none!important}
 .udL{display:grid;gap:6px;font:400 13px Poppins;color:var(--muted)}
 html:root .udL .admIn{margin:0}
+/* ===== one-page admin, formatted like Input Tax Capture ===== */
+html:root .admTabs{position:sticky;top:64px;display:flex;flex-wrap:nowrap;gap:8px;padding:8px 0 10px;margin:0 0 14px;background:var(--bg);border-radius:0;overflow-x:auto}
+html:root .admTabs button{border:1px solid var(--line)!important;background:var(--panel)!important;border-radius:999px;padding:9px 16px;font:400 14px Poppins;color:var(--ink);box-shadow:none!important}
+html:root .admTabs button:hover{border-color:var(--accent)!important;color:var(--accent)}
+html:root .admTitle h1{font:300 38px/1.1 Poppins}
+html:root #admBody > .acard{scroll-margin-top:130px;padding:24px 24px 28px}
+html:root #admBody > .acard > .acHead h4{font:500 18px Poppins}
+html:root #admBody .note{font:300 14px/1.7 Poppins;color:var(--muted);margin:0 0 16px}
+html:root #admBody .acard .acard{margin:10px 0 0;border-radius:16px;padding:16px 18px;background:transparent!important}
+html:root #admBody .chips{margin:0}
+html:root #reqBody .chips{margin:0 0 6px}
+html:root .acHead .mini{background:transparent!important;border:1px solid var(--line);color:var(--ink);padding:9px 16px}
+html:root #salesKpis{grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:10px;margin:4px 0 18px}
+html:root #salesKpis .stat{background:var(--soft)!important;opacity:.95}
+html:root #salesKpis .stat:not(.lead){background:color-mix(in srgb,var(--soft) 55%,var(--panel))!important}
+html:root #salesKpis .stat.lead{background:var(--soft)!important}
+html:root #salesKpis .stat .v{color:var(--ink)!important;font:400 26px Poppins}
+html:root #salesKpis .stat .v small{font:500 13px Poppins;color:var(--muted)}
+html:root #salesKpis .stats .stat:nth-child(3) .v{color:var(--ink)}
+.tblWrap{overflow-x:auto}
+.atable{width:100%;border-collapse:collapse;min-width:620px;font:400 14px Poppins}
+.atable th{text-align:left;font:400 13px Poppins;color:var(--muted);padding:10px 10px;border-bottom:1px solid var(--line)}
+.atable td{padding:12px 10px;border-bottom:1px solid var(--line);color:var(--ink)}
+.atable .n{text-align:right;font-variant-numeric:tabular-nums}
+.atable td.empty{text-align:center;color:var(--muted);font-weight:300;padding:28px 10px}
+.addform{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:14px;align-items:end}
+.addform label{display:grid;gap:8px;font:400 14px Poppins;color:var(--muted)}
+html:root .addform .admIn{margin:0;padding:13px 14px;height:48px;box-sizing:border-box}
+html:root .addform .addBtn{height:48px;font:500 15px Poppins}
+html:root #addMsg{margin:10px 0 0}
+html:root #secUsers .acHead #uSearch{margin:0;max-width:280px;border-radius:999px;padding:10px 18px}
+html:root #uList .urow{padding:14px 6px}
+@media (max-width:640px){html:root #secUsers .acHead #uSearch{max-width:none;width:100%}html:root .admTitle h1{font-size:30px}}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -809,8 +842,8 @@ m.addEventListener&&m.addEventListener('change',function(){ttApply();window.ttPa
 <span class="admNav"><span class="admWho" id="admWho"></span><button id="admClose" class="admLink" type="button">Editor</button><button id="admOut" class="admLink" type="button">Sign out</button></span>
 </div></div>
 <div class="admPage">
-<div class="admTitle"><h1>Admin</h1><p class="sub">Approve payments, manage users and credits, and edit packages and bank details.</p></div>
-<nav class="admTabs" id="admTabs" aria-label="Admin sections"><button data-a="ov" class="on">Overview</button><button data-a="pay">Payments<span id="admPendN" class="dot" style="display:none"></span></button><button data-a="users">Users</button><button data-a="set">Settings</button></nav>
+<div class="admTitle"><h1>Customers</h1><p class="sub">Approve payments, add customers, reset passwords, block access, and edit pricing and bank details.</p></div>
+<nav class="admTabs" id="admTabs" aria-label="Admin sections"><button type="button" data-s="secReq">Requests<span id="admPendN" class="dot" style="display:none"></span></button><button type="button" data-s="secSales">Sales</button><button type="button" data-s="secAdd">Add customer</button><button type="button" data-s="secUsers">Customers</button><button type="button" data-s="secSet">Pricing</button></nav>
 <div id="admBody" class="admBody"></div>
 </div>
 </div>
@@ -2333,20 +2366,97 @@ draw();
   $('admClose').onclick = () => { AP.style.display = 'none'; refreshMe().catch(() => {}); };
   $('admOut').onclick = async () => { AP.style.display = 'none'; await sb.auth.signOut().catch(() => {}); };
   $('adminBtn').onclick = () => openAdmin(admTab);
-  document.querySelectorAll('#admTabs button').forEach(b => b.onclick = () => openAdmin(b.dataset.a));
+  document.querySelectorAll('#admTabs button').forEach(b => b.onclick = () => { const t = $(b.dataset.s); if (t) t.scrollIntoView({behavior: 'smooth', block: 'start'}); });
   async function refreshPendingDot(){
     const {data} = await sb.rpc('photobot_admin_stats');
     const n = data ? data.pending : 0, d = $('admPendN');
     d.style.display = n ? '' : 'none'; d.textContent = n;
+    if ($('reqTitle')) $('reqTitle').textContent = `Payment requests · ${n} waiting`;
     $('adminBtn').textContent = n ? `Admin · ${n}` : 'Admin';
     return data;
   }
   function openAdmin(tab){
     admTab = tab; AP.style.display = '';
     if ($('admWho') && PB.me) $('admWho').textContent = showId(PB.me.email) + ' · Admin';
-    document.querySelectorAll('#admTabs button').forEach(b => b.classList.toggle('on', b.dataset.a === tab));
-    AB.innerHTML = '<div class="empty">Loading…</div>';
-    ({ov: admOverview, pay: admPayments, users: admUsers, set: admSettings})[tab]();
+    if (!AB.dataset.built){
+      AB.dataset.built = '1';
+      AB.innerHTML = `
+      <section class="acard" id="secReq"><div class="acHead"><h4 id="reqTitle">Payment requests</h4></div>
+        <p class="note">Approve a payment to add its credits to the customer. Compare approved payments with your bank statement from time to time.</p>
+        <div id="reqBody"></div></section>
+      <section class="acard" id="secSales"><div class="acHead"><h4>Sales</h4>
+        <div class="chips" id="salesSeg" role="group" aria-label="Period"><button type="button" data-p="today">Today</button><button type="button" data-p="month" class="on">This month</button><button type="button" data-p="last">Last month</button><button type="button" data-p="all">All time</button></div>
+        <button class="mini" id="salesExport" type="button">Export .csv</button></div>
+        <div class="stats" id="salesKpis"></div>
+        <div class="tblWrap"><table class="atable"><thead><tr><th>Date</th><th>Customer</th><th>Package</th><th class="n">Credits</th><th class="n">Amount</th><th>Approved</th></tr></thead><tbody id="salesBody"><tr><td colspan="6" class="empty">Loading sales…</td></tr></tbody></table></div></section>
+      <section class="acard" id="secAdd"><div class="acHead"><h4>Add a customer</h4></div>
+        <form class="addform" id="addForm" novalidate>
+          <label>Mobile number or email<input class="admIn" id="addLogin" placeholder="7xxxxxx" autocomplete="off"></label>
+          <label>Password<input class="admIn" id="addPw" placeholder="At least 6 characters" autocomplete="off"></label>
+          <label>Starting credits<input class="admIn" id="addCr" inputmode="numeric" placeholder="e.g. 10"></label>
+          <label>Access<select class="admIn" id="addRole"><option value="customer">Customer</option><option value="admin">Admin</option></select></label>
+          <button class="mini ok addBtn" id="addGo" type="submit">Add customer</button>
+        </form><p class="msg" id="addMsg"></p></section>
+      <section class="acard" id="secUsers"><div class="acHead"><h4 id="usersTitle">All customers</h4><input class="admIn" id="uSearch" placeholder="Search phone or email"></div>
+        <div id="usersBody"></div></section>
+      <section class="acard" id="secSet"><div class="acHead"><h4>Pricing and bank details</h4></div><div id="setBody"></div></section>`;
+      document.querySelectorAll('#salesSeg button').forEach(b => b.onclick = () => { salesP = b.dataset.p; document.querySelectorAll('#salesSeg button').forEach(x => x.classList.toggle('on', x === b)); paintSales(); });
+      $('salesExport').onclick = exportSales;
+      $('uSearch').oninput = () => { clearTimeout(userT); userT = setTimeout(() => { userQ = $('uSearch').value.trim(); loadUsers(); }, 300); };
+      $('addForm').onsubmit = addCustomer;
+    }
+    refreshPendingDot().catch(() => {});
+    admPayments(); admSales(); admUsers(); admSettings();
+    const target = {pay: 'secReq', users: 'secUsers', set: 'secSet'}[tab];
+    if (target) setTimeout(() => { const t = $(target); if (t) t.scrollIntoView({block: 'start'}); }, 60); else AP.scrollTop = 0;
+  }
+  let salesRows = [], salesP = 'month';
+  async function admSales(){
+    const {data, error} = await sb.rpc('photobot_admin_topups', {p_status: 'approved'});
+    if (error){ $('salesBody').innerHTML = `<tr><td colspan="6" class="empty">${esc(error.message)}</td></tr>`; return; }
+    salesRows = data || []; paintSales();
+  }
+  function salesInPeriod(){
+    const now = new Date(), y = now.getFullYear(), m = now.getMonth();
+    const from = salesP === 'today' ? new Date(y, m, now.getDate()) : salesP === 'month' ? new Date(y, m, 1) : salesP === 'last' ? new Date(y, m - 1, 1) : null;
+    const to = salesP === 'last' ? new Date(y, m, 1) : null;
+    return salesRows.filter(t => { const d = new Date(t.reviewed_at || t.created_at); return (!from || d >= from) && (!to || d < to); });
+  }
+  function paintSales(){
+    const rows = salesInPeriod();
+    const rev = rows.reduce((a, t) => a + Number(t.amount_mvr || 0), 0), cr = rows.reduce((a, t) => a + Number(t.credits || 0), 0);
+    const cust = new Set(rows.map(t => t.user_id)).size;
+    const label = {today: 'today', month: new Date().toLocaleString('en-GB', {month: 'long'}), last: 'last month', all: 'all time'}[salesP];
+    const pend = Number($('admPendN').textContent || 0);
+    $('salesKpis').innerHTML = `
+      <div class="stat lead"><div class="k">Revenue · ${esc(label)}</div><div class="v"><small>MVR</small> ${Number(rev).toLocaleString('en', {maximumFractionDigits: 2})}</div><div class="s">from approved payments</div></div>
+      <div class="stat"><div class="k">Sales</div><div class="v">${rows.length}</div><div class="s">${cust} customer${cust === 1 ? '' : 's'}</div></div>
+      <div class="stat"><div class="k">Credits sold</div><div class="v">${cr}</div><div class="s">posters customers can make</div></div>
+      <div class="stat"><div class="k">Average sale</div><div class="v">${rows.length ? Math.round(rev / rows.length) : '—'}</div><div class="s">per approved payment</div></div>
+      <div class="stat"><div class="k">Waiting for approval</div><div class="v">${pend}</div><div class="s">${pend ? 'see Payment requests' : 'nothing to check'}</div></div>`;
+    $('salesBody').innerHTML = rows.length ? rows.map(t => `<tr><td>${fmtDay(t.created_at)}</td><td>${esc(showId(t.email))}</td><td>${esc(t.package_name || '')}</td><td class="n">${t.credits}</td><td class="n">${Number(t.amount_mvr).toLocaleString('en', {maximumFractionDigits: 2})}</td><td>${fmtD(t.reviewed_at)}</td></tr>`).join('')
+      : '<tr><td colspan="6" class="empty">No sales in this period.</td></tr>';
+  }
+  function exportSales(){
+    const rows = salesInPeriod(), q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+    const csv = ['Date,Customer,Package,Credits,Amount (MVR),Approved'].concat(rows.map(t => [new Date(t.created_at).toISOString().slice(0, 10), showId(t.email), t.package_name, t.credits, t.amount_mvr, t.reviewed_at ? new Date(t.reviewed_at).toISOString().slice(0, 16).replace('T', ' ') : ''].map(q).join(','))).join('\n');
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv'})); a.download = `photo-bot-sales-${salesP}.csv`; document.body.appendChild(a); a.click(); a.remove();
+  }
+  async function addCustomer(e){
+    e.preventDefault();
+    const login = $('addLogin').value.trim(), pw = $('addPw').value.trim(), credits = parseInt($('addCr').value, 10) || 0, isAdm = $('addRole').value === 'admin';
+    if (!login){ $('addMsg').textContent = 'Enter a mobile number or email.'; return; }
+    if (pw.length < 6){ $('addMsg').textContent = 'Password must be at least 6 characters.'; return; }
+    const b = $('addGo'); b.disabled = true; $('addMsg').textContent = 'Adding…';
+    try {
+      const {data: {session}} = await sb.auth.getSession();
+      const r = await fetch(SB_URL + '/functions/v1/photobot-admin-user', {method: 'POST', headers: {'content-type': 'application/json', apikey: SB_KEY, authorization: 'Bearer ' + (session ? session.access_token : SB_KEY)}, body: JSON.stringify({action: 'create', login, password: pw, credits, admin: isAdm})});
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.error || 'Could not add the customer.');
+      $('addMsg').textContent = `Added ${showId(j.email)} with ${credits} credit${credits === 1 ? '' : 's'}. Send them their login and password.`;
+      $('addForm').reset(); loadUsers();
+    } catch(err){ $('addMsg').textContent = err.message; }
+    finally { b.disabled = false; }
   }
   PB.openAdmin = openAdmin;
 
@@ -2376,7 +2486,7 @@ draw();
 
   /* ---- payments ---- */
   async function admPayments(){
-    AB.innerHTML = `<div class="chips" id="payF">${['pending','approved','rejected','all'].map(f => `<button data-f="${f}" class="${f === payFilter ? 'on' : ''}">${f[0].toUpperCase() + f.slice(1)}</button>`).join('')}</div><div id="payL"><div class="empty">Loading…</div></div>`;
+    $('reqBody').innerHTML = `<div class="chips" id="payF">${['pending','approved','rejected','all'].map(f => `<button data-f="${f}" class="${f === payFilter ? 'on' : ''}">${f[0].toUpperCase() + f.slice(1)}</button>`).join('')}</div><div id="payL"><div class="empty">Loading…</div></div>`;
     document.querySelectorAll('#payF button').forEach(b => b.onclick = () => { payFilter = b.dataset.f; admPayments(); });
     const {data, error} = await sb.rpc('photobot_admin_topups', {p_status: payFilter === 'all' ? null : payFilter});
     const L = $('payL');
@@ -2421,8 +2531,8 @@ draw();
   /* ---- users ---- */
   let userT = 0;
   async function admUsers(){
-    AB.innerHTML = `<input class="admIn" id="uSearch" placeholder="Search phone or email" value="${esc(userQ)}"><div class="acard" id="uList" style="padding:4px 12px"><div class="empty">Loading…</div></div>`;
-    $('uSearch').oninput = () => { clearTimeout(userT); userT = setTimeout(() => { userQ = $('uSearch').value.trim(); loadUsers(); }, 300); };
+    $('usersBody').innerHTML = '<div id="uList"><div class="empty">Loading…</div></div>';
+    if ($('uSearch').value !== userQ) $('uSearch').value = userQ;
     loadUsers();
   }
   async function loadUsers(){
@@ -2430,7 +2540,8 @@ draw();
     const L = $('uList'); if (!L) return;
     if (error){ L.innerHTML = `<div class="empty">${esc(error.message)}</div>`; return; }
     if (!data.length){ L.innerHTML = '<div class="empty">No users found.</div>'; return; }
-    L.innerHTML = `<div class="msg" style="padding:8px 4px 0">${data.length} user${data.length === 1 ? '' : 's'}</div>` + data.map(u => `<div class="urow" data-u="${u.user_id}">
+    if ($('usersTitle')) $('usersTitle').textContent = `All customers · ${data.length}`;
+    L.innerHTML = data.map(u => `<div class="urow" data-u="${u.user_id}">
       <div class="av">${esc(initials(u.email))}</div>
       <div class="g"><div class="n">${esc(showId(u.email))}${u.is_admin ? '<span class="tag">Admin</span>' : ''}${(u.email || '').endsWith(OLD_DOM) ? '<span class="tag" style="background:#9ca3af">input-tax login</span>' : ''}</div><div class="m">${u.posters} posters · ${mvr(u.paid_mvr)} paid · joined ${fmtDay(u.created_at)}</div></div>
       <div class="c">${u.credits}<small>credits</small></div></div>`).join('');
@@ -2514,7 +2625,7 @@ draw();
     const {data: rows} = await sb.from('photobot_settings').select('key,value');
     const S = Object.fromEntries((rows || []).map(r => [r.key, r.value])); PB.settings = S;
     const {data: pks} = await sb.rpc('photobot_admin_packages');
-    AB.innerHTML = `
+    $('setBody').innerHTML = `
       <div class="acard"><h4>Bank details for payments</h4>
         <input class="admIn" id="ad_bank_name" placeholder="Bank (e.g. BML)" value="${esc(S.bank_name || '')}">
         <input class="admIn" id="ad_account_name" placeholder="Account name" value="${esc(S.account_name || '')}">
