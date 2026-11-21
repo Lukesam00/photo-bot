@@ -865,6 +865,7 @@ window.ttApply=function(){r.classList.toggle('ttdark',pick())};ttApply();
 <div class="card" data-step="stk">
 <h2>Stickers</h2>
 <div class="stkgrid" id="stkGrid"></div>
+<label class="row">Same stickers on all photos <input type="checkbox" id="stkSync" checked></label>
 <div id="stkEdit" style="display:none">
 <div class="sub">Edit sticker</div>
 <textarea id="stkText" rows="2" placeholder="Sticker text"></textarea>
@@ -877,7 +878,6 @@ window.ttApply=function(){r.classList.toggle('ttdark',pick())};ttApply();
 <label class="row">Size <input type="range" id="stkSize" min="30" max="300" value="100"></label>
 <label class="row">Rotate <input type="range" id="stkRot" min="-180" max="180" value="0"></label>
 <button class="btn ghost" id="stkDup">Duplicate</button>
-<button class="btn ghost" id="stkAll">Copy to all posters</button>
 </details>
 <button class="btn ghost danger" id="stkDel">Delete sticker</button>
 </div>
@@ -1357,10 +1357,12 @@ if (s){ const im = new Image(); im.onload = () => { setFrame(im, {template: !!TP
 } catch(e){}
 /* ---------- batch: several product photos ---------- */
 const items = []; let cur = -1, busy = false;
+let stkSync = true; try { stkSync = localStorage.getItem('photobot.stkSync') !== '0'; } catch(e){}
 function saveCur(){
 if (cur < 0 || !items[cur]) return;
 Object.assign(items[cur], {orig, mask, cut, bbox, gc, hint: hints.canvas, undo: undoStack, baseScale,
 stickers: STK.map(o => ({...o})), fx: {...FX}, P: {...P}, T: {...T}, T2: {...T2}, name: $('name').value, dv: $('dvName').value, scaleV: $('scale').value});
+if (stkSync) items.forEach(it => it.stickers = STK.map(o => ({...o})));
 }
 function loadItem(i){
 const it = items[i]; cur = i;
@@ -1369,7 +1371,7 @@ Object.assign(P, it.P); Object.assign(T, it.T); Object.assign(T2, it.T2);
 $('name').value = it.name; $('dvName').value = it.dv; $('scale').value = it.scaleV;
 $('rot').value = Math.round(P.rot); $('sx').value = Math.round(P.sx*100);
 Object.assign(FX, it.fx || {...FX}); syncFxUI();
-STK = (it.stickers || []).map(o => ({...o})); selS = -1; syncStkUI();
+if (!stkSync) STK = (it.stickers || []).map(o => ({...o})); selS = -1; syncStkUI();
 }
 function selectItem(i){ if (busy) return; saveCur(); loadItem(i); renderStrip(); schedulePresets(); draw(); }
 function removeItem(i){
@@ -1411,7 +1413,7 @@ tc.width = Math.round(o.width*tk); tc.height = Math.round(o.height*tk); tc.getCo
 const m = document.createElement('canvas'); m.width = o.width; m.height = o.height;
 items.push({orig: o, mask: m, cut: null, bbox: null, gc: null, hint: null, undo: [], baseScale: 1,
 P: {x: W/2, y: H*0.45, s: 1, rot: 0, flip: false, sx: 1}, T: {...T}, T2: {...T2}, name: '', dv: '', scaleV: 100,
-stickers: [], fx: {...FX}, thumb: tc.toDataURL('image/jpeg', .8), pending: true});
+stickers: stkSync ? STK.map(o => ({...o})) : [], fx: {...FX}, thumb: tc.toDataURL('image/jpeg', .8), pending: true});
 }
 ['removeBg','resetBg','fit'].forEach(id => $(id).disabled = false);
 thumb($('photoDrop'), items[items.length-1].thumb, 'Tap to add more photos');
@@ -2233,10 +2235,12 @@ function renderStkGrid(){
   $('stkRot').oninput = () => { const o = STK[selS]; if (o){ o.rot = +$('stkRot').value; draw(); } };
   $('stkDel').onclick = () => { if (selS < 0) return; STK.splice(selS, 1); selS = -1; syncStkUI(); draw(); };
   $('stkDup').onclick = () => { const o = STK[selS]; if (!o) return; STK.push({...o, x: o.x + W*0.05, y: o.y + H*0.04}); selS = STK.length-1; syncStkUI(); draw(); };
-  $('stkAll').onclick = () => {
-    if (busy) return;
-    items.forEach((it, i) => { if (i !== cur) it.stickers = STK.map(o => ({...o})); });
-    $('stkMsg').textContent = items.length > 1 ? `Copied ${STK.length} sticker${STK.length===1?'':'s'} to all ${items.length} posters.` : 'Copied.';
+  $('stkSync').checked = stkSync;
+  $('stkSync').onchange = () => {
+    stkSync = $('stkSync').checked;
+    try { localStorage.setItem('photobot.stkSync', stkSync ? '1' : '0'); } catch(e){}
+    if (stkSync) saveCur();
+    $('stkMsg').textContent = stkSync ? 'Stickers now go on every photo.' : 'Stickers now go on this photo only.';
   };
   document.fonts.load('400 40px "Bebas Neue"').then(() => { renderStkGrid(); draw(); }).catch(() => renderStkGrid());
   renderStkGrid();
