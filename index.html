@@ -833,6 +833,18 @@ html:root .credCard.low .ccV{color:var(--bad)}
 html:root .credCard.low .ccBar i{background:var(--bad)}
 html:root .credCard.low .ccBuy{background:var(--accent);color:var(--on-accent)}
 @media(max-width:900px){html:root .credCard{padding:12px 14px 10px 16px;border-radius:16px;margin:0}html:root .ccV{font-size:26px}html:root .ccBar{margin:10px 0 6px}}
+/* credits: one slim line, bar along the bottom edge */
+html:root .credCard{position:relative;overflow:hidden;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:0 12px;padding:7px 8px 9px 16px;border-radius:14px;margin:0 0 8px}
+html:root .ccL{flex-direction:row;align-items:baseline;gap:10px}
+html:root .ccK{font-size:10px}
+html:root .ccV{font:500 18px/1.2 Poppins;letter-spacing:0}
+html:root .ccNum{gap:6px}
+html:root .ccOf{font-size:12px}
+html:root .ccBuy{padding:6px 14px;font-size:12.5px}
+html:root .ccBar{position:absolute;left:0;right:0;bottom:0;height:3px;margin:0;border-radius:0}
+html:root .ccBar i{border-radius:0 999px 999px 0}
+html:root .ccS{display:none}
+@media(max-width:900px){html:root .credCard{padding:6px 7px 8px 14px;border-radius:14px;margin:0}html:root .ccV{font-size:17px}html:root .ccBar{margin:0}}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
