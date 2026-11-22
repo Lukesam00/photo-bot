@@ -875,6 +875,12 @@ html:root .cacts{max-width:none}
   html:root .ctable td:nth-child(5){grid-column:1/-1}
   html:root .cacts .mini{flex:1 1 auto;min-height:40px}
 }
+/* logo: small remove button on the logo itself */
+html:root .logobox{position:relative;overflow:visible}
+html:root .logobox img{border-radius:14px}
+html:root .logobox.has{border-style:solid}
+.logoX{position:absolute;top:-8px;right:-8px;width:26px;height:26px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:500 16px/1 Poppins;cursor:pointer;display:grid;place-items:center;padding:0;box-shadow:0 4px 10px -4px rgba(42,10,28,.35)}
+.logoX:hover{background:var(--bad);border-color:var(--bad);color:#fff}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -1498,14 +1504,15 @@ function brandChanged(){ saveBr(); clearTimeout(brT); brT = setTimeout(() => { r
 function syncBrandUI(){
   $('brShop').value = BR.shop || ''; $('brPhone').value = BR.phone || ''; $('brSocial').value = BR.social || ''; $('brWeb').value = BR.web || '';
   $('brColor').value = BR.color || '#0f766e'; $('brLogoSize').value = BR.logoSize || 100;
-  $('logoBox').innerHTML = BR.logo ? `<img src="${BR.logo}" alt="logo">` : '<span>＋ Logo</span>';
-  $('logoDel').style.display = BR.logo ? '' : 'none';
+  $('logoBox').innerHTML = BR.logo ? `<img src="${BR.logo}" alt="logo"><button class="logoX" type="button" title="Remove logo" aria-label="Remove logo">×</button>` : '<span>＋ Logo</span>';
+  $('logoBox').classList.toggle('has', !!BR.logo);
+  $('logoDel').style.display = 'none';
 }
 function loadLogo(){ logoImg = null; if (!BR.logo) return Promise.resolve(); return new Promise(r => { const im = new Image(); im.onload = () => { logoImg = im; r(); }; im.onerror = () => r(); im.src = BR.logo; }); }
 ['brShop','brPhone','brSocial','brWeb'].forEach(id => $(id).addEventListener('input', () => { BR[{brShop:'shop', brPhone:'phone', brSocial:'social', brWeb:'web'}[id]] = $(id).value.trim(); brandChanged(); }));
 $('brColor').addEventListener('input', () => { BR.color = $('brColor').value; brandChanged(); });
 $('brLogoSize').addEventListener('input', () => { BR.logoSize = +$('brLogoSize').value; brandChanged(); });
-$('logoBox').onclick = () => $('logoIn').click();
+$('logoBox').onclick = e => { if (e.target.closest('.logoX')){ $('logoDel').onclick(); return; } $('logoIn').click(); };
 $('logoIn').onchange = async () => {
   const f = $('logoIn').files[0]; $('logoIn').value = ''; if (!f) return;
   const im = await loadImg(f).catch(() => null); if (!im) return;
