@@ -817,6 +817,22 @@ html{-webkit-tap-highlight-color:transparent}
   html:root .dlcard details.more summary{font:400 12px Poppins;padding:4px 2px;justify-content:center;gap:8px}
   html:root .dlcard details.more[open] summary{margin-bottom:8px}
 }
+/* credits card: refined */
+html:root .credCard{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:0 16px;padding:16px 18px 14px 20px;border-radius:18px;border:1px solid var(--line);background:var(--panel);margin:0 0 12px}
+html:root .ccL{display:flex;flex-direction:column;gap:2px;min-width:0}
+html:root .ccK{font:500 10.5px Poppins;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+html:root .ccNum{display:flex;align-items:baseline;gap:8px}
+html:root .ccV{font:300 30px/1.1 Poppins;letter-spacing:-.02em;color:var(--ink);margin:0;font-variant-numeric:tabular-nums}
+html:root .ccOf{font:400 12.5px Poppins;color:var(--muted)}
+html:root .ccBuy{align-self:center;background:transparent;border:1px solid var(--accent);color:var(--accent);font:500 13px Poppins;padding:10px 18px;border-radius:999px;transition:background .15s,color .15s}
+html:root .ccBuy:hover{background:var(--accent);color:var(--on-accent)}
+html:root .ccBar{grid-column:1/-1;height:3px;border-radius:999px;background:var(--line);overflow:hidden;margin:12px 0 8px}
+html:root .ccBar i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--accent),#ff7a0f);transition:width .5s cubic-bezier(.2,.7,.2,1)}
+html:root .ccS{grid-column:1/-1;font:300 11.5px Poppins;color:var(--muted)}
+html:root .credCard.low .ccV{color:var(--bad)}
+html:root .credCard.low .ccBar i{background:var(--bad)}
+html:root .credCard.low .ccBuy{background:var(--accent);color:var(--on-accent)}
+@media(max-width:900px){html:root .credCard{padding:12px 14px 10px 16px;border-radius:16px;margin:0}html:root .ccV{font-size:26px}html:root .ccBar{margin:10px 0 6px}}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -834,8 +850,9 @@ window.ttApply=function(){r.classList.toggle('ttdark',pick())};ttApply();
 </div></header>
 <div class="wrap">
 <div class="credCard" id="credCard" style="display:none">
-<div class="ccL"><div class="ccTop"><span class="ccK">Credits left</span><span class="ccV" id="ccV">0</span></div><div class="ccBar"><i id="ccBar"></i></div><div class="ccS" id="ccS">1 credit per poster</div></div>
+<div class="ccL"><span class="ccK">Credits</span><div class="ccNum"><span class="ccV" id="ccV">0</span><span class="ccOf" id="ccOf"></span></div></div>
 <button class="ccBuy" id="ccBuy" type="button">Buy credits</button>
+<div class="ccBar"><i id="ccBar"></i></div><div class="ccS"><span>1 credit per poster</span></div>
 </div>
 <section class="stage">
 <div class="toolbar" id="tools">
@@ -2705,7 +2722,7 @@ draw();
       let mx = 0; try { mx = +localStorage.getItem('photobot.credMax') || 0; } catch(e){}
       if (c > mx || !mx) { mx = Math.max(c, 1); try { localStorage.setItem('photobot.credMax', mx); } catch(e){} }
       $('ccBar').style.width = Math.max(0, Math.min(100, c / mx * 100)) + '%';
-      $('ccS').textContent = `${c.toLocaleString('en-US')} of ${mx.toLocaleString('en-US')} left · 1 credit per poster`; }
+      $('ccOf').textContent = mx > c ? `of ${mx.toLocaleString('en-US')}` : 'available'; }
   }
   async function refreshMe(){ const {data, error} = await sb.rpc('photobot_me'); if (error) throw error; PB.me = data; pill(); return data; }
   async function notifyEvent(body){
