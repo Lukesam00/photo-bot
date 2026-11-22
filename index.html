@@ -2217,6 +2217,17 @@ $('fxMsg').textContent = items.length > 1 ? `Applied to all ${items.length} phot
 setTimeout(() => $('fxMsg').textContent = '', 2500);
 };
 renderPresets(); syncFxUI();
+function drawPreviewMark(){
+  ctx.save(); ctx.font = `600 ${Math.round(W*0.032)}px Poppins`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.translate(W/2, H/2); ctx.rotate(-Math.PI/6);
+  const sx = W*0.36, sy = H*0.13; let row = 0;
+  for (let y = -H; y <= H; y += sy, row++) for (let x = -W; x <= W; x += sx){
+    const px = x + (row % 2 ? sx/2 : 0);
+    ctx.fillStyle = 'rgba(255,255,255,.13)'; ctx.fillText('PREVIEW', px + 1.5, y + 1.5);
+    ctx.fillStyle = 'rgba(0,0,0,.09)'; ctx.fillText('PREVIEW', px, y);
+  }
+  ctx.restore();
+}
 function draw(forExport){
 ctx.clearRect(0,0,W,H);
 const behind = $('layer').value === 'behind';
@@ -2227,6 +2238,7 @@ if (!behind) drawProduct(ctx);
 drawText('en', T, $('fcolor').value);
 drawText('dv', T2, $('dvColor').value);
 drawStickers(ctx, forExport);
+if (!forExport && cut) drawPreviewMark();
 if (!forExport && !frame && !cut){
 ctx.fillStyle = '#8a857d'; ctx.textAlign='center'; ctx.font = `600 ${W*0.035}px Poppins`;
 ctx.fillText('Start: choose a frame and a product photo', W/2, H/2);
@@ -2632,6 +2644,16 @@ draw();
   // phone numbers map to Photo Bot phone accounts; emails stay as they are
   const toLogin = v => { const d = phoneOf(v); return d ? d + PHONE_DOM : (v || '').trim().toLowerCase(); };
   const showId = e => (e || '').replace(PHONE_DOM, '').replace(OLD_DOM, '');
+  // Logins shared with Input Tax Capture use its guarded sign-in (wrong tries are counted and locked there).
+  async function taxLogin(phone, pw){
+    if (!/^\d{6}$/.test(pw)) return sb.auth.signInWithPassword({email: phone + OLD_DOM, password: pw});
+    try {
+      const res = await fetch(SB_URL + '/functions/v1/tax-login', {method: 'POST', headers: {'content-type': 'application/json', apikey: SB_KEY, authorization: 'Bearer ' + SB_KEY}, body: JSON.stringify({action: 'login', mobile: phone, pin: pw})});
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok || !j.access_token) return {error: new Error(j.locked ? j.error : 'Invalid login credentials'), locked: !!j.locked};
+      return await sb.auth.setSession({access_token: j.access_token, refresh_token: j.refresh_token});
+    } catch(e){ return {error: e}; }
+  }
   const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const mvr = n => 'MVR ' + Number(n).toLocaleString('en', {maximumFractionDigits: 2});
 
@@ -2691,7 +2713,7 @@ draw();
       if (mode === 'in'){
         r = await sb.auth.signInWithPassword({email: id, password: pw});
         // older accounts made in the input-tax app use a different address for the same phone number
-        if (r.error && phone) { const r2 = await sb.auth.signInWithPassword({email: phone + OLD_DOM, password: pw}); if (!r2.error) r = r2; }
+        if (r.error && phone) { const r2 = await taxLogin(phone, pw); if (!r2.error) r = r2; else if (r2.locked) r = r2; }
       } else if (phone){
         const res = await fetch(SB_URL + '/functions/v1/photobot-signup', {method: 'POST', headers: {'content-type': 'application/json', apikey: SB_KEY, authorization: 'Bearer ' + SB_KEY}, body: JSON.stringify({phone, password: pw, name: $('authName').value.trim(), business: $('authBiz').value.trim()})});
         const j = await res.json().catch(() => ({}));
@@ -3332,7 +3354,7 @@ draw();
     try {
       let r = await sb.auth.signInWithPassword({email: id, password: pw});
       const phone = phoneOf(raw);
-      if (r.error && phone){ const r2 = await sb.auth.signInWithPassword({email: phone + OLD_DOM, password: pw}); if (!r2.error) r = r2; }
+      if (r.error && phone){ const r2 = await taxLogin(phone, pw); if (!r2.error) r = r2; else if (r2.locked) r = r2; }
       if (r.error) throw r.error;
       $('admMsg').textContent = '';
       if (await enterAdmin()) notifyEvent({event: 'signed_in'});
