@@ -845,6 +845,13 @@ html:root .ccBar{position:absolute;left:0;right:0;bottom:0;height:3px;margin:0;b
 html:root .ccBar i{border-radius:0 999px 999px 0}
 html:root .ccS{display:none}
 @media(max-width:900px){html:root .credCard{padding:6px 7px 8px 14px;border-radius:14px;margin:0}html:root .ccV{font-size:17px}html:root .ccBar{margin:0}}
+/* computer (mouse): show every frame and sticker in a grid instead of a swipe row */
+@media (min-width:901px){
+  html:root .tplgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;overflow:visible;margin:12px 0 0;padding:0}
+  html:root .tplgrid button{flex:none;width:auto}
+  html:root .stkgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;overflow:visible;margin:0;padding:0}
+  html:root .stkgrid button{flex:none;width:auto}
+}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
