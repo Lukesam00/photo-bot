@@ -895,7 +895,7 @@ window.ttApply=function(){r.classList.toggle('ttdark',pick())};ttApply();
 <body>
 <header class="topbar"><div class="hdIn">
 <span class="admBrand" role="link" tabindex="0" title="3 TIMES home"><svg viewBox="488 206 304 410" width="17" height="23" aria-hidden="true"><path d="M541 285 V236 H738 L636 396" fill="none" stroke="#FF7A0F" stroke-width="48" stroke-linecap="round" stroke-linejoin="round"/><path d="M517 462 A123 123 0 1 0 694 352" fill="none" stroke="#FF7A0F" stroke-width="48" stroke-linecap="round"/></svg><b>Photo Bot</b><small>v2</small></span>
-<span class="hdNav"><button class="hdMenuBtn" id="hdMenuBtn" type="button" aria-label="Menu" aria-expanded="false" style="display:none"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><span class="hdMenu" id="hdMenu"><button id="installBtn" class="admLink" style="display:none">Install app</button><button id="adminBtn" class="admLink" style="display:none">Admin</button><button id="credPill" class="credPill" style="display:none"></button><span class="admWho" id="hdWho"></span><button class="admLink" id="hdPw" type="button" style="display:none">Change password</button><button class="admLink" id="hdOut" type="button" style="display:none">Sign out</button></span></span>
+<span class="hdNav"><button class="hdMenuBtn" id="hdMenuBtn" type="button" aria-label="Menu" aria-expanded="false" style="display:none"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><span class="hdMenu" id="hdMenu"><button id="installBtn" class="admLink" style="display:none">Install app</button><button id="adminBtn" class="admLink" style="display:none">Admin</button><button id="credPill" class="credPill" style="display:none"></button><span class="admWho" id="hdWho"></span><button class="admLink" id="hdPw" type="button" style="display:none">Change PIN</button><button class="admLink" id="hdOut" type="button" style="display:none">Sign out</button></span></span>
 </div></header>
 <div class="wrap">
 <div class="credCard" id="credCard" style="display:none">
@@ -1095,20 +1095,20 @@ window.ttApply=function(){r.classList.toggle('ttdark',pick())};ttApply();
 <button class="authX" id="authX" type="button" aria-label="Close"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
 <div class="seg" id="authSeg" hidden><button data-m="in" class="on">Sign in</button><button data-m="up">Create account</button></div>
 <h2 id="authTitle">Sign in</h2>
-<p class="authSub" id="authSub">Sign in with your mobile number or email and your password.</p>
+<p class="authSub" id="authSub">Sign in with your mobile number and 6-digit PIN.</p>
 <div id="upFields" hidden>
 <label for="authName">Your name<input type="text" id="authName" autocomplete="name"></label>
 <label for="authBiz">Business name<input type="text" id="authBiz" placeholder="Shop or company name" autocomplete="organization"></label>
 </div>
-<label for="authId"><span id="authIdLbl">Mobile number or email</span><input type="text" id="authId" placeholder="7xxxxxx" autocomplete="username"></label>
+<label for="authId"><span id="authIdLbl">Mobile number</span><input type="text" id="authId" placeholder="7xxxxxx" autocomplete="username"></label>
 <div class="authTwo" id="authTwo">
-<label for="authPw"><span id="authPwLbl">Password</span><input type="password" id="authPw" placeholder="Password" autocomplete="current-password"></label>
-<label for="authPw2" id="pw2Wrap" hidden>Repeat password<input type="password" id="authPw2" placeholder="Repeat" autocomplete="new-password"></label>
+<label for="authPw"><span id="authPwLbl">PIN</span><input type="password" id="authPw" placeholder="6 digits" inputmode="numeric" maxlength="6" autocomplete="current-password"></label>
+<label for="authPw2" id="pw2Wrap" hidden>Repeat PIN<input type="password" id="authPw2" placeholder="6 digits" inputmode="numeric" maxlength="6" autocomplete="new-password"></label>
 </div>
 <button class="hbtn pri" id="authGo">Sign in</button>
 <div class="msg" id="authMsg" role="status"></div>
 <p class="authSwitch"><span id="authSwTxt">New here?</span> <button type="button" class="authLink" id="authSwap">Create an account</button></p>
-<div class="msg" id="authHelp">Forgot your password? Message us<span id="authContact"></span>.</div>
+<div class="msg" id="authHelp">Forgot your PIN? Message us<span id="authContact"></span>. <span id="authOldWrap">Still have an older password? <button type="button" class="authLink" id="authOldPw">Type it instead</button></span></div>
 </div>
 </div>
 <div class="ticks"><span>AI background removal</span><span>Dhivehi names</span><span>Many photos at once</span><span>Save &amp; share</span></div>
@@ -1130,13 +1130,13 @@ window.ttApply=function(){r.classList.toggle('ttdark',pick())};ttApply();
 <div class="authBoard" id="pwBoard" style="display:none" role="dialog" aria-modal="true" aria-labelledby="pwTitle">
 <div class="authPanel">
 <button class="authX" id="pwX" type="button" aria-label="Close"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-<h2 id="pwTitle">Change password</h2>
-<p class="authSub">Choose a new password for this login. Use it the next time you sign in.</p>
+<h2 id="pwTitle">Change PIN</h2>
+<p class="authSub">Choose a new 6-digit PIN for this login. Use it the next time you sign in.</p>
 <div class="authTwo two">
-<label for="pwNew">New password<input type="password" id="pwNew" placeholder="6+ characters" autocomplete="new-password"></label>
-<label for="pwNew2">Repeat password<input type="password" id="pwNew2" placeholder="Repeat" autocomplete="new-password"></label>
+<label for="pwNew">New PIN<input type="password" id="pwNew" placeholder="6 digits" inputmode="numeric" maxlength="6" autocomplete="new-password"></label>
+<label for="pwNew2">Repeat PIN<input type="password" id="pwNew2" placeholder="6 digits" inputmode="numeric" maxlength="6" autocomplete="new-password"></label>
 </div>
-<button class="hbtn pri" id="pwSave" type="button">Save password</button>
+<button class="hbtn pri" id="pwSave" type="button">Save PIN</button>
 <div class="msg" id="pwMsg" role="status"></div>
 </div>
 </div>
@@ -1161,7 +1161,7 @@ window.ttApply=function(){r.classList.toggle('ttdark',pick())};ttApply();
 <h1>Admin sign in</h1>
 <p class="sub">Manage users, credits, payments and packages.</p>
 <label for="admId">Mobile number or email<input type="text" id="admId" autocomplete="username" placeholder="7xxxxxx"></label>
-<label for="admPw">Password<input type="password" id="admPw" autocomplete="current-password" placeholder="Password"></label>
+<label for="admPw">PIN<input type="password" id="admPw" autocomplete="current-password" placeholder="6-digit PIN (or your password)"></label>
 <button class="hbtn pri" id="admGo">Sign in</button>
 <div class="msg" id="admMsg" role="status"></div>
 <p class="admSwitch">Not an admin? <a href="/">Go to customer sign in</a></p>
@@ -1175,7 +1175,7 @@ window.ttApply=function(){r.classList.toggle('ttdark',pick())};ttApply();
 <span class="admNav"><span class="admWho" id="admWho"></span><button id="admClose" class="admLink" type="button">Editor</button><button id="admOut" class="admLink" type="button">Sign out</button></span>
 </div></div>
 <div class="admPage">
-<div class="admTitle"><h1>Customers</h1><p class="sub">Approve payments, add customers, reset passwords, block access, and edit pricing and bank details.</p></div>
+<div class="admTitle"><h1>Customers</h1><p class="sub">Approve payments, add customers, reset PINs, block access, and edit pricing and bank details.</p></div>
 <nav class="admTabs" id="admTabs" aria-label="Admin sections"><button type="button" data-s="secUsers">Customers</button><button type="button" data-s="secReq">Requests<span id="admPendN" class="dot" style="display:none"></span></button><button type="button" data-s="secSales">Sales</button><button type="button" data-s="secAdd">Add customer</button><button type="button" data-s="secSet">Pricing</button></nav>
 <div id="admBody" class="admBody"></div>
 </div>
@@ -2653,15 +2653,23 @@ draw();
   const toLogin = v => { const d = phoneOf(v); return d ? d + PHONE_DOM : (v || '').trim().toLowerCase(); };
   const showId = e => (e || '').replace(PHONE_DOM, '').replace(OLD_DOM, '');
   // Logins shared with Input Tax Capture use its guarded sign-in (wrong tries are counted and locked there).
-  async function taxLogin(phone, pw){
-    if (!/^\d{6}$/.test(pw)) return sb.auth.signInWithPassword({email: phone + OLD_DOM, password: pw});
+  const isPin = v => /^\d{6}$/.test(v), phoneLogin = e => /@(phone\.photobot\.app|mobile\.inputtax\.app)$/.test(e || '');
+  // PIN sign-in goes through the guarded login: wrong tries are counted and locked on the server.
+  async function pinLogin(phone, pin){
     try {
-      const res = await fetch(SB_URL + '/functions/v1/tax-login', {method: 'POST', headers: {'content-type': 'application/json', apikey: SB_KEY, authorization: 'Bearer ' + SB_KEY}, body: JSON.stringify({action: 'login', mobile: phone, pin: pw})});
+      const res = await fetch(SB_URL + '/functions/v1/tax-login', {method: 'POST', headers: {'content-type': 'application/json', apikey: SB_KEY, authorization: 'Bearer ' + SB_KEY}, body: JSON.stringify({action: 'login', app: 'photobot', mobile: phone, pin})});
       const j = await res.json().catch(() => ({}));
-      if (!res.ok || !j.access_token) return {error: new Error(j.locked ? j.error : 'Invalid login credentials'), locked: !!j.locked};
+      if (!res.ok || !j.access_token) return {error: new Error(j.error || 'Invalid login credentials')};
       return await sb.auth.setSession({access_token: j.access_token, refresh_token: j.refresh_token});
-    } catch(e){ return {error: e}; }
+    } catch(e){ return {error: new Error('Could not sign in right now. Check your connection and try again.')}; }
   }
+  // Older logins that still have a password (not a 6-digit PIN).
+  async function passwordLogin(id, phone, pw){
+    let r = await sb.auth.signInWithPassword({email: id, password: pw});
+    if (r.error && phone){ const r2 = await sb.auth.signInWithPassword({email: phone + OLD_DOM, password: pw}); if (!r2.error) r = r2; }
+    return r;
+  }
+
   const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const mvr = n => 'MVR ' + Number(n).toLocaleString('en', {maximumFractionDigits: 2});
 
@@ -2710,18 +2718,16 @@ draw();
     try { const {data} = await sb.from('photobot_settings').select('value').eq('key', 'contact').maybeSingle(); $('authContact').textContent = data && data.value ? ' on ' + data.value : ''; } catch(e){}
     await loadPackages().catch(() => {}); pkgCards($('gatePkgs'), false);
   }
-  const niceErr = m => /Invalid login/i.test(m) ? 'Wrong phone/email or password.' : /already registered/i.test(m) ? 'This account already exists — sign in instead.' : /Password should be/i.test(m) ? 'Password must be at least 6 characters.' : /valid email|invalid format/i.test(m) ? 'Enter a phone number or a valid email.' : m;
+  const niceErr = m => /Invalid login/i.test(m) ? 'Wrong mobile number or PIN.' : /already registered/i.test(m) ? 'This account already exists — sign in instead.' : /Password should be/i.test(m) ? 'The PIN must be 6 digits.' : /valid email|invalid format/i.test(m) ? 'Enter a phone number or a valid email.' : m;
   $('authGo').onclick = async () => {
     const id = toLogin($('authId').value), pw = $('authPw').value;
-    if (!id || !pw){ $('authMsg').textContent = 'Enter your phone/email and password.'; return; }
+    if (!id || !pw){ $('authMsg').textContent = 'Enter your mobile number and PIN.'; return; }
     $('authGo').disabled = true; $('authMsg').classList.remove('ok'); $('authMsg').textContent = mode === 'in' ? 'Signing in…' : 'Creating account…';
     try {
       const phone = phoneOf($('authId').value);
       let r;
       if (mode === 'in'){
-        r = await sb.auth.signInWithPassword({email: id, password: pw});
-        // older accounts made in the input-tax app use a different address for the same phone number
-        if (r.error && phone) { const r2 = await taxLogin(phone, pw); if (!r2.error) r = r2; else if (r2.locked) r = r2; }
+        r = phone && isPin(pw) ? await pinLogin(phone, pw) : await passwordLogin(id, phone, pw);
       } else if (phone){
         const res = await fetch(SB_URL + '/functions/v1/photobot-signup', {method: 'POST', headers: {'content-type': 'application/json', apikey: SB_KEY, authorization: 'Bearer ' + SB_KEY}, body: JSON.stringify({phone, password: pw, name: $('authName').value.trim(), business: $('authBiz').value.trim()})});
         const j = await res.json().catch(() => ({}));
@@ -2734,7 +2740,7 @@ draw();
           $('authMsg').classList.add('ok'); $('authMsg').textContent = "Account created. You can sign in as soon as it's approved. We'll let you know.";
           return;
         }
-        r = await sb.auth.signInWithPassword({email: j.email, password: pw});
+        r = await pinLogin(phone, pw);
       } else {
         r = await sb.auth.signUp({email: id, password: pw});
       }
@@ -2751,17 +2757,20 @@ draw();
   const modeUI = m => {
     const up = m === 'up';
     $('authTitle').textContent = up ? 'Create an account' : 'Sign in';
-    $('authSub').textContent = up ? "Make product posters in minutes, with 5 free credits to start. You'll sign in with your mobile number and the password you choose here." : 'Sign in with your mobile number or email and your password.';
+    $('authSub').textContent = up ? "Make product posters in minutes, with 5 free credits to start. You'll sign in with your mobile number and the 6-digit PIN you choose here." : 'Sign in with your mobile number and 6-digit PIN.';
     $('upFields').hidden = !up; $('pw2Wrap').hidden = !up; $('authTwo').classList.toggle('two', up);
-    $('authIdLbl').textContent = up ? 'Mobile number' : 'Mobile number or email';
-    $('authPwLbl').textContent = up ? 'Choose a password' : 'Password';
-    $('authPw').placeholder = up ? '6+ characters' : 'Password';
+    $('authIdLbl').textContent = 'Mobile number';
+    $('authPwLbl').textContent = up ? 'Choose a 6-digit PIN' : 'PIN';
+    $('authPw').placeholder = '6 digits'; $('authPw').maxLength = 6; $('authPw').inputMode = 'numeric';
+    $('authOldWrap').hidden = false;
     $('authSwTxt').textContent = up ? 'Already have an account?' : 'New here?';
     $('authSwap').textContent = up ? 'Sign in' : 'Create an account';
     $('authHelp').hidden = up;
     $('authGo').textContent = up ? 'Create account' : 'Sign in';
   };
   document.querySelectorAll('#authSeg button').forEach(b => b.addEventListener('click', () => modeUI(b.dataset.m)));
+  // someone who still has an older password can type it in the same box
+  $('authOldPw').onclick = () => { const i = $('authPw'); i.removeAttribute('maxlength'); i.inputMode = 'text'; i.placeholder = 'Password'; $('authPwLbl').textContent = 'Password'; $('authIdLbl').textContent = 'Mobile number or email'; $('authOldWrap').hidden = true; i.value = ''; i.focus(); };
   const openBoard = m => {
     $('authForm').style.display = ''; document.querySelector(`#authSeg button[data-m=${m}]`).click();
     $('authMsg').textContent = '';
@@ -2780,8 +2789,8 @@ draw();
     let bad = '';
     if (!$('authName').value.trim()) bad = 'Enter your name.';
     else if (!phoneOf($('authId').value)) bad = 'Enter your 7-digit mobile number.';
-    else if ($('authPw').value.length < 6) bad = 'Password must be at least 6 characters.';
-    else if ($('authPw').value !== $('authPw2').value) bad = 'The two passwords are not the same.';
+    else if (!isPin($('authPw').value)) bad = 'Choose a PIN of exactly 6 digits.';
+    else if ($('authPw').value !== $('authPw2').value) bad = 'The two PINs are not the same.';
     if (bad){ $('authMsg').textContent = bad; e.stopImmediatePropagation(); e.preventDefault(); return; }
     PB.pendingInfo = {name: $('authName').value.trim(), business: $('authBiz').value.trim()};
   }, true);
@@ -2836,13 +2845,22 @@ draw();
   $('pwBoard').addEventListener('keydown', e => { if (e.key === 'Escape') $('pwBoard').style.display = 'none'; });
   $('pwSave').onclick = async () => {
     const a = $('pwNew').value, b = $('pwNew2').value; $('pwMsg').classList.remove('ok');
-    if (a.length < 6){ $('pwMsg').textContent = 'Password must be at least 6 characters.'; return; }
-    if (a !== b){ $('pwMsg').textContent = 'The two passwords are not the same.'; return; }
+    if (!isPin(a)){ $('pwMsg').textContent = 'The PIN must be exactly 6 digits.'; return; }
+    if (a !== b){ $('pwMsg').textContent = 'The two PINs are not the same.'; return; }
     $('pwSave').disabled = true; $('pwMsg').textContent = 'Saving…';
-    const {error} = await sb.auth.updateUser({password: a});
+    let error = null;
+    try {
+      const {data: {session}} = await sb.auth.getSession();
+      if (session && phoneLogin(session.user.email)){
+        const res = await fetch(SB_URL + '/functions/v1/tax-login', {method: 'POST', headers: {'content-type': 'application/json', apikey: SB_KEY, authorization: 'Bearer ' + session.access_token}, body: JSON.stringify({action: 'change_pin', pin: a})});
+        const j = await res.json().catch(() => ({}));
+        if (!res.ok) error = {message: j.error || 'Could not change the PIN. Try again.'};
+      } else { error = (await sb.auth.updateUser({password: a})).error; }
+    } catch(e){ error = {message: 'Could not change the PIN. Check your connection and try again.'}; }
     $('pwSave').disabled = false;
     if (error){ $('pwMsg').textContent = error.message; return; }
-    $('pwMsg').classList.add('ok'); $('pwMsg').textContent = 'Password changed.';
+    $('pwNew').value = ''; $('pwNew2').value = '';
+    $('pwMsg').classList.add('ok'); $('pwMsg').textContent = 'PIN changed.';
     setTimeout(() => { $('pwBoard').style.display = 'none'; }, 1200);
   };
   $('ccBuy').onclick = () => openAccount();
@@ -2966,7 +2984,7 @@ draw();
           <label>Name<input class="admIn" id="addName" autocomplete="off"></label>
           <label>Business<input class="admIn" id="addBiz" placeholder="Shop or company" autocomplete="off"></label>
           <label>Mobile number or email<input class="admIn" id="addLogin" placeholder="7xxxxxx" autocomplete="off"></label>
-          <label>Password<input class="admIn" id="addPw" placeholder="At least 6 characters" autocomplete="off"></label>
+          <label>PIN<input class="admIn" id="addPw" placeholder="6 digits" inputmode="numeric" autocomplete="off"></label>
           <label>Starting credits<input class="admIn" id="addCr" inputmode="numeric" placeholder="e.g. 10"></label>
           <label>Access<select class="admIn" id="addRole"><option value="customer">Customer</option><option value="admin">Admin</option></select></label>
           <button class="mini ok addBtn" id="addGo" type="submit">Add customer</button>
@@ -3019,14 +3037,14 @@ draw();
     e.preventDefault();
     const login = $('addLogin').value.trim(), pw = $('addPw').value.trim(), credits = parseInt($('addCr').value, 10) || 0, isAdm = $('addRole').value === 'admin';
     if (!login){ $('addMsg').textContent = 'Enter a mobile number or email.'; return; }
-    if (pw.length < 6){ $('addMsg').textContent = 'Password must be at least 6 characters.'; return; }
+    if (phoneOf(login) ? !isPin(pw) : pw.length < 6){ $('addMsg').textContent = phoneOf(login) ? 'The PIN must be exactly 6 digits.' : 'For an email login, the password must be at least 6 characters.'; return; }
     const b = $('addGo'); b.disabled = true; $('addMsg').textContent = 'Adding…';
     try {
       const {data: {session}} = await sb.auth.getSession();
       const r = await fetch(SB_URL + '/functions/v1/photobot-admin-user', {method: 'POST', headers: {'content-type': 'application/json', apikey: SB_KEY, authorization: 'Bearer ' + (session ? session.access_token : SB_KEY)}, body: JSON.stringify({action: 'create', login, password: pw, credits, admin: isAdm, name: $('addName').value, business: $('addBiz').value})});
       const j = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(j.error || 'Could not add the customer.');
-      $('addMsg').textContent = `Added ${showId(j.email)} with ${credits} credit${credits === 1 ? '' : 's'}. Send them their login and password.`;
+      $('addMsg').textContent = `Added ${showId(j.email)} with ${credits} credit${credits === 1 ? '' : 's'}. Send them their mobile number and PIN.`;
       $('addForm').reset(); loadUsers();
     } catch(err){ $('addMsg').textContent = err.message; }
     finally { b.disabled = false; }
@@ -3155,7 +3173,7 @@ draw();
         <td><div class="cacts">
           ${u.approved === false ? '<button class="mini ok" data-a="approve" type="button">Approve</button>' : ''}<button class="mini ${u.approved === false ? '' : 'ok'}" data-a="credits" type="button">Add credits</button>
           <button class="mini" data-a="history" type="button">Credit history</button>
-          <button class="mini" data-a="pw" type="button">Reset password</button>
+          <button class="mini" data-a="pw" type="button">Reset PIN</button>
           ${me ? '' : `<button class="mini" data-a="block" type="button">${u.blocked ? 'Unblock' : 'Block'}</button><button class="mini no" data-a="delete" type="button">Delete</button>`}
         </div><div class="cform" hidden></div><div class="msg cmsg"></div></td></tr>`;
       }).join('') + '</tbody></table></div>';
@@ -3198,11 +3216,11 @@ draw();
         const st = tr.querySelector('.st'); st.className = 'st approved'; st.textContent = 'Active'; say('Approved: they can sign in now.'); window.updateWaiting && window.updateWaiting();
       };
       tr.querySelector('[data-a=pw]').onclick = () => openForm(
-        `<input class="cin" placeholder="New password (6+ characters)" autocomplete="off"><button class="mini" type="button" data-g>Suggest</button><button class="mini ok" type="button" data-s>Reset</button>`,
+        `<input class="cin" placeholder="New 6-digit PIN" inputmode="numeric" autocomplete="off"><button class="mini" type="button" data-g>Suggest</button><button class="mini ok" type="button" data-s>Reset</button>`,
         () => { const i = form.querySelector('input'); i.focus();
-          form.querySelector('[data-g]').onclick = () => { const a = 'abcdefghjkmnpqrstuvwxyz23456789'; let x = ''; const r = new Uint32Array(8); crypto.getRandomValues(r); r.forEach(k => x += a[k % a.length]); i.value = x; };
-          form.querySelector('[data-s]').onclick = async () => { const pw = i.value.trim(); if (pw.length < 6){ say('Password must be at least 6 characters.'); return; }
-            try { await adminUserCall({action: 'password', user_id: uid, password: pw}); form.hidden = true; say('Password reset. Send them their new password: ' + pw); } catch(e){ say(e.message); } };
+          form.querySelector('[data-g]').onclick = () => { const r = new Uint32Array(6); crypto.getRandomValues(r); let x = ''; r.forEach(k => x += k % 10); i.value = x; };
+          form.querySelector('[data-s]').onclick = async () => { const pw = i.value.trim(); if (phoneLogin(u.email) ? !isPin(pw) : pw.length < 6){ say(phoneLogin(u.email) ? 'The PIN must be exactly 6 digits.' : 'The password must be at least 6 characters.'); return; }
+            try { await adminUserCall({action: 'password', user_id: uid, password: pw}); form.hidden = true; say('PIN reset. Send them their new PIN: ' + pw); } catch(e){ say(e.message); } };
         });
       const bb = tr.querySelector('[data-a=block]');
       if (bb) bb.onclick = async () => {
@@ -3237,11 +3255,11 @@ draw();
         <div class="acts" style="margin-top:4px"><input class="admIn" id="udN" type="number" inputmode="numeric" placeholder="e.g. 10 or -5" style="margin:0;flex:1"><input class="admIn" id="udR" placeholder="Reason (optional)" style="margin:0;flex:1.4"></div>
         <button class="btn" id="udAdd" style="margin-top:8px">Update credits</button><div class="msg" id="udMsg"></div></div>
       <div class="acard"><h4>Edit customer</h4>
-        ${(p.email || '').endsWith(OLD_DOM) ? '<div class="paybox" style="margin:0 0 12px">This login is shared with Input Tax Capture. A new password, login or block also applies there.</div>' : ''}
+        ${(p.email || '').endsWith(OLD_DOM) ? '<div class="paybox" style="margin:0 0 12px">This login is shared with Input Tax Capture. A new PIN, login or block also applies there.</div>' : ''}
         <label class="udL">Login (mobile number or email)<input class="admIn" id="udLogin" value="${esc(showId(p.email))}" autocomplete="off"></label>
         <button class="mini" id="udLoginSave" type="button" style="margin-top:8px">Save login</button><div class="msg" id="udLoginMsg"></div>
-        <label class="udL" style="margin-top:14px">New password<input class="admIn" id="udPw" type="text" placeholder="At least 6 characters" autocomplete="off"></label>
-        <div class="acts" style="margin-top:8px"><button class="mini" id="udPwGen" type="button">Suggest one</button><button class="mini ok" id="udPwSave" type="button">Reset password</button></div><div class="msg" id="udPwMsg"></div>
+        <label class="udL" style="margin-top:14px">New PIN<input class="admIn" id="udPw" type="text" placeholder="6 digits" inputmode="numeric" autocomplete="off"></label>
+        <div class="acts" style="margin-top:8px"><button class="mini" id="udPwGen" type="button">Suggest one</button><button class="mini ok" id="udPwSave" type="button">Reset PIN</button></div><div class="msg" id="udPwMsg"></div>
         <div class="acts" style="margin-top:14px;align-items:center"><span class="msg" id="udBlockState" style="margin:0;flex:1">Checking access…</span><button class="mini no" id="udBlock" type="button" style="flex:0 0 auto">Block access</button></div>
       </div>
       <div class="acard"><h4>Admin access</h4><label class="row" style="margin-top:0">Can open admin panel <input type="checkbox" id="udAdm" ${p.is_admin ? 'checked' : ''}></label><div class="msg" id="udAdmMsg"></div></div>
@@ -3275,12 +3293,12 @@ draw();
       try { const j = await call({action: 'login', login: $('udLogin').value}); $('udLogin').value = showId(j.email); $('udLoginMsg').textContent = 'Login updated. The customer now signs in with ' + showId(j.email) + '.'; if (admTab === 'users') loadUsers(); }
       catch(e){ $('udLoginMsg').textContent = e.message; } finally { b.disabled = false; }
     };
-    $('udPwGen').onclick = () => { const a = 'abcdefghjkmnpqrstuvwxyz23456789'; let x = ''; const r = new Uint32Array(8); crypto.getRandomValues(r); r.forEach(n => x += a[n % a.length]); $('udPw').value = x; $('udPwMsg').textContent = ''; };
+    $('udPwGen').onclick = () => { const r = new Uint32Array(6); crypto.getRandomValues(r); let x = ''; r.forEach(k => x += k % 10); $('udPw').value = x; $('udPwMsg').textContent = ''; };
     $('udPwSave').onclick = async () => {
       const pw = $('udPw').value.trim();
-      if (pw.length < 6){ $('udPwMsg').textContent = 'Password must be at least 6 characters.'; return; }
+      if (phoneLogin(p.email) ? !isPin(pw) : pw.length < 6){ $('udPwMsg').textContent = phoneLogin(p.email) ? 'The PIN must be exactly 6 digits.' : 'The password must be at least 6 characters.'; return; }
       const b = $('udPwSave'); b.disabled = true; $('udPwMsg').textContent = 'Resetting…';
-      try { await call({action: 'password', password: pw}); $('udPwMsg').textContent = 'Password reset. Send the customer their new password: ' + pw; }
+      try { await call({action: 'password', password: pw}); $('udPwMsg').textContent = 'PIN reset. Send the customer their new PIN: ' + pw; }
       catch(e){ $('udPwMsg').textContent = e.message; } finally { b.disabled = false; }
     };
     let blocked = false;
@@ -3357,12 +3375,11 @@ draw();
   }
   $('admGo').onclick = async () => {
     const raw = $('admId').value, id = toLogin(raw), pw = $('admPw').value;
-    if (!id || !pw){ $('admMsg').textContent = 'Enter your mobile number or email and password.'; return; }
+    if (!id || !pw){ $('admMsg').textContent = 'Enter your mobile number and PIN.'; return; }
     $('admGo').disabled = true; $('admMsg').textContent = 'Signing in…';
     try {
-      let r = await sb.auth.signInWithPassword({email: id, password: pw});
       const phone = phoneOf(raw);
-      if (r.error && phone){ const r2 = await taxLogin(phone, pw); if (!r2.error) r = r2; else if (r2.locked) r = r2; }
+      const r = phone && isPin(pw) ? await pinLogin(phone, pw) : await passwordLogin(id, phone, pw);
       if (r.error) throw r.error;
       $('admMsg').textContent = '';
       if (await enterAdmin()) notifyEvent({event: 'signed_in'});
