@@ -852,6 +852,29 @@ html:root .ccS{display:none}
   html:root .stkgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;overflow:visible;margin:0;padding:0}
   html:root .stkgrid button{flex:none;width:auto}
 }
+/* admin tables: no sideways scrolling; cards on phones */
+.uTools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+html:root #secUsers .acHead #uSort{width:auto;max-width:200px;border-radius:999px;padding:10px 14px;margin:0;font:400 14px Poppins}
+.atable tr[hidden]{display:none!important}
+html:root .atable,html:root .ctable{min-width:0}
+html:root .ctable .cin{min-width:0}
+html:root .cacts{max-width:none}
+@media (max-width:760px){
+  .uTools{width:100%}
+  html:root #secUsers .acHead #uSearch{flex:1 1 160px;max-width:none;width:auto}
+  html:root .tblWrap{overflow:visible}
+  html:root .atable{display:block}
+  html:root .atable thead{display:none}
+  html:root .atable tbody{display:grid;gap:10px}
+  html:root .atable tr{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;border:1px solid var(--line);border-radius:16px;padding:14px;background:var(--panel)}
+  html:root .atable td{display:block;border:0;padding:0;text-align:left;min-width:0;font:400 14px Poppins}
+  html:root .atable td[data-label]::before{content:attr(data-label);display:block;font:400 11px Poppins;letter-spacing:.04em;color:var(--muted);margin-bottom:2px}
+  html:root .atable td.empty{grid-column:1/-1;text-align:center}
+  html:root .ctable td:nth-child(1),html:root .ctable td:nth-child(2),html:root .ctable td:nth-child(6){grid-column:1/-1}
+  html:root .ctable td:nth-child(1)::before,html:root .ctable td:nth-child(2)::before,html:root .ctable td:nth-child(6)::before{display:none}
+  html:root .ctable td:nth-child(5){grid-column:1/-1}
+  html:root .cacts .mini{flex:1 1 auto;min-height:40px}
+}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -1146,7 +1169,7 @@ window.ttApply=function(){r.classList.toggle('ttdark',pick())};ttApply();
 </div></div>
 <div class="admPage">
 <div class="admTitle"><h1>Customers</h1><p class="sub">Approve payments, add customers, reset passwords, block access, and edit pricing and bank details.</p></div>
-<nav class="admTabs" id="admTabs" aria-label="Admin sections"><button type="button" data-s="secReq">Requests<span id="admPendN" class="dot" style="display:none"></span></button><button type="button" data-s="secSales">Sales</button><button type="button" data-s="secAdd">Add customer</button><button type="button" data-s="secUsers">Customers</button><button type="button" data-s="secSet">Pricing</button></nav>
+<nav class="admTabs" id="admTabs" aria-label="Admin sections"><button type="button" data-s="secUsers">Customers</button><button type="button" data-s="secReq">Requests<span id="admPendN" class="dot" style="display:none"></span></button><button type="button" data-s="secSales">Sales</button><button type="button" data-s="secAdd">Add customer</button><button type="button" data-s="secSet">Pricing</button></nav>
 <div id="admBody" class="admBody"></div>
 </div>
 </div>
@@ -2898,6 +2921,8 @@ draw();
     if (!AB.dataset.built){
       AB.dataset.built = '1';
       AB.innerHTML = `
+      <section class="acard" id="secUsers"><div class="acHead"><h4 id="usersTitle">All customers</h4><span class="uTools"><input class="admIn" id="uSearch" type="search" placeholder="Search name, phone or email"><select class="admIn" id="uSort" aria-label="Sort customers"><option value="">Sort: newest</option><option value="name">Name A to Z</option><option value="waiting">Waiting first</option><option value="low">Credits: low to high</option><option value="high">Credits: high to low</option><option value="posters">Most posters</option></select></span></div>
+        <div id="usersBody"></div></section>
       <section class="acard" id="secReq"><div class="acHead"><h4 id="reqTitle">Payment requests</h4></div>
         <p class="note">Approve a payment to add its credits to the customer. Compare approved payments with your bank statement from time to time.</p>
         <div id="reqBody"></div></section>
@@ -2916,12 +2941,11 @@ draw();
           <label>Access<select class="admIn" id="addRole"><option value="customer">Customer</option><option value="admin">Admin</option></select></label>
           <button class="mini ok addBtn" id="addGo" type="submit">Add customer</button>
         </form><p class="msg" id="addMsg"></p></section>
-      <section class="acard" id="secUsers"><div class="acHead"><h4 id="usersTitle">All customers</h4><input class="admIn" id="uSearch" placeholder="Search phone or email"></div>
-        <div id="usersBody"></div></section>
       <section class="acard" id="secSet"><div class="acHead"><h4>Pricing and bank details</h4></div><div id="setBody"></div></section>`;
       document.querySelectorAll('#salesSeg button').forEach(b => b.onclick = () => { salesP = b.dataset.p; document.querySelectorAll('#salesSeg button').forEach(x => x.classList.toggle('on', x === b)); paintSales(); });
       $('salesExport').onclick = exportSales;
-      $('uSearch').oninput = () => { clearTimeout(userT); userT = setTimeout(() => { userQ = $('uSearch').value.trim(); loadUsers(); }, 300); };
+      $('uSearch').oninput = () => { userQ = $('uSearch').value.trim(); applyUserView(); };
+      $('uSort').onchange = () => applyUserView();
       $('addForm').onsubmit = addCustomer;
     }
     refreshPendingDot().catch(() => {});
@@ -3061,8 +3085,27 @@ draw();
     if (!r.ok) throw new Error(j.error || 'Something went wrong. Try again.');
     return j;
   }
+  function applyUserView(){
+    const L = $('uList'), tb = L && L.querySelector('tbody'); if (!tb) return;
+    const q = ($('uSearch').value || '').trim().toLowerCase(), mode = $('uSort') ? $('uSort').value : '';
+    const rows = [...tb.children];
+    rows.forEach((tr, i) => {
+      if (tr.dataset.i === undefined) tr.dataset.i = i;
+      const txt = ([...tr.querySelectorAll('input.cin')].map(x => x.value).join(' ') + ' ' + (tr.querySelector('.st') || {textContent: ''}).textContent).toLowerCase();
+      tr.hidden = !!q && !txt.includes(q);
+    });
+    const num = (tr, n) => parseFloat((tr.children[n].textContent || '0').replace(/[^\d.-]/g, '')) || 0;
+    const nm = tr => (tr.querySelector('input[data-f=name]').value || '~').toLowerCase();
+    const cmp = {name: (a, b) => nm(a).localeCompare(nm(b)), waiting: (a, b) => (b.querySelector('.st.pending') ? 1 : 0) - (a.querySelector('.st.pending') ? 1 : 0),
+      low: (a, b) => num(a, 3) - num(b, 3), high: (a, b) => num(b, 3) - num(a, 3), posters: (a, b) => num(b, 2) - num(a, 2)}[mode] || (() => 0);
+    rows.sort((a, b) => cmp(a, b) || (a.dataset.i - b.dataset.i)).forEach(tr => tb.appendChild(tr));
+    let none = L.querySelector('.uNone');
+    const shown = rows.some(tr => !tr.hidden);
+    if (!shown && !none){ none = document.createElement('div'); none.className = 'empty uNone'; none.textContent = 'No customer matches that search.'; L.appendChild(none); }
+    if (none) none.style.display = shown ? 'none' : '';
+  }
   async function loadUsers(){
-    const {data, error} = await sb.rpc('photobot_admin_users_v2', {p_search: userQ || null});
+    const {data, error} = await sb.rpc('photobot_admin_users_v2', {p_search: null});
     const L = $('uList'); if (!L) return;
     if (error){ L.innerHTML = `<div class="empty">${esc(error.message)}</div>`; return; }
     const waitingN = data.filter(u => u.approved === false).length;
@@ -3086,6 +3129,7 @@ draw();
           ${me ? '' : `<button class="mini" data-a="block" type="button">${u.blocked ? 'Unblock' : 'Block'}</button><button class="mini no" data-a="delete" type="button">Delete</button>`}
         </div><div class="cform" hidden></div><div class="msg cmsg"></div></td></tr>`;
       }).join('') + '</tbody></table></div>';
+    setTimeout(applyUserView, 0);
     L.querySelectorAll('tbody tr').forEach(tr => {
       const uid = tr.dataset.u, u = data.find(x => x.user_id === uid), msg = tr.querySelector('.cmsg'), form = tr.querySelector('.cform');
       const say = (t) => { msg.textContent = t; };
@@ -3504,6 +3548,17 @@ ttPaint();place();var t;new MutationObserver(function(){clearTimeout(t);t=setTim
   // show the menu button only when there is something in the menu
   const sync = () => { const any = [...menu.querySelectorAll('.admLink')].some(b => b.style.display !== 'none'); btn.style.display = any ? '' : 'none'; if (!any) set(false); };
   new MutationObserver(sync).observe(menu, {attributes: true, subtree: true, attributeFilter: ['style']}); sync();
+})();
+</script>
+<script>
+/* admin tables: label each cell with its column name (used for the phone card layout) */
+(function(){
+  const run = () => document.querySelectorAll('#adminPanel table.atable').forEach(t => {
+    const hs = [...t.querySelectorAll('thead th')].map(th => th.textContent.trim());
+    t.querySelectorAll('tbody tr').forEach(tr => [...tr.children].forEach((td, i) => { if (!td.hasAttribute('colspan') && hs[i] && td.dataset.label !== hs[i]) td.dataset.label = hs[i]; }));
+  });
+  const ap = document.getElementById('adminPanel'); if (!ap) return;
+  let t = null; new MutationObserver(() => { clearTimeout(t); t = setTimeout(run, 60); }).observe(ap, {childList: true, subtree: true}); run();
 })();
 </script>
 </body>
