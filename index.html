@@ -2225,6 +2225,38 @@ $('fxMsg').textContent = items.length > 1 ? `Applied to all ${items.length} phot
 setTimeout(() => $('fxMsg').textContent = '', 2500);
 };
 renderPresets(); syncFxUI();
+// On-poster remove buttons: a red x on the selected sticker, and on the product photo once it is tapped.
+var selP = false, delReady = false;
+const DEL_R = () => W*0.034;
+function delBtnPos(kind){
+  if (kind === 'sticker'){
+    const o = STK[selS]; if (!o) return null;
+    const [hw, hh] = stkSizeOf(o), pad = STK_BASE()*0.15, a = o.rot*Math.PI/180, lx = (hw+pad)*o.k, ly = -(hh+pad)*o.k, m = DEL_R()*1.1;
+    return {x: Math.max(m, Math.min(W-m, o.x + lx*Math.cos(a) - ly*Math.sin(a))), y: Math.max(m, Math.min(H-m, o.y + lx*Math.sin(a) + ly*Math.cos(a)))};
+  }
+  if (!cut || !bbox || !selP) return null;
+  const a = P.rot*Math.PI/180, w = bbox.w*P.s*P.sx, h = bbox.h*P.s, m = DEL_R()*1.1;
+  const aw = Math.abs(w*Math.cos(a)) + Math.abs(h*Math.sin(a)), ah = Math.abs(w*Math.sin(a)) + Math.abs(h*Math.cos(a));
+  return {x: Math.max(m, Math.min(W-m, P.x + aw/2)), y: Math.max(m, Math.min(H-m, P.y - ah/2)), aw, ah};
+}
+function drawDelBtn(c, q){
+  const rr = DEL_R(), k = rr*0.36; c.save();
+  c.shadowColor = 'rgba(0,0,0,.35)'; c.shadowBlur = rr*0.5; c.fillStyle = '#dc2626'; c.beginPath(); c.arc(q.x, q.y, rr, 0, 7); c.fill();
+  c.shadowColor = 'transparent'; c.strokeStyle = '#fff'; c.lineWidth = rr*0.2; c.lineCap = 'round';
+  c.beginPath(); c.moveTo(q.x-k, q.y-k); c.lineTo(q.x+k, q.y+k); c.moveTo(q.x+k, q.y-k); c.lineTo(q.x-k, q.y+k); c.stroke(); c.restore();
+}
+function drawDelButtons(){
+  if (!delReady || tool !== 'move') return;
+  if (selS >= 0){ const q = delBtnPos('sticker'); if (q) drawDelBtn(ctx, q); return; }
+  const q = delBtnPos('prod'); if (!q) return;
+  ctx.save(); ctx.setLineDash([12, 8]); ctx.lineWidth = 3; ctx.strokeStyle = '#0ea5e9'; ctx.strokeRect(P.x - q.aw/2, P.y - q.ah/2, q.aw, q.ah); ctx.restore();
+  drawDelBtn(ctx, q);
+}
+function hitDel(p){
+  const rr = DEL_R()*1.6;
+  if (selS >= 0){ const q = delBtnPos('sticker'); return q && Math.hypot(p.x-q.x, p.y-q.y) <= rr ? 'sticker' : null; }
+  const q = delBtnPos('prod'); return q && Math.hypot(p.x-q.x, p.y-q.y) <= rr ? 'prod' : null;
+}
 function drawPreviewMark(){
   ctx.save(); ctx.font = `600 ${Math.round(W*0.032)}px Poppins`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.translate(W/2, H/2); ctx.rotate(-Math.PI/6);
@@ -2247,6 +2279,7 @@ drawText('en', T, $('fcolor').value);
 drawText('dv', T2, $('dvColor').value);
 drawStickers(ctx, forExport);
 if (!forExport && cut) drawPreviewMark();
+if (!forExport) drawDelButtons();
 if (!forExport && !frame && !cut){
 ctx.fillStyle = '#8a857d'; ctx.textAlign='center'; ctx.font = `600 ${W*0.035}px Poppins`;
 ctx.fillText('Start: choose a frame and a product photo', W/2, H/2);
@@ -2491,12 +2524,16 @@ pinch = {d0: pdist(), v0: +$(target).value, target, a0: Math.atan2(b1.y-a1.y, b1
 }
 if (pts.size > 1) return;
 if (tool==='move'){
+const del = hitDel(p);
+if (del === 'sticker'){ $('stkDel').onclick(); return; }
+if (del === 'prod'){ selP = false; removeItem(cur); return; }
 const si = hitSticker(p);
-if (si >= 0){ selectSticker(si); const o = STK[si]; drag = {kind:'sticker', i: si, dx: p.x-o.x, dy: p.y-o.y}; cv.style.cursor = 'grabbing'; return; }
+if (si >= 0){ selP = false; selectSticker(si); const o = STK[si]; drag = {kind:'sticker', i: si, dx: p.x-o.x, dy: p.y-o.y}; cv.style.cursor = 'grabbing'; return; }
 if (selS >= 0){ selS = -1; syncStkUI(); draw(); }
 if (hitText(p,'en',T)) drag = {kind:'text', obj:T, dx:p.x-T.x, dy:p.y-T.y};
 else if (hitText(p,'dv',T2)) drag = {kind:'text', obj:T2, dx:p.x-T2.x, dy:p.y-T2.y};
 else if (cut) drag = {kind:'prod', dx:p.x-P.x, dy:p.y-P.y};   // drag anywhere moves the product
+const wasP = selP; selP = !!(drag && drag.kind === 'prod'); if (selP !== wasP) draw();
 if (drag) cv.style.cursor = 'grabbing';
 } else if (cut && (tool==='erase'||tool==='restore')){ pushUndo(); drag = {kind:'brush'}; brush(p); rebuildCut(false, true); }
 else if (cut && tool==='wand'){ const l = toLocal(p); wandAt(l.x, l.y); }
@@ -2535,6 +2572,7 @@ if (pts.size < 2) pinch = null;
 if (drag && drag.kind==='brush') rebuildCut(false);
 if (pts.size === 0){ drag = null; if (tool==='move') cv.style.cursor = 'grab'; }
 }
+delReady = true;
 cv.addEventListener('pointerup', endPointer);
 cv.addEventListener('pointercancel', endPointer);
 cv.addEventListener('wheel', e => {
