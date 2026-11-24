@@ -882,6 +882,33 @@ html:root .logobox.has{border-style:solid}
 .logoX{position:absolute;top:-8px;right:-8px;width:26px;height:26px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:500 16px/1 Poppins;cursor:pointer;display:grid;place-items:center;padding:0;box-shadow:0 4px 10px -4px rgba(42,10,28,.35)}
 .logoX:hover{background:var(--bad);border-color:var(--bad);color:#fff}
 .admBrand{cursor:pointer}
+
+/* admin on phones: one section at a time, compact customer rows that open on tap */
+td.csum{display:none}
+@media (max-width:760px){
+  html:root #adminPanel .admTitle{display:none}
+  html:root #adminPanel .admPage{padding:8px 14px 56px}
+  html:root #adminPanel.ptabs .admBody>.acard:not(.tabOn){display:none}
+  html:root #adminPanel.ptabs .admBody>.acard{background:transparent!important;border:0;padding:0;margin:0;border-radius:0}
+  html:root #adminPanel .admTabs{margin:0 -14px 12px;padding:8px 14px 10px}
+  html:root #adminPanel .admTabs button.cur{background:var(--accent)!important;border-color:var(--accent)!important;color:var(--on-accent)}
+  html:root #adminPanel .acHead{margin-bottom:12px}
+  html:root #adminPanel .acHead h4{font:500 16px Poppins;flex:1 1 100%}
+  html:root .ctable tr.crow{padding:12px 14px;gap:0}
+  html:root .ctable tr.crow:not(.open)>td:not(.csum){display:none}
+  html:root .ctable tr.crow.open{gap:12px 14px;border-color:var(--accent)}
+  html:root .ctable tr.crow>td.csum{display:flex;grid-column:1/-1;order:-1;align-items:center;gap:10px;cursor:pointer;min-height:40px;-webkit-tap-highlight-color:transparent}
+  .csum .cdot{flex:none;width:9px;height:9px;border-radius:50%;background:#2e9e6b}
+  .csum .cdot.w{background:#e0962a}.csum .cdot.b{background:#d24545}
+  .csum .cwho{min-width:0;flex:1 1 auto;display:grid;gap:1px}
+  .csum .cwho b{font:500 15px Poppins;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .csum .cwho small{font:400 12.5px Poppins;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .csum .ccr{flex:none;text-align:right;display:grid;gap:1px}
+  .csum .ccr b{font:600 15px Poppins;color:var(--ink)}.csum .ccr b.zero{color:#d24545}
+  .csum .ccr small{font:400 11px Poppins;color:var(--muted)}
+  .csum .cchev{flex:none;width:9px;height:9px;border-right:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);transform:rotate(45deg);margin:0 4px 4px 2px;transition:transform .15s}
+  tr.open .csum .cchev{transform:rotate(225deg);margin-bottom:-4px}
+}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -3652,6 +3679,44 @@ ttPaint();place();var t;new MutationObserver(function(){clearTimeout(t);t=setTim
   const go = e => { if (e.target.closest && e.target.closest('.admBrand')) location.href = 'https://threetimes.tech'; };
   document.addEventListener('click', go);
   document.addEventListener('keydown', e => { if (e.key === 'Enter') go(e); });
+})();
+</script>
+<script>
+/* Admin on phones: tabs show one section at a time; each customer is one short row that opens on tap. */
+(function(){
+  var AP=document.getElementById('adminPanel'),AB=document.getElementById('admBody'),tabs=document.getElementById('admTabs');
+  if(!AP||!AB||!tabs)return;
+  AP.classList.add('ptabs');
+  var cur='secUsers',jumped=false,phone=function(){return matchMedia('(max-width:760px)').matches};
+  function setTab(id){cur=id;
+    [].forEach.call(AB.children,function(s){s.classList.toggle('tabOn',s.id===id)});
+    [].forEach.call(tabs.querySelectorAll('button[data-s]'),function(b){b.classList.toggle('cur',b.dataset.s===id)});}
+  tabs.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('button[data-s]');if(!b)return;
+    setTab(b.dataset.s);if(phone()){e.stopPropagation();AP.scrollTop=0;}},true);
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function sync(tr){
+    var c=tr.querySelector(':scope>td.csum');
+    if(!c){c=document.createElement('td');c.className='csum';tr.appendChild(c);tr.classList.add('crow');
+      c.addEventListener('click',function(){tr.classList.toggle('open')});}
+    var v=function(f){var i=tr.querySelector('[data-f='+f+']');return i?i.value.trim():''};
+    var st=tr.querySelector('.st'),k=st?(st.classList.contains('pending')?'w':st.classList.contains('rejected')?'b':''):'';
+    var nm=v('name')||v('business'),login=v('login'),crEl=tr.children[3]?tr.children[3].querySelector('b'):null,cr=crEl?crEl.textContent.trim():'';
+    var sub=[nm?login:'',nm&&v('name')&&v('business')?v('business'):'',k?st.textContent.trim():''].filter(Boolean).join(' · ');
+    var html='<span class="cdot '+k+'"></span><span class="cwho"><b>'+esc(nm||login)+'</b>'+(sub?'<small>'+esc(sub)+'</small>':'')+'</span>'+
+      '<span class="ccr"><b class="'+(parseFloat(cr)>0?'':'zero')+'">'+esc(cr)+'</b><small>credits</small></span><span class="cchev"></span>';
+    if(c.innerHTML!==html)c.innerHTML=html;
+  }
+  var t=0;
+  function run(){
+    setTab(cur);
+    [].forEach.call(AB.querySelectorAll('#uList tbody tr'),sync);
+    var d=document.getElementById('admPendN');
+    if(!jumped&&d&&d.style.display!=='none'&&parseInt(d.textContent,10)>0){jumped=true;if(phone())setTab('secReq');}
+  }
+  function later(){clearTimeout(t);t=setTimeout(run,80)}
+  new MutationObserver(later).observe(AP,{childList:true,subtree:true,characterData:true});
+  AB.addEventListener('change',later);AB.addEventListener('click',function(){setTimeout(run,700)});
+  run();
 })();
 </script>
 </body>
