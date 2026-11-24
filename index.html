@@ -909,6 +909,21 @@ td.csum{display:none}
   .csum .cchev{flex:none;width:9px;height:9px;border-right:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);transform:rotate(45deg);margin:0 4px 4px 2px;transition:transform .15s}
   tr.open .csum .cchev{transform:rotate(225deg);margin-bottom:-4px}
 }
+
+/* pricing tab: one card per package with labelled fields */
+.setBlock{margin:0 0 26px}
+.setHead{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:0 0 14px}
+.setHead h4{margin:0!important;font:500 17px Poppins!important;color:var(--ink);margin-right:auto!important}
+html:root .setHead .btn{width:auto;margin:0;padding:11px 20px;border-radius:999px;font:500 14px Poppins}
+html:root #pkL{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:14px}
+html:root .pkrow{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end;margin:0;border:1px solid var(--line);border-radius:18px;padding:18px;background:var(--panel)}
+html:root .pkrow.bankCard{max-width:620px}
+html:root .pkrow .pkF{display:grid;gap:6px;font:500 12.5px Poppins;color:var(--muted);min-width:0}
+html:root .pkrow .pkF.wide,html:root .pkrow .pkActs{grid-column:1/-1}
+html:root .pkrow .pkF input:not([type=checkbox]){width:100%;box-sizing:border-box;margin:0;padding:12px 14px;font:400 16px Poppins;border-radius:12px}
+html:root .pkrow .pkF.chk{display:flex;align-items:center;gap:10px;font:400 14px Poppins;color:var(--ink);cursor:pointer}
+html:root .pkrow .pkF.chk input{width:22px;height:22px;margin:0;accent-color:var(--accent)}
+html:root .pkrow .pkActs .mini{min-height:42px;padding:0 22px}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -3054,7 +3069,7 @@ draw();
           <label>Access<select class="admIn" id="addRole"><option value="customer">Customer</option><option value="admin">Admin</option></select></label>
           <button class="mini ok addBtn" id="addGo" type="submit">Add customer</button>
         </form><p class="msg" id="addMsg"></p></section>
-      <section class="acard" id="secSet"><div class="acHead"><h4>Pricing and bank details</h4></div><div id="setBody"></div></section>`;
+      <section class="acard" id="secSet"><div class="acHead"><h4>Pricing</h4></div><div id="setBody"></div></section>`;
       document.querySelectorAll('#salesSeg button').forEach(b => b.onclick = () => { salesP = b.dataset.p; document.querySelectorAll('#salesSeg button').forEach(x => x.classList.toggle('on', x === b)); paintSales(); });
       $('salesExport').onclick = exportSales;
       $('uSearch').oninput = () => { userQ = $('uSearch').value.trim(); applyUserView(); };
@@ -3382,15 +3397,16 @@ draw();
     const S = Object.fromEntries((rows || []).map(r => [r.key, r.value])); PB.settings = S;
     const {data: pks} = await sb.rpc('photobot_admin_packages');
     $('setBody').innerHTML = `
-      <div class="acard"><h4>Bank details for payments</h4>
-        <input class="admIn" id="ad_bank_name" placeholder="Bank (e.g. BML)" value="${esc(S.bank_name || '')}">
-        <input class="admIn" id="ad_account_name" placeholder="Account name" value="${esc(S.account_name || '')}">
-        <input class="admIn" id="ad_account_number" placeholder="Account number" value="${esc(S.account_number || '')}" inputmode="numeric">
-        <input class="admIn" id="ad_contact" placeholder="Contact number (shown on login page)" value="${esc(S.contact || '')}">
-        <label class="row">Free credits on sign-up <input class="admIn" id="ad_free_credits" value="${esc(S.free_credits || '5')}" inputmode="numeric" style="width:90px;margin:0"></label>
-        <button class="btn" id="adSave" style="margin-top:10px">Save</button><div class="msg" id="adSaveMsg"></div></div>
-      <div class="acard"><h4>Packages</h4><div class="msg" style="margin:0 0 4px">Name · credits · price (MVR) · shown</div><div id="pkL"></div>
-        <button class="btn ghost" id="pkAdd" style="margin-top:10px">+ Add package</button><div class="msg" id="pkMsg"></div></div>`;
+      <div class="setBlock"><div class="setHead"><h4>Packages</h4><button class="btn" id="pkAdd" type="button">Add package</button></div>
+        <div id="pkL"></div><div class="msg" id="pkMsg"></div></div>
+      <div class="setBlock"><div class="setHead"><h4>Bank details for payments</h4></div>
+        <div class="pkrow bankCard">
+        <label class="pkF wide">Bank<input class="admIn" id="ad_bank_name" placeholder="e.g. BML" value="${esc(S.bank_name || '')}"></label>
+        <label class="pkF wide">Account name<input class="admIn" id="ad_account_name" value="${esc(S.account_name || '')}"></label>
+        <label class="pkF wide">Account number<input class="admIn" id="ad_account_number" value="${esc(S.account_number || '')}" inputmode="numeric"></label>
+        <label class="pkF">Contact number<input class="admIn" id="ad_contact" placeholder="Shown on the login page" value="${esc(S.contact || '')}"></label>
+        <label class="pkF">Free credits on sign-up<input class="admIn" id="ad_free_credits" value="${esc(S.free_credits || '5')}" inputmode="numeric"></label>
+        <div class="pkActs"><button class="mini ok" id="adSave" type="button">Save</button></div><div class="msg" id="adSaveMsg" style="grid-column:1/-1"></div></div></div>`;
     $('adSave').onclick = async () => {
       try {
         for (const k of ['bank_name','account_name','account_number','contact','free_credits']){
@@ -3403,19 +3419,22 @@ draw();
     const L = $('pkL');
     const addRow = p => {
       const r = document.createElement('div'); r.className = 'pkrow';
-      r.innerHTML = `<input value="${esc(p.name || '')}" placeholder="Name"><input value="${p.credits || ''}" type="number" inputmode="numeric" placeholder="Credits"><input value="${p.price_mvr ?? ''}" type="number" inputmode="decimal" placeholder="MVR"><label><input type="checkbox" ${p.active !== false ? 'checked' : ''}></label>
-        <button class="mini ok" style="grid-column:1/-1">Save ${esc(p.name || 'new package')}</button>`;
+      r.innerHTML = `<label class="pkF wide">Package name<input value="${esc(p.name || '')}" placeholder="e.g. Starter"></label>
+        <label class="pkF">Credits<input value="${p.credits || ''}" type="number" inputmode="numeric"></label>
+        <label class="pkF">Price (MVR)<input value="${p.price_mvr ?? ''}" type="number" inputmode="decimal"></label>
+        <label class="pkF chk wide"><input type="checkbox" ${p.active !== false ? 'checked' : ''}>Show to customers</label>
+        <div class="pkActs"><button class="mini ok" type="button">Save${p.id ? '' : ' new package'}</button></div>`;
       const [nm, cr, pr, ac] = r.querySelectorAll('input'), btn = r.querySelector('button');
       btn.onclick = async () => {
         const {data: id, error} = await sb.rpc('photobot_admin_save_package', {p_id: p.id || null, p_name: nm.value, p_credits: parseInt(cr.value, 10), p_price: parseFloat(pr.value), p_active: ac.checked, p_sort: p.sort || null});
         if (error){ $('pkMsg').textContent = /BAD_PACKAGE/.test(error.message) ? 'Check the name, credits (1 or more) and price.' : error.message; return; }
-        p.id = id; btn.textContent = 'Saved ✓'; setTimeout(() => btn.textContent = 'Save ' + nm.value, 1500);
+        p.id = id; btn.textContent = 'Saved ✓'; setTimeout(() => btn.textContent = 'Save', 1500);
         $('pkMsg').textContent = ''; loadPackages().catch(() => {});
       };
       L.appendChild(r);
     };
     (pks || []).forEach(addRow);
-    $('pkAdd').onclick = () => addRow({active: true});
+    $('pkAdd').onclick = () => { addRow({active: true}); const n = L.lastElementChild; L.insertBefore(n, L.firstChild); n.querySelector('input').focus(); };
   }
   PB.openAccount = openAccount;
 
