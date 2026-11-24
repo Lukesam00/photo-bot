@@ -931,6 +931,10 @@ html:root .credit,.sitefoot{text-align:center;font:400 12.8px/1.5 Poppins,system
 html:root .credit b,.sitefoot b{font-weight:700;color:var(--ink)}
 .credit .heart,.sitefoot .heart{color:#E0245E;font-size:16px}
 .admPage>.sitefoot{margin:28px 0 -40px}
+
+/* greeting above the credits card */
+.greet{display:none;margin:0 2px 8px;font:300 16px/1.35 Poppins,system-ui,sans-serif;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.greet b{font-weight:500;color:var(--ink)}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -3753,6 +3757,24 @@ ttPaint();place();var t;new MutationObserver(function(){clearTimeout(t);t=setTim
   var w=document.querySelector('body > .wrap')||document.querySelector('.wrap');
   if(w&&!(w.nextElementSibling&&w.nextElementSibling.classList.contains('sitefoot')))w.insertAdjacentElement('afterend',mk());
   [].forEach.call(document.querySelectorAll('.admPage'),function(p){if(!p.querySelector(':scope>.sitefoot'))p.appendChild(mk())});
+})();
+</script>
+<script>
+/* a short greeting for the signed-in customer, above the credits card */
+(function(){
+  var card=document.getElementById('credCard'); if(!card)return;
+  var g=document.createElement('p'); g.className='greet'; g.id='greet'; card.parentNode.insertBefore(g,card);
+  function paint(){
+    var me=window.PB&&window.PB.me, on=!!me&&card.style.display!=='none';
+    g.style.display=on?'block':'none'; if(!on)return;
+    var h=new Date().getHours(), hi=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+    var who=String(me.business||me.name||'').trim();
+    g.textContent=''; g.appendChild(document.createTextNode(hi+(who?', ':'')));
+    if(who){var b=document.createElement('b');b.textContent=who;g.appendChild(b)}
+    else g.appendChild(document.createTextNode('. Welcome to Photo Bot'));
+  }
+  new MutationObserver(paint).observe(card,{attributes:true,attributeFilter:['style']});
+  setInterval(paint,5000); paint();
 })();
 </script>
 </body>
