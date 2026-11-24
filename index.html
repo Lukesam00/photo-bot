@@ -933,7 +933,7 @@ html:root .credit b,.sitefoot b{font-weight:700;color:var(--ink)}
 .admPage>.sitefoot{margin:28px 0 -40px}
 
 /* greeting above the credits card */
-.greet{display:none;margin:0 2px 8px;font:300 16px/1.35 Poppins,system-ui,sans-serif;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.greet{display:none;grid-column:1/-1;min-width:0;margin:3px 0 4px;font:300 14.5px/1.35 Poppins,system-ui,sans-serif;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .greet b{font-weight:500;color:var(--ink)}
 </style>
 <script>
@@ -3763,7 +3763,7 @@ ttPaint();place();var t;new MutationObserver(function(){clearTimeout(t);t=setTim
 /* a short greeting for the signed-in customer, above the credits card */
 (function(){
   var card=document.getElementById('credCard'); if(!card)return;
-  var g=document.createElement('p'); g.className='greet'; g.id='greet'; card.parentNode.insertBefore(g,card);
+  var g=document.createElement('p'); g.className='greet'; g.id='greet'; card.insertBefore(g,card.firstChild);
   function paint(){
     var me=window.PB&&window.PB.me, on=!!me&&card.style.display!=='none';
     g.style.display=on?'block':'none'; if(!on)return;
