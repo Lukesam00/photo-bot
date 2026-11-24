@@ -924,6 +924,13 @@ html:root .pkrow .pkF input:not([type=checkbox]){width:100%;box-sizing:border-bo
 html:root .pkrow .pkF.chk{display:flex;align-items:center;gap:10px;font:400 14px Poppins;color:var(--ink);cursor:pointer}
 html:root .pkrow .pkF.chk input{width:22px;height:22px;margin:0;accent-color:var(--accent)}
 html:root .pkrow .pkActs .mini{min-height:42px;padding:0 22px}
+
+/* footer: same as Input Tax, on every screen */
+html:root .credit,.sitefoot{text-align:center;font:400 12.8px/1.5 Poppins,system-ui,sans-serif;color:var(--muted);border-top:1px solid var(--line);padding:22px 16px}
+.sitefoot{margin:8px 0 0}
+html:root .credit b,.sitefoot b{font-weight:700;color:var(--ink)}
+.credit .heart,.sitefoot .heart{color:#E0245E;font-size:16px}
+.admPage>.sitefoot{margin:28px 0 -40px}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -1166,7 +1173,7 @@ window.ttApply=function(){r.classList.toggle('ttdark',pick())};ttApply();
 <p class="pkP">Credits are used as posters are saved: 1 credit per finished poster, editing is free. Sign in to buy a package by bank transfer.</p>
 <div class="pkgs" id="gatePkgs"></div>
 <p class="fine">Pay by bank transfer and upload the slip — credits are added once approved.</p>
-<p class="credit">Crafted by <b>SaM</b> With <span aria-label="love">♥</span></p>
+<p class="credit">Crafted by <b>SaM</b> With <span class="heart" role="img" aria-label="love">❤</span></p>
 </div>
 </div>
 <div class="authBoard" id="pwBoard" style="display:none" role="dialog" aria-modal="true" aria-labelledby="pwTitle">
@@ -1208,7 +1215,7 @@ window.ttApply=function(){r.classList.toggle('ttdark',pick())};ttApply();
 <div class="msg" id="admMsg" role="status"></div>
 <p class="admSwitch">Not an admin? <a href="/">Go to customer sign in</a></p>
 </div>
-<p class="credit">Crafted by <b>SaM</b> With <span aria-label="love">♥</span></p>
+<p class="credit">Crafted by <b>SaM</b> With <span class="heart" role="img" aria-label="love">❤</span></p>
 </div>
 </div>
 <div id="adminPanel" class="admWrap" style="display:none">
@@ -3736,6 +3743,16 @@ ttPaint();place();var t;new MutationObserver(function(){clearTimeout(t);t=setTim
   new MutationObserver(later).observe(AP,{childList:true,subtree:true,characterData:true});
   AB.addEventListener('change',later);AB.addEventListener('click',function(){setTimeout(run,700)});
   run();
+})();
+</script>
+<script>
+/* the same small footer under the editor, the buy page and the admin panel */
+(function(){
+  var F='Crafted by <b>SaM</b> With <span class="heart" role="img" aria-label="love">\u2764</span>';
+  function mk(){var f=document.createElement('footer');f.className='sitefoot';f.innerHTML=F;return f}
+  var w=document.querySelector('body > .wrap')||document.querySelector('.wrap');
+  if(w&&!(w.nextElementSibling&&w.nextElementSibling.classList.contains('sitefoot')))w.insertAdjacentElement('afterend',mk());
+  [].forEach.call(document.querySelectorAll('.admPage'),function(p){if(!p.querySelector(':scope>.sitefoot'))p.appendChild(mk())});
 })();
 </script>
 </body>
