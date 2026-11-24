@@ -35,8 +35,18 @@
     '.x-plan .n{font-weight:500;color:var(--ink)}.x-plan .c{font-weight:300;color:var(--muted);font-size:14px;display:block;margin-top:2px}' +
     '.x-plan .p{font-weight:500;color:var(--plum);white-space:nowrap}' +
     '.x-plan.hl .n::after{content:"★";color:var(--orange);margin:0 6px;font-size:12px}' +
-    '.x-wa{position:fixed;right:18px;bottom:18px;z-index:50;width:56px;height:56px;border-radius:50%;background:#25D366;display:grid;place-items:center;box-shadow:0 6px 20px rgba(0,0,0,.22);transition:transform .15s}' +
+    '.x-wa{position:fixed;right:16px;bottom:16px;z-index:50;width:48px;height:48px;border-radius:50%;background:#25D366;display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.16);transition:transform .15s}' +
     '.x-wa:hover{transform:scale(1.06)}html[dir="rtl"] .x-wa{right:auto;left:18px}' +
+    '.x-more{border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)}' +
+    '.x-more summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:16px 0;font-size:15px;font-weight:500;color:var(--ink)}' +
+    '.x-more summary::-webkit-details-marker{display:none}' +
+    '.x-more summary::after{content:"+";font-weight:300;font-size:22px;line-height:1;color:var(--plum);transition:transform .2s}' +
+    '.x-more[open] summary::after{transform:rotate(45deg)}' +
+    '.x-more .in{display:flex;flex-direction:column;gap:18px;padding:4px 0 22px}' +
+    '.x-more .howl{margin:0}' +
+    '.x-row{scrollbar-width:none}.x-row::-webkit-scrollbar{display:none}' +
+    '#top{padding-bottom:clamp(40px,6vw,72px)!important}' +
+    '#products article{gap:20px!important;padding:44px 0!important}' +
     '.x-mock{border:1px solid var(--line2);border-radius:14px;overflow:hidden;background:var(--bg);font-size:12px;color:var(--muted)}' +
     '.x-mock .bar{display:flex;align-items:center;gap:6px;padding:9px 12px;background:var(--soft);border-bottom:1px solid var(--line)}' +
     '.x-mock .bar i{width:8px;height:8px;border-radius:50%;background:var(--line2)}' +
@@ -92,6 +102,17 @@
     top.parentNode.insertBefore(ba, top.nextSibling);
   } catch (e) {}
 
+  /* tidy: fold the long details and the video into one "How it works" row */
+  try {
+    [arts.tax, arts.bot].forEach(function (a) {
+      if (!a) return;
+      var d = el('<details class="x-more"><summary>' + T("How it works", "މަސައްކަތް ކުރާ ގޮތް") + '</summary><div class="in"></div></details>');
+      var inn = d.querySelector(".in");
+      [a.querySelector(".pts"), a.querySelector(".howl"), a.querySelector("video.how")].forEach(function (n) { if (n) inn.appendChild(n); });
+      a.insertBefore(d, a.lastElementChild);
+    });
+  } catch (e) {}
+
   /* 3 · sample posters and a sample statement */
   try {
     if (arts.bot) {
@@ -133,7 +154,7 @@
 
   /* 5 · floating WhatsApp button */
   try {
-    document.body.appendChild(el('<a class="x-wa" href="https://wa.me/9609936052" target="_blank" rel="noopener" data-al-en="Chat on WhatsApp" data-al-dv="ވަޓްސްއެޕުން ވާހަކަ ދައްކަވާ" aria-label="Chat on WhatsApp"><svg width="30" height="30" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 1.8a8.2 8.2 0 1 1-4.3 15.2l-.3-.2-2.9.8.8-2.8-.2-.3A8.2 8.2 0 0 1 12 3.8zm-3.2 4.1c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.3s1 2.7 1.1 2.9c.1.2 2 3.1 4.9 4.2 2.4.9 2.9.7 3.4.7.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.5-.3l-2-1c-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.8-1.4-1.7-1.6-2-.2-.3 0-.4.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2.1-.4 0-.5l-.9-2.2c-.2-.5-.4-.5-.6-.5z"/></svg></a>'));
+    document.body.appendChild(el('<a class="x-wa" href="https://wa.me/9609936052" target="_blank" rel="noopener" data-al-en="Chat on WhatsApp" data-al-dv="ވަޓްސްއެޕުން ވާހަކަ ދައްކަވާ" aria-label="Chat on WhatsApp"><svg width="26" height="26" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 1.8a8.2 8.2 0 1 1-4.3 15.2l-.3-.2-2.9.8.8-2.8-.2-.3A8.2 8.2 0 0 1 12 3.8zm-3.2 4.1c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.3s1 2.7 1.1 2.9c.1.2 2 3.1 4.9 4.2 2.4.9 2.9.7 3.4.7.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.5-.3l-2-1c-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.8-1.4-1.7-1.6-2-.2-.3 0-.4.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2.1-.4 0-.5l-.9-2.2c-.2-.5-.4-.5-.6-.5z"/></svg></a>'));
   } catch (e) {}
 
   /* 4 · live prices, read from the two apps */

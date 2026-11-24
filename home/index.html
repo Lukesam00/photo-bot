@@ -49,7 +49,7 @@ html[lang="dv"] .langbtn,html[lang="dv"] bdi{font-family:Poppins,system-ui,sans-
 </style>
 <style>html{scroll-behavior:smooth;background:var(--bg)}</style>
 <script>
-(function(){try{var v=localStorage.getItem('tt-theme');if(v==='light'||v==='dark')document.documentElement.dataset.theme=v}catch(e){}})();
+(function(){var v=null;try{v=localStorage.getItem('tt-theme')}catch(e){}document.documentElement.dataset.theme=v==='dark'?'dark':'light'})();
 </script>
 <script src="/site.js" defer></script>
 </head>
