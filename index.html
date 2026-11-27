@@ -945,6 +945,63 @@ html:root #admSheet.slipView .acctTop{display:flex;align-items:center;justify-co
 html:root #admSheetBox img.full{width:auto;max-width:100%;max-height:78vh;margin:0 auto;object-fit:contain}
 .slipPdf{width:100%;height:78vh;border:1px solid var(--line);border-radius:12px;background:#fff}
 .slipBtn[disabled]{opacity:.5;cursor:default}
+
+/* ===== landing page in the new 3 TIMES look ===== */
+html:root .gate .heroH{font:300 clamp(38px,6.2vw,68px)/1.05 Poppins;letter-spacing:-.03em;color:var(--accent);margin:0 0 18px}
+html:root .gate .heroH em{font-weight:600;color:var(--accent)}
+html:root .gate .eyebrow{color:#E8600C;margin:14px 0 16px}
+html:root .gate .eyebrow i{background:#E8600C;height:2px;border-radius:2px;width:28px}
+html:root .gate .heroP{font:400 clamp(16px,1.6vw,18px)/1.7 Poppins;color:var(--muted);max-width:520px}
+html:root .gate #heroBtns .hbtn{padding:16px 28px;font:500 15.5px Poppins;border-width:1.5px}
+.lfree{margin:14px 0 0;font:400 13.5px Poppins;color:var(--muted)}
+html:root .gate .ticks{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 28px}
+html:root .gate .ticks span{font:400 13px Poppins;color:var(--ink);border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:7px 13px;gap:8px}
+html:root .gate .ticks span::before{width:6px;height:6px;border:0;border-radius:50%;background:#E8600C;transform:none}
+html:root .gate .gateIn > .mock{display:none}
+.lvis{position:relative;min-height:400px;display:flex;justify-content:center;align-items:center;margin:8px 0 10px}
+.lvis::before{content:"";position:absolute;inset:5% 2%;border-radius:40px;background:linear-gradient(135deg,var(--soft),color-mix(in srgb,#E8600C 14%,var(--soft)))}
+.lphone{position:relative;z-index:1;margin-right:16%;width:min(60%,270px);background:var(--panel);border:7px solid #2A0A1C;border-radius:38px;padding:16px 14px 18px;box-shadow:0 30px 60px -28px rgba(42,10,28,.55)}
+.lphone::before{content:"";display:block;width:70px;height:6px;border-radius:6px;background:#2A0A1C;margin:0 auto 12px}
+.lphone .lt{text-align:center;font:600 11px Poppins;letter-spacing:.16em;color:var(--accent);margin-bottom:12px}
+.lba{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center}
+.lba figure{margin:0;display:grid;gap:6px}
+.lba img{border-radius:10px;border:1px solid var(--line);aspect-ratio:4/5;object-fit:cover;width:100%;display:block}
+.lba figcaption{font:400 9.5px Poppins;color:var(--muted);text-align:center}
+.lba .lto{width:22px;height:22px;border-radius:50%;background:#E8600C;color:#fff;display:grid;place-items:center;font-size:12px}
+.lbars{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.lbars span{border-radius:999px;padding:8px 4px;text-align:center;font:500 10px Poppins;border:1px solid var(--line);color:var(--accent)}
+.lbars span+span{background:#E8600C;border-color:#E8600C;color:#fff}
+.lfloat{position:absolute;z-index:2;right:1%;bottom:3%;width:min(30%,150px);border-radius:14px;border:5px solid var(--panel);box-shadow:0 24px 44px -20px rgba(42,10,28,.6);transform:rotate(5deg)}
+.lsteps{display:grid;gap:14px;background:var(--soft);border:1px solid var(--line);border-radius:24px;padding:20px 22px;align-items:center;margin:40px 0 0}
+.lsteps strong{font:500 20px Poppins;color:var(--accent)}
+.lsteps div{display:flex;align-items:center;gap:12px;font:500 15.5px Poppins;color:var(--ink)}
+.lsteps div i{flex:none;width:30px;height:30px;border-radius:50%;background:#E8600C;color:#fff;font:600 14px Poppins;font-style:normal;display:grid;place-items:center}
+.lkick{font:500 12.5px Poppins;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:48px 0 0;display:block}
+.lh2{margin:8px 0 0;font:400 clamp(26px,3.4vw,40px)/1.15 Poppins;letter-spacing:-.02em;color:var(--accent)}
+.lgal{display:grid;grid-auto-flow:column;grid-auto-columns:44%;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin-top:20px;scrollbar-width:none}
+.lgal::-webkit-scrollbar{display:none}
+.lgal img{border-radius:14px;border:1px solid var(--line);aspect-ratio:4/5;object-fit:cover;width:100%;scroll-snap-align:start;display:block}
+html:root .gate .pkH{text-align:start;font:400 clamp(26px,3.4vw,40px)/1.15 Poppins;letter-spacing:-.02em;color:var(--accent);margin:48px 0 8px}
+html:root .gate .pkP{text-align:start;margin:0 0 22px;max-width:60ch;font:400 15px/1.7 Poppins}
+html:root .gate .pkgs{max-width:none}
+html:root .gate .pkg{border-radius:24px}
+html:root .gate .pkg.hl{border-color:#E8600C}
+html:root .gate .pkg .badge{background:#E8600C;color:#fff}
+html:root .gate .fine{text-align:start;margin:16px 0 0}
+.lband{background:#2A0A1C;color:#fff;border-radius:28px;padding:clamp(24px,4.5vw,48px);display:grid;gap:22px;align-items:center;margin:48px 0 0}
+.lband h2{margin:0;font:300 clamp(26px,3.8vw,44px)/1.15 Poppins;letter-spacing:-.02em;color:#fff}
+.lband h2 b{font-weight:600}
+.lct{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid #4A2A3B;border-radius:18px;text-decoration:none;color:#fff}
+.lct:hover{border-color:#FF9A4D}
+.lct i{flex:none;width:42px;height:42px;border-radius:50%;background:#FF7A0F;display:grid;place-items:center}
+.lct small{display:block;font:400 12.5px Poppins;color:#CDB4C2}.lct b{font:500 16px Poppins}
+@media (min-width:700px){.lsteps{grid-template-columns:auto repeat(3,1fr);gap:24px}.lgal{grid-auto-flow:initial;grid-template-columns:repeat(6,1fr);overflow:visible}.lband{grid-template-columns:1.1fr 1fr}}
+@media (min-width:900px){
+  html:root .gate .gateIn > .lvis{grid-column:2;grid-row:1 / span 8;align-self:center;min-height:520px;margin:0}
+  html:root .gate .gateIn > .lsteps,html:root .gate .gateIn > .lkick,html:root .gate .gateIn > .lh2,html:root .gate .gateIn > .lgal,html:root .gate .gateIn > .lband{grid-column:1 / -1}
+  html:root .gate .heroH{font-size:clamp(46px,5.2vw,68px)}
+}
+@media (max-width:899px){html:root .gate #heroBtns .hbtn{margin-top:10px}}
 </style>
 <script>
 /* light / dark: saved choice wins, otherwise the phone setting */
@@ -3787,6 +3844,26 @@ ttPaint();place();var t;new MutationObserver(function(){clearTimeout(t);t=setTim
   }
   new MutationObserver(paint).observe(card,{attributes:true,attributeFilter:['style']});
   setInterval(paint,5000); paint();
+})();
+</script>
+<script>
+/* landing page: product visual, steps, sample posters and a contact band, in the new 3 TIMES look */
+(function(){
+  var g=document.querySelector('#authGate .gateIn'); if(!g||g.querySelector('.lvis'))return;
+  var S='/samples/',mk=function(html){var d=document.createElement('div');d.innerHTML=html;return d.firstElementChild};
+  var mock=g.querySelector(':scope > .mock'),btns=document.getElementById('heroBtns'),pkH=g.querySelector(':scope > .pkH'),credit=g.querySelector(':scope > .credit');
+  if(mock)g.insertBefore(mk('<div class="lvis" aria-hidden="true"><div class="lphone"><div class="lt">PHOTO BOT</div><div class="lba"><figure><img src="'+S+'before.jpg" alt=""><figcaption>Your photo</figcaption></figure><span class="lto">\u2192</span><figure><img src="'+S+'p1.jpg" alt=""><figcaption>Poster</figcaption></figure></div><div class="lbars"><span>Change frame</span><span>Save poster</span></div></div><img class="lfloat" src="'+S+'p4.jpg" alt=""></div>'),mock);
+  if(btns){var f=mk('<p class="lfree">5 free credits to start. No card needed.</p>');var form=document.getElementById('authForm');(form&&form.parentNode===g?form:btns).insertAdjacentElement('afterend',f);
+    var free=function(){var c=g.querySelector('#gatePkgs .pkg .crl');var m=c&&/^(\d+)\s+credits/.exec(c.textContent.trim());var first=g.querySelector('#gatePkgs .pkg h4');if(m&&first&&/free/i.test(first.textContent))f.textContent=m[1]+' free credits to start. No card needed.'};
+    free();var pk=document.getElementById('gatePkgs');if(pk)new MutationObserver(free).observe(pk,{childList:true,subtree:true});}
+  if(pkH){
+    var imgs='';for(var i=1;i<=6;i++)imgs+='<img src="'+S+'p'+i+'.jpg" alt="" loading="lazy">';
+    g.insertBefore(mk('<div class="lsteps"><strong>How it works</strong><div><i>1</i>Add a photo</div><div><i>2</i>Pick a frame</div><div><i>3</i>Save or send</div></div>'),pkH);
+    g.insertBefore(mk('<span class="lkick">Samples</span>'),pkH);
+    g.insertBefore(mk('<h2 class="lh2">Made with Photo Bot</h2>'),pkH);
+    g.insertBefore(mk('<div class="lgal">'+imgs+'</div>'),pkH);
+  }
+  if(credit)g.insertBefore(mk('<div class="lband"><h2>Need a hand?<br><b>Message us.</b></h2><div style="display:grid;gap:14px"><a class="lct" href="https://wa.me/9609936052" target="_blank" rel="noopener"><i><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20l1.2-5.1A8.5 8.5 0 1 1 21 11.5z"/></svg></i><span><small>WhatsApp</small><b>+960 993 6052</b></span></a><a class="lct" href="https://threetimes.tech"><i><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></i><span><small>More from 3 TIMES</small><b>threetimes.tech</b></span></a></div></div>'),credit);
 })();
 </script>
 </body>
